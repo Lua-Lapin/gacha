@@ -1,0 +1,38 @@
+.machine { width: 220px; margin: 0 auto; }
+.dome {
+  position: relative;
+  width: 200px; height: 200px; margin: 0 auto;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #eafaff, #bfe7f7);
+  border: 4px solid #9bd3ee;
+  overflow: hidden;
+}
+.dome-capsule {
+  position: absolute;
+  width: 34px; height: 34px; border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: inset -4px -4px 6px rgba(0,0,0,0.15);
+}
+.machine.shaking .dome { animation: shake 0.4s linear infinite; }
+@keyframes shake {
+  0%,100% { transform: translateX(0) rotate(0); }
+  25% { transform: translateX(-4px) rotate(-2deg); }
+  75% { transform: translateX(4px) rotate(2deg); }
+}
+.body {
+  position: relative;
+  width: 200px; height: 130px; margin: -10px auto 0;
+  background: #e63946; border-radius: 12px;
+  box-shadow: inset 0 -6px 0 rgba(0,0,0,0.15);
+}
+.knob {
+  position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
+  width: 56px; height: 56px; border-radius: 50%;
+  background: #ffd93d; border: 3px solid #b8860b; color: #5a3d00;
+  font-weight: 700; cursor: pointer;
+}
+.knob:disabled { cursor: default; opacity: 0.7; }
+.slot {
+  position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+  width: 90px; height: 34px; background: #1d1d2c; border-radius: 6px;
+}

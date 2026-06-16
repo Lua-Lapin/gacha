@@ -1,0 +1,27 @@
+.result { position: relative; margin-top: 24px; }
+.result-label { color: #666; margin: 0 0 8px; }
+.result-title {
+  font-size: 2rem; font-weight: 800; color: #e63946; margin: 0;
+  animation: pop 0.5s cubic-bezier(.2,1.4,.4,1);
+}
+@keyframes pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.result-title::after {
+  content: '✨'; margin-left: 6px;
+  display: inline-block; animation: sparkle 1s ease-in-out infinite;
+}
+@keyframes sparkle { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+.confetti {
+  position: absolute; top: -20px; left: 0; width: 100%; height: 0;
+  pointer-events: none;
+}
+.confetti-piece {
+  position: absolute; top: 0; width: 8px; height: 12px; border-radius: 2px;
+  animation: fall 1.2s ease-in forwards;
+}
+@keyframes fall {
+  0% { transform: translateY(-10px) rotate(0); opacity: 1; }
+  100% { transform: translateY(180px) rotate(360deg); opacity: 0; }
+}
