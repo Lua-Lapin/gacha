@@ -1,0 +1,32 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { saveResult, fetchPeople, generate } from './api.js'
+
+beforeEach(() => { globalThis.fetch = vi.fn() })
+
+describe('api', () => {
+  it('saveResult POSTs JSON to /api/results', async () => {
+    fetch.mockResolvedValue({ ok: true, json: async () => ({ id: 1 }) })
+    const out = await saveResult({ name: 'a', adjective: 'b', cocktail: 'c', title: 'bc', color: '#000' })
+    expect(out.id).toBe(1)
+    expect(fetch.mock.calls[0][0]).toMatch(/\/api\/results$/)
+    expect(fetch.mock.calls[0][1].method).toBe('POST')
+  })
+
+  it('fetchPeople GETs /api/people', async () => {
+    fetch.mockResolvedValue({ ok: true, json: async () => [{ id: 1 }] })
+    expect(await fetchPeople()).toHaveLength(1)
+  })
+
+  it('generate posts multipart and returns json', async () => {
+    fetch.mockResolvedValue({ ok: true, json: async () => ({ imagePath: 'images/1.png' }) })
+    const file = new File(['x'], 'a.png', { type: 'image/png' })
+    const out = await generate(1, file)
+    expect(out.imagePath).toBe('images/1.png')
+    expect(fetch.mock.calls[0][1].body).toBeInstanceOf(FormData)
+  })
+
+  it('throws on non-ok response', async () => {
+    fetch.mockResolvedValue({ ok: false, json: async () => ({ error: 'boom' }) })
+    await expect(fetchPeople()).rejects.toThrow('boom')
+  })
+})
