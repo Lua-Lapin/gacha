@@ -1,0 +1,4 @@
+.save-result { display: flex; gap: 0.5rem; align-items: center; justify-content: center; margin-top: 1rem; }
+.save-result input { padding: 0.4rem 0.6rem; border-radius: 8px; border: 1px solid #ccc; }
+.save-result button { padding: 0.4rem 1rem; border-radius: 8px; cursor: pointer; }
+.saved-msg { color: #6bcB77; font-size: 0.9rem; }
