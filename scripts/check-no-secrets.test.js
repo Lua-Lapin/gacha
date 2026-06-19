@@ -22,6 +22,14 @@ describe('check-no-secrets.sh', () => {
     expect(runCheck(['server/.env'])).toBe(1)
   })
 
+  it('fails when a .env.local file is present', () => {
+    expect(runCheck(['server/.env.local'])).toBe(1)
+  })
+
+  it('passes for a .env.example template', () => {
+    expect(runCheck(['server/.env.example'])).toBe(0)
+  })
+
   it('fails when a .db file is present', () => {
     expect(runCheck(['data/gacha.db'])).toBe(1)
   })

@@ -9,6 +9,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
+    "server": "node server/index.js",
+    "gallery:build": "vite build gallery",
+    "gallery:dev": "vite gallery",
     "prepare": "husky"
   },
   "dependencies": {

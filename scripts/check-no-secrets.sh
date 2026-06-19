@@ -7,7 +7,9 @@ else
   files="$(cat)"
 fi
 
-bad="$(echo "$files" | grep -E '(^|/)\.env($|\.)|\.db$|\.sqlite$' || true)"
+bad="$(echo "$files" \
+  | grep -E '(^|/)\.env($|\.)|\.db$|\.sqlite$' \
+  | grep -vE '\.env\.(example|sample|template)$' || true)"
 
 if [ -n "$bad" ]; then
   echo "ERROR: secret/db files must never be committed:" >&2
