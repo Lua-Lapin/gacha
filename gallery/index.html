@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>役職ガチャ ギャラリー 🍸</title>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 0; padding: 2rem; background: #1a1024; color: #fff; }
+      h1 { text-align: center; }
+      #gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
+      .card { margin: 0; background: #2a1a3a; border-radius: 12px; overflow: hidden; }
+      .card img { width: 100%; display: block; }
+      figcaption { padding: 0.75rem; display: flex; flex-direction: column; gap: 0.25rem; }
+      .title { font-weight: bold; }
+      .name { opacity: 0.7; font-size: 0.9rem; }
+      .empty { text-align: center; opacity: 0.7; }
+    </style>
+  </head>
+  <body>
+    <h1>役職ガチャ ギャラリー 🍸</h1>
+    <div id="gallery"></div>
+    <script type="module" src="main.js"></script>
+  </body>
+</html>

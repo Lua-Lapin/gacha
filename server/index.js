@@ -73,7 +73,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     db,
     generateImage: (args) => realGenerate({ client, ...args }),
     publishGeneration: realPublish,
-    galleryDir: 'gallery',
+    galleryDir: 'gallery/public',
   })
   app.listen(3001, () => console.log('API on http://localhost:3001'))
 }
