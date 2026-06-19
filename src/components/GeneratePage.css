@@ -1,0 +1,6 @@
+.generate-page { max-width: 480px; margin: 2rem auto; display: flex; flex-direction: column; gap: 0.75rem; }
+.generate-page label { font-weight: bold; }
+.generate-page select, .generate-page input { padding: 0.4rem; border-radius: 8px; }
+.generate-page button { padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; }
+.generate-page .error { color: #ff6b6b; }
+.generate-page .done { color: #6bcB77; }
