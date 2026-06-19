@@ -1,0 +1,37 @@
+@import './theme.css';
+
+.gacha-btn {
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: inherit;
+  border: none;
+  border-radius: var(--gacha-radius-pill);
+  cursor: pointer;
+  transition: transform 0.05s ease;
+}
+
+.gacha-btn--primary {
+  color: #fff;
+  background: var(--gacha-accent);
+  box-shadow: 0 4px 0 var(--gacha-accent-dark);
+}
+.gacha-btn--primary:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--gacha-accent-dark);
+}
+
+.gacha-btn--secondary {
+  color: #5a3d00;
+  background: var(--gacha-yellow);
+  box-shadow: 0 4px 0 var(--gacha-yellow-dark);
+}
+.gacha-btn--secondary:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--gacha-yellow-dark);
+}
+
+.gacha-btn:disabled {
+  cursor: default;
+  opacity: 0.55;
+}

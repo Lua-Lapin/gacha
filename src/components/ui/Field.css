@@ -1,0 +1,44 @@
+@import './theme.css';
+
+.gacha-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+.gacha-field__label {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--gacha-ink);
+}
+
+/* 共通入力スタイル（input/select） */
+.gacha-input,
+.gacha-select {
+  padding: 10px 12px;
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--gacha-ink);
+  background: #fff;
+  border: 2px solid var(--gacha-panel-border);
+  border-radius: 10px;
+  transition: border-color 0.15s ease;
+}
+.gacha-input:focus,
+.gacha-select:focus {
+  outline: none;
+  border-color: var(--gacha-accent);
+}
+
+/* ファイル入力 */
+.gacha-file::file-selector-button {
+  margin-right: 12px;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-family: inherit;
+  color: #5a3d00;
+  background: var(--gacha-yellow);
+  border: none;
+  border-radius: var(--gacha-radius-pill);
+  cursor: pointer;
+}

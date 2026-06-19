@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react'
+import Button from './ui/Button.jsx'
+import Card from './ui/Card.jsx'
+import Field from './ui/Field.jsx'
 import './GeneratePage.css'
 
 export default function GeneratePage({ loadPeople, onGenerate }) {
@@ -26,25 +29,44 @@ export default function GeneratePage({ loadPeople, onGenerate }) {
   }
 
   return (
-    <div className="generate-page">
-      <h2>役職アバター生成</h2>
-      <label htmlFor="person-select">人を選択</label>
-      <select id="person-select" value={personId} onChange={(e) => setPersonId(e.target.value)}>
-        <option value="">選択してください</option>
-        {people.map((p) => (
-          <option key={p.id} value={p.id}>{p.name}（{p.title}）</option>
-        ))}
-      </select>
+    <Card className="generate-page">
+      <h2 className="generate-page__title">役職アバター生成 🎨</h2>
 
-      <label htmlFor="avatar-input">アバター画像</label>
-      <input id="avatar-input" type="file" accept="image/*"
-        onChange={(e) => setFile(e.target.files[0] || null)} />
+      <Field label="人を選択" htmlFor="person-select">
+        <select
+          id="person-select"
+          className="gacha-select"
+          value={personId}
+          onChange={(e) => setPersonId(e.target.value)}
+        >
+          <option value="">選択してください</option>
+          {people.map((p) => (
+            <option key={p.id} value={p.id}>{p.name}（{p.title}）</option>
+          ))}
+        </select>
+      </Field>
 
-      <button onClick={handleGenerate} disabled={status === 'generating'}>生成</button>
+      <Field label="アバター画像" htmlFor="avatar-input">
+        <input
+          id="avatar-input"
+          className="gacha-file"
+          type="file"
+          accept="image/*"
+          onChange={(e) => setFile(e.target.files[0] || null)}
+        />
+      </Field>
 
-      {status === 'generating' && <p>生成中…</p>}
-      {status === 'error' && <p className="error">エラー: {error}</p>}
-      {status === 'done' && <p className="done">生成・アップロード完了: {imagePath}</p>}
-    </div>
+      <Button
+        onClick={handleGenerate}
+        disabled={status === 'generating' || !personId || !file}
+      >
+        {status === 'generating' ? '生成中…' : '生成'}
+      </Button>
+
+      {status === 'error' && <p className="generate-page__error">エラー: {error}</p>}
+      {status === 'done' && (
+        <p className="generate-page__done">生成・アップロード完了 ✓ {imagePath}</p>
+      )}
+    </Card>
   )
 }

@@ -5,6 +5,7 @@ import Capsule from './components/Capsule.jsx'
 import ResultDisplay from './components/ResultDisplay.jsx'
 import SaveResult from './components/SaveResult.jsx'
 import GeneratePage from './components/GeneratePage.jsx'
+import Button from './components/ui/Button.jsx'
 import { drawTitle, pickCapsuleColor } from './lib/draw.js'
 import { saveResult, fetchPeople, generate } from './lib/api.js'
 
@@ -42,8 +43,16 @@ export default function App() {
       <h1 className="app-title">役職ガチャ 🍸</h1>
 
       <nav className="view-nav">
-        <button onClick={() => setView('gacha')} disabled={view === 'gacha'}>ガチャ</button>
-        <button onClick={() => setView('generate')} disabled={view === 'generate'}>生成</button>
+        <Button
+          variant={view === 'gacha' ? 'primary' : 'secondary'}
+          className="view-nav__btn"
+          onClick={() => setView('gacha')}
+        >ガチャ</Button>
+        <Button
+          variant={view === 'generate' ? 'primary' : 'secondary'}
+          className="view-nav__btn"
+          onClick={() => setView('generate')}
+        >生成</Button>
       </nav>
 
       {view === 'generate' && (

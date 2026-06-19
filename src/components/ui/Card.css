@@ -1,0 +1,9 @@
+@import './theme.css';
+
+.gacha-card {
+  background: var(--gacha-panel);
+  border: 1px solid var(--gacha-panel-border);
+  border-radius: var(--gacha-radius);
+  padding: 20px;
+  box-shadow: 0 6px 16px rgba(230, 57, 70, 0.08);
+}

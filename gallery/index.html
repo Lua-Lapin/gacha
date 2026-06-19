@@ -5,15 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>役職ガチャ ギャラリー 🍸</title>
     <style>
-      body { font-family: system-ui, sans-serif; margin: 0; padding: 2rem; background: #1a1024; color: #fff; }
-      h1 { text-align: center; }
-      #gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
-      .card { margin: 0; background: #2a1a3a; border-radius: 12px; overflow: hidden; }
-      .card img { width: 100%; display: block; }
-      figcaption { padding: 0.75rem; display: flex; flex-direction: column; gap: 0.25rem; }
-      .title { font-weight: bold; }
-      .name { opacity: 0.7; font-size: 0.9rem; }
-      .empty { text-align: center; opacity: 0.7; }
+      :root {
+        --gacha-accent: #e63946;
+        --gacha-ink: #2b2b3a;
+        --gacha-muted: #666;
+        --gacha-panel: #fff7f2;
+        --gacha-panel-border: #ffd9c2;
+        --gacha-radius: 12px;
+      }
+      body {
+        font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+        margin: 0; padding: 2.5rem 1.5rem 4rem;
+        background: linear-gradient(#fff5f5, #ffe3e3);
+        color: var(--gacha-ink);
+        min-height: 100vh;
+      }
+      h1 { text-align: center; margin: 0 0 2rem; font-size: 2rem; }
+      #gallery {
+        max-width: 1100px; margin: 0 auto;
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem;
+      }
+      .card {
+        margin: 0; background: var(--gacha-panel);
+        border: 1px solid var(--gacha-panel-border);
+        border-radius: var(--gacha-radius); overflow: hidden;
+        box-shadow: 0 6px 16px rgba(230, 57, 70, 0.1);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(230, 57, 70, 0.18); }
+      .card img { width: 100%; display: block; aspect-ratio: 1; object-fit: cover; }
+      figcaption { padding: 0.85rem 1rem; display: flex; flex-direction: column; gap: 0.3rem; }
+      .title { font-weight: 800; color: var(--gacha-accent); }
+      .name { color: var(--gacha-muted); font-size: 0.9rem; }
+      .empty { text-align: center; color: var(--gacha-muted); }
     </style>
   </head>
   <body>

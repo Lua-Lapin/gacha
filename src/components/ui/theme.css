@@ -1,0 +1,14 @@
+/* 役職ガチャ 共通デザイントークン */
+:root {
+  --gacha-accent: #e63946;
+  --gacha-accent-dark: #b32a35;
+  --gacha-yellow: #ffd93d;
+  --gacha-yellow-dark: #b8860b;
+  --gacha-ink: #2b2b3a;
+  --gacha-muted: #666;
+  --gacha-panel: #fff7f2;
+  --gacha-panel-border: #ffd9c2;
+  --gacha-radius: 12px;
+  --gacha-radius-pill: 999px;
+  --gacha-success: #2a9d4a;
+}

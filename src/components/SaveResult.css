@@ -1,4 +1,22 @@
-.save-result { display: flex; gap: 0.5rem; align-items: center; justify-content: center; margin-top: 1rem; }
-.save-result input { padding: 0.4rem 0.6rem; border-radius: 8px; border: 1px solid #ccc; }
-.save-result button { padding: 0.4rem 1rem; border-radius: 8px; cursor: pointer; }
-.saved-msg { color: #6bcB77; font-size: 0.9rem; }
+@import './ui/theme.css';
+
+.save-result {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+.save-result__label {
+  font-weight: 700;
+  color: var(--gacha-ink);
+}
+.save-result__input {
+  width: 180px;
+}
+.save-result__msg {
+  color: var(--gacha-success);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
