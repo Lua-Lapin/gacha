@@ -1,3 +1,6 @@
 node_modules/
 .superpowers/
 dist/
+server/.env
+data/*.db
+*.sqlite
