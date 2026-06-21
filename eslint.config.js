@@ -18,4 +18,11 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  {
+    // サーバ/スクリプトは Node ランタイム。Buffer/process などの node globals を許可する。
+    files: ['server/**/*.js', 'scripts/**/*.js'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 ])
