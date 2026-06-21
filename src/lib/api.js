@@ -33,3 +33,11 @@ export async function registerCard(personId, blob) {
   form.append('image', blob, 'card.png')
   return handle(await fetch(`${BASE}/api/cards`, { method: 'POST', body: form }))
 }
+
+export async function fetchPending() {
+  return handle(await fetch(`${BASE}/api/pending`))
+}
+
+export async function publishAll() {
+  return handle(await fetch(`${BASE}/api/publish`, { method: 'POST' }))
+}

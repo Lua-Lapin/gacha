@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { saveResult, fetchPeople, generate, registerCard } from './api.js'
+import { saveResult, fetchPeople, generate, registerCard, fetchPending, publishAll } from './api.js'
 
 beforeEach(() => { globalThis.fetch = vi.fn() })
 
@@ -33,6 +33,21 @@ describe('api', () => {
     expect(fetch.mock.calls[0][0]).toMatch(/\/api\/cards$/)
     expect(fetch.mock.calls[0][1].method).toBe('POST')
     expect(fetch.mock.calls[0][1].body).toBeInstanceOf(FormData)
+  })
+
+  it('fetchPending GETs /api/pending', async () => {
+    fetch.mockResolvedValue({ ok: true, json: async () => [{ id: 1, imagePath: 'images/1.png' }] })
+    const out = await fetchPending()
+    expect(out).toHaveLength(1)
+    expect(fetch.mock.calls[0][0]).toMatch(/\/api\/pending$/)
+  })
+
+  it('publishAll POSTs /api/publish and returns committed ids', async () => {
+    fetch.mockResolvedValue({ ok: true, json: async () => ({ committed: [1, 2] }) })
+    const out = await publishAll()
+    expect(out.committed).toEqual([1, 2])
+    expect(fetch.mock.calls[0][0]).toMatch(/\/api\/publish$/)
+    expect(fetch.mock.calls[0][1].method).toBe('POST')
   })
 
   it('throws on non-ok response', async () => {
