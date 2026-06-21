@@ -9,9 +9,8 @@ export async function defaultRunGit(args) {
   await execFileAsync('git', args)
 }
 
-export async function publishGeneration({
-  galleryDir, generationId, imageBuffer, manifest, runGit = defaultRunGit,
-}) {
+// 生成物をローカルへ書き出すだけ（git は触らない）。記録時に呼ぶ。
+export function writeGenerationFiles({ galleryDir, generationId, imageBuffer, manifest }) {
   const imagesDir = join(galleryDir, 'images')
   mkdirSync(imagesDir, { recursive: true })
 
@@ -19,9 +18,18 @@ export async function publishGeneration({
   writeFileSync(join(galleryDir, imagePath), imageBuffer)
   writeFileSync(join(galleryDir, 'manifest.json'), JSON.stringify(manifest, null, 2))
 
-  await runGit(['add', join(galleryDir, imagePath), join(galleryDir, 'manifest.json')])
-  await runGit(['commit', '-m', `feat: add generation ${generationId}`])
-  await runGit(['push'])
-
   return { imagePath }
+}
+
+// 未公開の生成物（既にローカル書き出し済み）を一括で add → 1コミット → push する。
+export async function publishPending({ galleryDir, generations, runGit = defaultRunGit }) {
+  const ids = generations.map((g) => g.id).sort((a, b) => a - b)
+  const files = generations.map((g) => join(galleryDir, g.imagePath))
+  await runGit(['add', ...files, join(galleryDir, 'manifest.json')])
+  const message = ids.length === 1
+    ? `feat: add generation ${ids[0]}`
+    : `feat: add generations ${ids[0]}-${ids[ids.length - 1]}`
+  await runGit(['commit', '-m', message])
+  await runGit(['push'])
+  return { committed: ids }
 }
