@@ -13,5 +13,6 @@ export async function shareImage(blob, { filename, title }) {
   a.href = url
   a.download = filename
   a.click()
-  URL.revokeObjectURL(url)
+  // 一部ブラウザでは同一tick内のrevokeがダウンロードを中断するため遅延させる
+  setTimeout(() => URL.revokeObjectURL(url), 0)
 }
