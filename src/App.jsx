@@ -73,7 +73,10 @@ export default function App() {
             <ResultDisplay title={result.title} info={result.info} />
           )}
           {phase === 'revealed' && result && (
-            <SaveResult onSave={(name) => saveResult({
+            <SaveResult
+              title={result.title}
+              info={result.info}
+              onSave={(name) => saveResult({
               name,
               adjective: result.adjective,
               cocktail: result.cocktail,
