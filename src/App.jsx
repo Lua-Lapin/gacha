@@ -7,7 +7,7 @@ import SaveResult from './components/SaveResult.jsx'
 import GeneratePage from './components/GeneratePage.jsx'
 import Button from './components/ui/Button.jsx'
 import { drawTitle, pickCapsuleColor } from './lib/draw.js'
-import { saveResult, fetchPeople, generate, registerCard } from './lib/api.js'
+import { saveResult, fetchPeople, generate, registerCard, fetchPending, publishAll } from './lib/api.js'
 
 // phase: 'idle' | 'spinning' | 'dropping' | 'revealed'
 export default function App() {
@@ -56,7 +56,12 @@ export default function App() {
       </nav>
 
       {view === 'generate' && (
-        <GeneratePage loadPeople={fetchPeople} onGenerate={generate} />
+        <GeneratePage
+          loadPeople={fetchPeople}
+          loadPending={fetchPending}
+          onGenerate={generate}
+          onPublish={publishAll}
+        />
       )}
 
       {view === 'gacha' && (
