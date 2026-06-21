@@ -59,6 +59,8 @@ export function createApp({ db, generateImage, publishGeneration, galleryDir }) 
         prompt,
         avatarBuffer: req.file.buffer,
         avatarFilename: req.file.originalname || 'avatar.png',
+        size: '1024x1536',
+        quality: 'medium',
       })
       res.json(await recordAndPublish({ personId, imageBuffer, prompt }))
     } catch (err) {
@@ -89,11 +91,11 @@ export function createApp({ db, generateImage, publishGeneration, galleryDir }) 
 }
 
 import dotenv from 'dotenv'
-dotenv.config({ path: new URL('.env', import.meta.url) })
+import { fileURLToPath } from 'node:url'
+dotenv.config({ path: fileURLToPath(new URL('.env', import.meta.url)) })
 import { createDb } from './db.js'
 import { createClient, generateImage as realGenerate } from './imagegen.js'
 import { publishGeneration as realPublish } from './publish.js'
-import { fileURLToPath } from 'node:url'
 import { mkdirSync } from 'node:fs'
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

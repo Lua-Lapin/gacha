@@ -10,9 +10,16 @@ Card images are produced by editing an uploaded avatar with OpenAI's `images.edi
 ## Credentials
 
 The API key lives in `server/.env` as `OPENAI_API_KEY`. `server/index.js` loads it
-explicitly via `dotenv.config({ path: new URL('.env', import.meta.url) })`, so it works
-regardless of the directory the server is started from. If you see
-`Missing credentials`, check that `server/.env` exists and contains the key.
+explicitly via
+`dotenv.config({ path: fileURLToPath(new URL('.env', import.meta.url)) })`, so it works
+regardless of the directory the server is started from.
+
+Note: dotenv's `path` must be a **string**, not a `URL` object — passing a URL throws
+`The "to" argument must be of type string` and the key silently fails to load, which
+surfaces as `Missing credentials`. Always wrap with `fileURLToPath()`.
+
+If you see `Missing credentials`, check that `server/.env` exists and contains the key,
+and restart the server so the change is picked up.
 
 ## How to call
 
