@@ -21,4 +21,13 @@ describe('SaveResult', () => {
     await userEvent.click(screen.getByRole('button', { name: '保存' }))
     expect(onSave).not.toHaveBeenCalled()
   })
+
+  it('shows the share button after a successful save', async () => {
+    const onSave = vi.fn().mockResolvedValue(undefined)
+    const info = { meaning: '切ない恋心', note: 'x', ingredients: ['ウイスキー'] }
+    render(<SaveResult onSave={onSave} title="まじめなマンハッタン" info={info} />)
+    await userEvent.type(screen.getByLabelText('名前'), 'あや')
+    await userEvent.click(screen.getByRole('button', { name: '保存' }))
+    expect(await screen.findByRole('button', { name: 'シェア' })).toBeTruthy()
+  })
 })

@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import Button from './ui/Button.jsx'
+import CardShare from './CardShare.jsx'
 import './SaveResult.css'
 
-export default function SaveResult({ onSave }) {
+export default function SaveResult({ onSave, title, info }) {
   const [name, setName] = useState('')
   const [saved, setSaved] = useState(false)
 
@@ -24,6 +25,7 @@ export default function SaveResult({ onSave }) {
       />
       <Button variant="secondary" onClick={handleSave}>保存</Button>
       {saved && <span className="save-result__msg">保存しました ✓</span>}
+      {saved && <CardShare title={title} info={info} />}
     </div>
   )
 }
