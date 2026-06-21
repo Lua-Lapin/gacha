@@ -57,11 +57,18 @@ export function cardPageHtml(entry, base) {
       img { max-width: 640px; width: 100%; height: auto; border-radius: 12px;
         box-shadow: 0 6px 16px rgba(230, 57, 70, 0.18); }
       a { color: #e63946; font-weight: 700; text-decoration: none; }
+      .download {
+        display: inline-flex; align-items: center; gap: 0.35rem;
+        padding: 0.4rem 0.85rem; border-radius: 999px;
+        background: #e63946; color: #fff;
+        font-weight: 700; text-decoration: none;
+      }
     </style>
   </head>
   <body>
     <h1>${t}</h1>
     <img src="${img}" alt="${t}" />
+    <a class="download" href="${img}" download="${t}.png">⬇ 保存</a>
     <a href="${gallery}">← ギャラリーへ</a>
   </body>
 </html>

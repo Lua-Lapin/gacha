@@ -33,6 +33,12 @@ describe('cardPageHtml', () => {
     expect(html).toContain('るん')
   })
 
+  it('renders a download button for the card image', () => {
+    const html = cardPageHtml(entry, BASE)
+    expect(html).toContain('class="download"')
+    expect(html).toContain('download="せっかちなハイボール.png"')
+  })
+
   it('escapes html-special characters in the title', () => {
     const html = cardPageHtml({ ...entry, title: '<b>"x"</b>' }, BASE)
     expect(html).not.toContain('<b>"x"</b>')
