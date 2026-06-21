@@ -8,9 +8,9 @@ describe('buildPrompt', () => {
     expect(out).toContain('「陽気なモヒート」')
   })
 
-  it('keeps the fixed avatar feature instructions', () => {
+  it('instructs preserving the uploaded avatar features', () => {
     const out = buildPrompt('x')
-    expect(out).toContain('銀髪ツインテール')
+    expect(out).toContain('元画像の特徴を維持')
   })
 
   it('template contains the placeholder', () => {
