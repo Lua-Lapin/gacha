@@ -113,7 +113,7 @@ import { fileURLToPath } from 'node:url'
 dotenv.config({ path: fileURLToPath(new URL('.env', import.meta.url)) })
 import { createDb } from './db.js'
 import { createClient, generateImage as realGenerate } from './imagegen.js'
-import { publishGeneration as realPublish } from './publish.js'
+import { writeGenerationFiles as realWrite, publishPending as realPublish } from './publish.js'
 import { mkdirSync } from 'node:fs'
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
@@ -122,13 +122,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   // OpenAIクライアントは画像生成が呼ばれた時に初めて作る。
   // これにより APIキーが無くても保存/カード登録のエンドポイントは起動できる。
   let client
-  // GALLERY_AUTOCOMMIT=0 で git add/commit/push をスキップ（ローカル書き込みのみ）。
-  // 開発中に履歴を汚さず動作確認したいときに使う。
-  const commit = process.env.GALLERY_AUTOCOMMIT !== '0'
   const app = createApp({
     db,
     generateImage: (args) => realGenerate({ client: (client ??= createClient()), ...args }),
-    publishGeneration: (args) => realPublish({ ...args, commit }),
+    writeGenerationFiles: realWrite,
+    publishPending: realPublish,
     galleryDir: 'gallery/public',
   })
   app.listen(3001, () => console.log('API on http://localhost:3001'))
