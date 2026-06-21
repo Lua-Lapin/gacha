@@ -48,7 +48,7 @@ describe('GeneratePage', () => {
     renderPage({ onGenerate })
     await selectAndUpload()
     await userEvent.click(screen.getByRole('button', { name: '生成' }))
-    expect(await screen.findByText(/あや/)).toBeTruthy()
+    expect(await screen.findByText(/生成中…/)).toBeTruthy()
     expect(screen.getByRole('button', { name: '生成' })).not.toBeDisabled()
     resolve({ imagePath: 'images/1.png' })
   })

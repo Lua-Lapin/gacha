@@ -65,7 +65,7 @@ export default function GeneratePage({ loadPeople, loadPending, onGenerate, onPu
         >
           <option value="">選択してください</option>
           {people.map((p) => (
-            <option key={p.id} value={p.id}>{p.title}</option>
+            <option key={p.id} value={p.id}>{p.name}（{p.title}）</option>
           ))}
         </select>
       </Field>
