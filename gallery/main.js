@@ -27,7 +27,10 @@ export function renderGallery(entries, base = '') {
 
 // ブラウザ実行時のみ動作（テスト環境では document が無い）
 if (typeof document !== 'undefined') {
-  fetch('manifest.json')
+  // 生成直後でも最新を出すため、キャッシュを避けて取得する。
+  // GitHub Pages の manifest.json は max-age=600 なので、これが無いと
+  // 古い(空の)manifestが最大10分残り「ギャラリーに出ない」状態になる。
+  fetch(`manifest.json?ts=${Date.now()}`, { cache: 'no-store' })
     .then((r) => r.json())
     .then((entries) => {
       document.getElementById('gallery').innerHTML = renderGallery(entries, location.href)
