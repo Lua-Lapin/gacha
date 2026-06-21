@@ -19,7 +19,10 @@ export function renderGallery(entries, base = '') {
       <figcaption>
         <span class="title">${e.title}</span>
         <span class="name">${e.name}</span>
-        <a class="tweet" href="${tweetHref(e, base)}" target="_blank" rel="noopener">𝕏 でシェア</a>
+        <div class="actions">
+          <a class="tweet" href="${tweetHref(e, base)}" target="_blank" rel="noopener">𝕏 でシェア</a>
+          <a class="download" href="${e.image}" download="${e.title}.png">⬇ 保存</a>
+        </div>
       </figcaption>
     </figure>
   `).join('')

@@ -22,6 +22,15 @@ describe('renderGallery', () => {
     expect(html).toContain('twitter.com/intent/tweet')
     expect(html).toContain('class="tweet"')
   })
+
+  it('renders a download link to the card image per entry', () => {
+    const html = renderGallery([
+      { id: 1, name: 'あや', title: '陽気なモヒート', image: 'images/1.png', createdAt: '' },
+    ])
+    expect(html).toContain('class="download"')
+    expect(html).toContain('href="images/1.png"')
+    expect(html).toContain('download="陽気なモヒート.png"')
+  })
 })
 
 describe('tweetHref', () => {
