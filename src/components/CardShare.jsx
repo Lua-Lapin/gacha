@@ -1,15 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
-import Button from './ui/Button.jsx'
 import ShareableCard from './ShareableCard.jsx'
 import { captureCardPng } from '../lib/cardImage.js'
-import { shareImage } from '../lib/share.js'
 import './CardShare.css'
 
+// 保存後にカードPNGを生成してギャラリー(ビューワー)へ自動登録するだけのコンポーネント。
+// シェアはビューワー側で行うため、ここに表示用プレビューやシェアボタンは持たない。
 export default function CardShare({ title, info, personId, onRegister }) {
   const cardRef = useRef(null)
-  const [status, setStatus] = useState('idle') // idle | capturing | error
-  const [error, setError] = useState('')
-  // registering | done | error。ギャラリー(ビューワー)への自動登録の状態。
+  // registering | done | error
   const [registerStatus, setRegisterStatus] = useState('idle')
   const registeredRef = useRef(false)
 
@@ -29,29 +27,12 @@ export default function CardShare({ title, info, personId, onRegister }) {
     })()
   }, [personId, onRegister])
 
-  async function handleShare() {
-    if (!cardRef.current) return
-    setStatus('capturing')
-    setError('')
-    try {
-      const blob = await captureCardPng(cardRef.current)
-      await shareImage(blob, { filename: `${title}.png`, title })
-      setStatus('idle')
-    } catch (e) {
-      setError(String(e.message || e))
-      setStatus('error')
-    }
-  }
-
   return (
     <div className="card-share">
-      <div className="card-share__preview">
+      {/* PNG化のためだけに画面外でレンダリングする（表示はしない） */}
+      <div className="card-share__capture" aria-hidden="true">
         <ShareableCard ref={cardRef} title={title} info={info} />
       </div>
-      <Button onClick={handleShare} disabled={status === 'capturing'}>
-        {status === 'capturing' ? '作成中…' : 'シェア'}
-      </Button>
-      {status === 'error' && <p className="card-share__error">{error}</p>}
       {registerStatus === 'registering' && <p className="card-share__msg">ギャラリーに登録中…</p>}
       {registerStatus === 'done' && <p className="card-share__msg">ギャラリーに登録しました ✓</p>}
       {registerStatus === 'error' && <p className="card-share__error">ギャラリー登録に失敗しました</p>}

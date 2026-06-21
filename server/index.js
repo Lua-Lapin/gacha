@@ -23,12 +23,12 @@ export function createApp({ db, generateImage, publishGeneration, galleryDir }) 
     const genId = db.insertGeneration({
       personId, imagePath: null, prompt, status: 'success', error: null,
     })
-    const manifest = buildManifest(db.listSuccessfulGenerations())
-    const { imagePath } = await publishGeneration({
-      galleryDir, generationId: genId, imageBuffer,
-      manifest: manifest.map((m) => m.id === genId ? { ...m, image: `images/${genId}.png` } : m),
-    })
+    // 公開(git push)前にDBへ画像パスを確定させる。こうしておけば push が失敗しても
+    // DB と、それを元に組むmanifestが食い違わない（過去エントリが null になる不具合の修正）。
+    const imagePath = `images/${genId}.png`
     db.raw.prepare('UPDATE generations SET image_path = ? WHERE id = ?').run(imagePath, genId)
+    const manifest = buildManifest(db.listSuccessfulGenerations())
+    await publishGeneration({ galleryDir, generationId: genId, imageBuffer, manifest })
     return { generationId: genId, imagePath }
   }
 

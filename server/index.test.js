@@ -89,6 +89,18 @@ describe('POST /api/cards', () => {
     expect(db.listSuccessfulGenerations()).toHaveLength(1)
   })
 
+  it('keeps prior entries non-null in the published manifest', async () => {
+    const id = db.insertPerson({ name: 'あや', adjective: 'a', cocktail: 'c', title: 'ac', color: '#000' })
+    // publish が失敗(push失敗を模擬)しても、次の登録時に過去エントリが null にならないこと
+    publishGeneration.mockRejectedValueOnce(new Error('push failed'))
+    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('a'), 'a.png')
+    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('b'), 'b.png')
+
+    const manifest = publishGeneration.mock.calls.at(-1)[0].manifest
+    expect(manifest).toHaveLength(2)
+    expect(manifest.every((m) => m.image && m.image.startsWith('images/'))).toBe(true)
+  })
+
   it('returns 400 when personId missing', async () => {
     const res = await request(app).post('/api/cards').attach('image', Buffer.from('a'), 'a.png')
     expect(res.status).toBe(400)
