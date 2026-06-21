@@ -24,6 +24,12 @@ export function createDb(path = 'data/gacha.db') {
     );
   `)
 
+  // generations.published を後付けで追加（既存DBにも安全に適用するマイグレーション）。
+  const cols = sqlite.prepare(`PRAGMA table_info(generations)`).all()
+  if (!cols.some((c) => c.name === 'published')) {
+    sqlite.exec(`ALTER TABLE generations ADD COLUMN published INTEGER NOT NULL DEFAULT 0`)
+  }
+
   return {
     raw: sqlite,
     insertPerson({ name, adjective, cocktail, title, color }) {
@@ -54,6 +60,20 @@ export function createDb(path = 'data/gacha.db') {
         WHERE g.status = 'success'
         ORDER BY g.created_at DESC
       `).all()
+    },
+    listPendingGenerations() {
+      return sqlite.prepare(`
+        SELECT g.id, g.image_path AS imagePath, g.created_at AS createdAt,
+               p.name, p.title
+        FROM generations g JOIN people p ON p.id = g.person_id
+        WHERE g.status = 'success' AND g.published = 0
+        ORDER BY g.created_at DESC
+      `).all()
+    },
+    markPublished(ids) {
+      if (!ids.length) return
+      const placeholders = ids.map(() => '?').join(',')
+      sqlite.prepare(`UPDATE generations SET published = 1 WHERE id IN (${placeholders})`).run(...ids)
     },
   }
 }

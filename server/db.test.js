@@ -45,4 +45,32 @@ describe('generations', () => {
     })
     expect(db.listSuccessfulGenerations()).toHaveLength(0)
   })
+
+  it('defaults published to 0 and lists only unpublished successes', () => {
+    const personId = db.insertPerson({
+      name: 'あや', adjective: 'a', cocktail: 'c', title: 'ac', color: '#000',
+    })
+    const g1 = db.insertGeneration({
+      personId, imagePath: 'images/1.png', prompt: 'p', status: 'success', error: null,
+    })
+    db.insertGeneration({
+      personId, imagePath: null, prompt: 'p', status: 'failed', error: 'boom',
+    })
+    const pending = db.listPendingGenerations()
+    expect(pending).toHaveLength(1)
+    expect(pending[0].id).toBe(g1)
+    expect(pending[0].imagePath).toBe('images/1.png')
+    expect(pending[0].name).toBe('あや')
+  })
+
+  it('markPublished removes rows from the pending list', () => {
+    const personId = db.insertPerson({
+      name: 'b', adjective: 'a', cocktail: 'c', title: 'ac', color: '#000',
+    })
+    const g1 = db.insertGeneration({ personId, imagePath: 'images/1.png', prompt: 'p', status: 'success', error: null })
+    const g2 = db.insertGeneration({ personId, imagePath: 'images/2.png', prompt: 'p', status: 'success', error: null })
+    db.markPublished([g1, g2])
+    expect(db.listPendingGenerations()).toHaveLength(0)
+    expect(db.listSuccessfulGenerations()).toHaveLength(2)
+  })
 })
