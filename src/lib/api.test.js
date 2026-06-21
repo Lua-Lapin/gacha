@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { saveResult, fetchPeople, generate } from './api.js'
+import { saveResult, fetchPeople, generate, registerCard } from './api.js'
 
 beforeEach(() => { globalThis.fetch = vi.fn() })
 
@@ -22,6 +22,16 @@ describe('api', () => {
     const file = new File(['x'], 'a.png', { type: 'image/png' })
     const out = await generate(1, file)
     expect(out.imagePath).toBe('images/1.png')
+    expect(fetch.mock.calls[0][1].body).toBeInstanceOf(FormData)
+  })
+
+  it('registerCard posts the png blob to /api/cards', async () => {
+    fetch.mockResolvedValue({ ok: true, json: async () => ({ imagePath: 'images/2.png' }) })
+    const blob = new Blob(['png'], { type: 'image/png' })
+    const out = await registerCard(7, blob)
+    expect(out.imagePath).toBe('images/2.png')
+    expect(fetch.mock.calls[0][0]).toMatch(/\/api\/cards$/)
+    expect(fetch.mock.calls[0][1].method).toBe('POST')
     expect(fetch.mock.calls[0][1].body).toBeInstanceOf(FormData)
   })
 

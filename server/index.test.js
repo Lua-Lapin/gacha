@@ -72,3 +72,59 @@ describe('POST /api/generate', () => {
     expect(db.listSuccessfulGenerations()).toHaveLength(0)
   })
 })
+
+describe('POST /api/cards', () => {
+  it('publishes the uploaded card png and records it as a generation', async () => {
+    const id = db.insertPerson({ name: 'あや', adjective: 'a', cocktail: 'c', title: 'ac', color: '#000' })
+    const res = await request(app)
+      .post('/api/cards')
+      .field('personId', String(id))
+      .attach('image', Buffer.from('cardpng'), 'card.png')
+    expect(res.status).toBe(200)
+    expect(res.body.imagePath).toBe('images/1.png')
+    expect(generateImage).not.toHaveBeenCalled()
+    expect(publishGeneration).toHaveBeenCalledOnce()
+    const buf = publishGeneration.mock.calls[0][0].imageBuffer
+    expect(buf.toString()).toBe('cardpng')
+    expect(db.listSuccessfulGenerations()).toHaveLength(1)
+  })
+
+  it('keeps prior entries non-null in the published manifest', async () => {
+    const id = db.insertPerson({ name: 'あや', adjective: 'a', cocktail: 'c', title: 'ac', color: '#000' })
+    // publish が失敗(push失敗を模擬)しても、次の登録時に過去エントリが null にならないこと
+    publishGeneration.mockRejectedValueOnce(new Error('push failed'))
+    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('a'), 'a.png')
+    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('b'), 'b.png')
+
+    const manifest = publishGeneration.mock.calls.at(-1)[0].manifest
+    expect(manifest).toHaveLength(2)
+    expect(manifest.every((m) => m.image && m.image.startsWith('images/'))).toBe(true)
+  })
+
+  it('returns 400 when personId missing', async () => {
+    const res = await request(app).post('/api/cards').attach('image', Buffer.from('a'), 'a.png')
+    expect(res.status).toBe(400)
+  })
+
+  it('returns 400 when image missing', async () => {
+    const id = db.insertPerson({ name: 'b', adjective: 'a', cocktail: 'c', title: 'ac', color: '#000' })
+    const res = await request(app).post('/api/cards').field('personId', String(id))
+    expect(res.status).toBe(400)
+  })
+
+  it('returns 404 when person not found', async () => {
+    const res = await request(app)
+      .post('/api/cards')
+      .field('personId', '999')
+      .attach('image', Buffer.from('a'), 'a.png')
+    expect(res.status).toBe(404)
+  })
+})
+
+describe('CORS', () => {
+  it('answers preflight and sets allow-origin', async () => {
+    const res = await request(app).options('/api/results')
+    expect(res.status).toBe(204)
+    expect(res.headers['access-control-allow-origin']).toBe('*')
+  })
+})

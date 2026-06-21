@@ -7,7 +7,7 @@ import SaveResult from './components/SaveResult.jsx'
 import GeneratePage from './components/GeneratePage.jsx'
 import Button from './components/ui/Button.jsx'
 import { drawTitle, pickCapsuleColor } from './lib/draw.js'
-import { saveResult, fetchPeople, generate } from './lib/api.js'
+import { saveResult, fetchPeople, generate, registerCard } from './lib/api.js'
 
 // phase: 'idle' | 'spinning' | 'dropping' | 'revealed'
 export default function App() {
@@ -73,7 +73,11 @@ export default function App() {
             <ResultDisplay title={result.title} info={result.info} />
           )}
           {phase === 'revealed' && result && (
-            <SaveResult onSave={(name) => saveResult({
+            <SaveResult
+              title={result.title}
+              info={result.info}
+              onRegister={registerCard}
+              onSave={(name) => saveResult({
               name,
               adjective: result.adjective,
               cocktail: result.cocktail,
