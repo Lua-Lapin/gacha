@@ -25,3 +25,12 @@
   0% { transform: translateY(-10px) rotate(0); opacity: 1; }
   100% { transform: translateY(180px) rotate(360deg); opacity: 0; }
 }
+.cocktail-info {
+  margin: 18px auto 0; max-width: 320px; padding: 14px 16px;
+  background: #fff7f2; border: 1px solid #ffd9c2; border-radius: 12px;
+  text-align: left; line-height: 1.6;
+  animation: pop 0.5s cubic-bezier(.2,1.4,.4,1) 0.15s both;
+}
+.cocktail-meaning { margin: 0 0 6px; font-weight: 700; color: #c44; }
+.cocktail-note { margin: 0 0 6px; color: #555; font-size: 0.9rem; }
+.cocktail-ingredients { margin: 0; color: #777; font-size: 0.85rem; }

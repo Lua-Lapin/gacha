@@ -1,6 +1,7 @@
 node_modules/
 .superpowers/
 dist/
+.DS_Store
 server/.env
 data/*.db
 *.sqlite
