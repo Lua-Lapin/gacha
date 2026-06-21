@@ -88,7 +88,8 @@ export function createApp({ db, generateImage, publishGeneration, galleryDir }) 
   return app
 }
 
-import 'dotenv/config'
+import dotenv from 'dotenv'
+dotenv.config({ path: new URL('.env', import.meta.url) })
 import { createDb } from './db.js'
 import { createClient, generateImage as realGenerate } from './imagegen.js'
 import { publishGeneration as realPublish } from './publish.js'
