@@ -23,7 +23,7 @@ describe('SaveResult', () => {
   })
 
   it('shows the share button after a successful save', async () => {
-    const onSave = vi.fn().mockResolvedValue(undefined)
+    const onSave = vi.fn().mockResolvedValue({ id: 1 })
     const info = { meaning: '切ない恋心', note: 'x', ingredients: ['ウイスキー'] }
     render(<SaveResult onSave={onSave} title="まじめなマンハッタン" info={info} />)
     await userEvent.type(screen.getByLabelText('名前'), 'あや')
