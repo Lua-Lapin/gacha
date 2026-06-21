@@ -3,12 +3,13 @@ import request from 'supertest'
 import { createApp } from './index.js'
 import { createDb } from './db.js'
 
-let app, db, generateImage, publishGeneration
+let app, db, generateImage, writeGenerationFiles, publishPending
 beforeEach(() => {
   db = createDb(':memory:')
   generateImage = vi.fn().mockResolvedValue(Buffer.from('png'))
-  publishGeneration = vi.fn().mockResolvedValue({ imagePath: 'images/1.png' })
-  app = createApp({ db, generateImage, publishGeneration, galleryDir: '/tmp/g' })
+  writeGenerationFiles = vi.fn(({ generationId }) => ({ imagePath: `images/${generationId}.png` }))
+  publishPending = vi.fn(async ({ generations }) => ({ committed: generations.map((g) => g.id) }))
+  app = createApp({ db, generateImage, writeGenerationFiles, publishPending, galleryDir: '/tmp/g' })
 })
 
 describe('POST /api/results', () => {
@@ -38,7 +39,7 @@ describe('GET /api/people', () => {
 })
 
 describe('POST /api/generate', () => {
-  it('generates, publishes, and records success', async () => {
+  it('generates and records success without committing', async () => {
     const id = db.insertPerson({ name: 'b', adjective: 'a', cocktail: 'c', title: 'ac', color: '#000' })
     const res = await request(app)
       .post('/api/generate')
@@ -46,8 +47,9 @@ describe('POST /api/generate', () => {
       .attach('avatar', Buffer.from('avatar'), 'avatar.png')
     expect(res.status).toBe(200)
     expect(generateImage).toHaveBeenCalledOnce()
-    expect(publishGeneration).toHaveBeenCalledOnce()
-    expect(db.listSuccessfulGenerations()).toHaveLength(1)
+    expect(writeGenerationFiles).toHaveBeenCalledOnce()
+    expect(publishPending).not.toHaveBeenCalled()
+    expect(db.listPendingGenerations()).toHaveLength(1)
   })
 
   it('returns 400 when personId missing', async () => {
@@ -69,12 +71,12 @@ describe('POST /api/generate', () => {
       .field('personId', String(id))
       .attach('avatar', Buffer.from('a'), 'a.png')
     expect(res.status).toBe(500)
-    expect(db.listSuccessfulGenerations()).toHaveLength(0)
+    expect(db.listPendingGenerations()).toHaveLength(0)
   })
 })
 
 describe('POST /api/cards', () => {
-  it('publishes the uploaded card png and records it as a generation', async () => {
+  it('records the uploaded card png without committing', async () => {
     const id = db.insertPerson({ name: 'あや', adjective: 'a', cocktail: 'c', title: 'ac', color: '#000' })
     const res = await request(app)
       .post('/api/cards')
@@ -83,20 +85,17 @@ describe('POST /api/cards', () => {
     expect(res.status).toBe(200)
     expect(res.body.imagePath).toBe('images/1.png')
     expect(generateImage).not.toHaveBeenCalled()
-    expect(publishGeneration).toHaveBeenCalledOnce()
-    const buf = publishGeneration.mock.calls[0][0].imageBuffer
+    expect(publishPending).not.toHaveBeenCalled()
+    const buf = writeGenerationFiles.mock.calls[0][0].imageBuffer
     expect(buf.toString()).toBe('cardpng')
-    expect(db.listSuccessfulGenerations()).toHaveLength(1)
+    expect(db.listPendingGenerations()).toHaveLength(1)
   })
 
-  it('keeps prior entries non-null in the published manifest', async () => {
+  it('keeps prior entries non-null in the written manifest', async () => {
     const id = db.insertPerson({ name: 'あや', adjective: 'a', cocktail: 'c', title: 'ac', color: '#000' })
-    // publish が失敗(push失敗を模擬)しても、次の登録時に過去エントリが null にならないこと
-    publishGeneration.mockRejectedValueOnce(new Error('push failed'))
     await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('a'), 'a.png')
     await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('b'), 'b.png')
-
-    const manifest = publishGeneration.mock.calls.at(-1)[0].manifest
+    const manifest = writeGenerationFiles.mock.calls.at(-1)[0].manifest
     expect(manifest).toHaveLength(2)
     expect(manifest.every((m) => m.image && m.image.startsWith('images/'))).toBe(true)
   })
@@ -118,6 +117,46 @@ describe('POST /api/cards', () => {
       .field('personId', '999')
       .attach('image', Buffer.from('a'), 'a.png')
     expect(res.status).toBe(404)
+  })
+})
+
+describe('GET /api/pending', () => {
+  it('lists only unpublished successful generations', async () => {
+    const id = db.insertPerson({ name: 'b', adjective: 'a', cocktail: 'c', title: 'ac', color: '#000' })
+    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('a'), 'a.png')
+    const res = await request(app).get('/api/pending')
+    expect(res.status).toBe(200)
+    expect(res.body).toHaveLength(1)
+    expect(res.body[0].imagePath).toBe('images/1.png')
+  })
+})
+
+describe('POST /api/publish', () => {
+  it('publishes all pending, marks them published, and returns ids', async () => {
+    const id = db.insertPerson({ name: 'b', adjective: 'a', cocktail: 'c', title: 'ac', color: '#000' })
+    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('a'), 'a.png')
+    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('b'), 'b.png')
+    const res = await request(app).post('/api/publish')
+    expect(res.status).toBe(200)
+    expect(publishPending).toHaveBeenCalledOnce()
+    expect(res.body.committed).toEqual([1, 2])
+    expect(db.listPendingGenerations()).toHaveLength(0)
+  })
+
+  it('is a no-op when nothing is pending', async () => {
+    const res = await request(app).post('/api/publish')
+    expect(res.status).toBe(200)
+    expect(res.body.committed).toEqual([])
+    expect(publishPending).not.toHaveBeenCalled()
+  })
+
+  it('returns 500 and leaves rows pending when push fails', async () => {
+    const id = db.insertPerson({ name: 'b', adjective: 'a', cocktail: 'c', title: 'ac', color: '#000' })
+    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('a'), 'a.png')
+    publishPending.mockRejectedValueOnce(new Error('push failed'))
+    const res = await request(app).post('/api/publish')
+    expect(res.status).toBe(500)
+    expect(db.listPendingGenerations()).toHaveLength(1)
   })
 })
 

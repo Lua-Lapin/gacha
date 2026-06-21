@@ -5,7 +5,7 @@ import { buildManifest } from './manifest.js'
 
 const upload = multer({ storage: multer.memoryStorage() })
 
-export function createApp({ db, generateImage, publishGeneration, galleryDir }) {
+export function createApp({ db, generateImage, writeGenerationFiles, publishPending, galleryDir }) {
   const app = express()
   app.use(express.json())
 
@@ -18,17 +18,15 @@ export function createApp({ db, generateImage, publishGeneration, galleryDir }) 
     next()
   })
 
-  // 成功した生成物をDBに記録し、ギャラリー(ビューワー)へPNGとして公開する共通処理
-  async function recordAndPublish({ personId, imageBuffer, prompt }) {
+  // 生成物をDBに記録し、ギャラリーへローカル書き出しする（git は publish 時にまとめて実行）。
+  function recordGeneration({ personId, imageBuffer, prompt }) {
     const genId = db.insertGeneration({
       personId, imagePath: null, prompt, status: 'success', error: null,
     })
-    // 公開(git push)前にDBへ画像パスを確定させる。こうしておけば push が失敗しても
-    // DB と、それを元に組むmanifestが食い違わない（過去エントリが null になる不具合の修正）。
     const imagePath = `images/${genId}.png`
     db.raw.prepare('UPDATE generations SET image_path = ? WHERE id = ?').run(imagePath, genId)
     const manifest = buildManifest(db.listSuccessfulGenerations())
-    await publishGeneration({ galleryDir, generationId: genId, imageBuffer, manifest })
+    writeGenerationFiles({ galleryDir, generationId: genId, imageBuffer, manifest })
     return { generationId: genId, imagePath }
   }
 
@@ -59,10 +57,10 @@ export function createApp({ db, generateImage, publishGeneration, galleryDir }) 
         prompt,
         avatarBuffer: req.file.buffer,
         avatarFilename: req.file.originalname || 'avatar.png',
-        size: '1024x1536',
+        size: '1024x1024',
         quality: 'medium',
       })
-      res.json(await recordAndPublish({ personId, imageBuffer, prompt }))
+      res.json(recordGeneration({ personId, imageBuffer, prompt }))
     } catch (err) {
       db.insertGeneration({
         personId, imagePath: null, prompt, status: 'failed', error: String(err.message || err),
@@ -81,7 +79,27 @@ export function createApp({ db, generateImage, publishGeneration, galleryDir }) 
     if (!person) return res.status(404).json({ error: 'person not found' })
 
     try {
-      res.json(await recordAndPublish({ personId, imageBuffer: req.file.buffer, prompt: 'card' }))
+      res.json(recordGeneration({ personId, imageBuffer: req.file.buffer, prompt: 'card' }))
+    } catch (err) {
+      res.status(500).json({ error: String(err.message || err) })
+    }
+  })
+
+  app.get('/api/pending', (req, res) => {
+    res.json(db.listPendingGenerations())
+  })
+
+  app.post('/api/publish', async (req, res) => {
+    const pending = db.listPendingGenerations()
+    if (!pending.length) return res.json({ committed: [] })
+    try {
+      // 公開は生成順（id 昇順）にまとめる。listPendingGenerations は新しい順で返すため並べ替える。
+      const generations = pending
+        .map((g) => ({ id: g.id, imagePath: g.imagePath }))
+        .sort((a, b) => a.id - b.id)
+      const { committed } = await publishPending({ galleryDir, generations })
+      db.markPublished(committed)
+      res.json({ committed, pushed: true })
     } catch (err) {
       res.status(500).json({ error: String(err.message || err) })
     }
@@ -104,10 +122,13 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   // OpenAIクライアントは画像生成が呼ばれた時に初めて作る。
   // これにより APIキーが無くても保存/カード登録のエンドポイントは起動できる。
   let client
+  // GALLERY_AUTOCOMMIT=0 で git add/commit/push をスキップ（ローカル書き込みのみ）。
+  // 開発中に履歴を汚さず動作確認したいときに使う。
+  const commit = process.env.GALLERY_AUTOCOMMIT !== '0'
   const app = createApp({
     db,
     generateImage: (args) => realGenerate({ client: (client ??= createClient()), ...args }),
-    publishGeneration: realPublish,
+    publishGeneration: (args) => realPublish({ ...args, commit }),
     galleryDir: 'gallery/public',
   })
   app.listen(3001, () => console.log('API on http://localhost:3001'))
