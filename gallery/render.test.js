@@ -40,8 +40,9 @@ describe('tweetHref', () => {
     expect(decodeURIComponent(href)).toContain('陽気なモヒート')
   })
 
-  it('includes the absolute image url when a base is given', () => {
-    const href = tweetHref({ title: 't', image: 'images/1.png' }, 'https://example.com/gallery/')
-    expect(href).toContain(encodeURIComponent('https://example.com/gallery/images/1.png'))
+  it('links to the absolute card page url (not the raw image) so X unfurls a preview', () => {
+    const href = tweetHref({ id: 1, title: 't', image: 'images/1.png' }, 'https://example.com/gallery/')
+    expect(href).toContain(encodeURIComponent('https://example.com/gallery/card/1.html'))
+    expect(href).not.toContain(encodeURIComponent('https://example.com/gallery/images/1.png'))
   })
 })

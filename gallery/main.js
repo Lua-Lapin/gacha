@@ -1,10 +1,16 @@
+import { cardPagePath } from './cardPage.js'
+
+// 本番（GitHub Pages）の絶対URL。ツイートのカードページURLとメタタグの解決に使う。
+export const BASE = 'https://lua-lapin.github.io/gacha/'
+
 // カードをX(Twitter)へ投稿するためのintent URLを組み立てる。
-// base が与えられれば画像の絶対URLを url パラメータに載せる（投稿にカード画像リンクが付く）。
-export function tweetHref(entry, base = '') {
+// X は画像直リンクではプレビューを出さないため、url にはメタタグ入りの
+// カードページ（card/{id}.html）の絶対URLを載せる。これにより画像カードが展開される。
+export function tweetHref(entry, base = BASE) {
   const text = `私の役職は「${entry.title}」でした🍸 #役職ガチャ`
   const params = new URLSearchParams({ text })
   if (base) {
-    params.set('url', new URL(entry.image, base).href)
+    params.set('url', new URL(cardPagePath(entry), base).href)
   }
   return `https://twitter.com/intent/tweet?${params.toString()}`
 }
