@@ -14,7 +14,7 @@ const gachas = [
 describe('GachaList', () => {
   it('renders one card per gacha with title and formatted deadline', () => {
     const { container } = render(<GachaList gachas={gachas} onSelect={() => {}} />)
-    expect(container.querySelectorAll('.gacha-card')).toHaveLength(2)
+    expect(container.querySelectorAll('.gacha-list-card')).toHaveLength(2)
     expect(screen.getByText('カクテル役職ガチャ')).toBeInTheDocument()
     expect(screen.getByText('⏰ 6月30日 23:59 まで')).toBeInTheDocument()
   })

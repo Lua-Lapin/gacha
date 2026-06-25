@@ -13,13 +13,13 @@ export default function GachaList({ gachas, onSelect }) {
         <button
           key={g.id}
           type="button"
-          className="gacha-card"
+          className="gacha-list-card"
           onClick={() => onSelect(g.id)}
         >
-          <img className="gacha-card__banner" src={g.banner} alt={g.title} />
-          <div className="gacha-card__info">
-            <span className="gacha-card__title">{g.title}</span>
-            <span className="gacha-card__deadline">⏰ {formatDeadline(g.endsAt)}</span>
+          <img className="gacha-list-card__banner" src={g.banner} alt={g.title} />
+          <div className="gacha-list-card__info">
+            <span className="gacha-list-card__title">{g.title}</span>
+            <span className="gacha-list-card__deadline">⏰ {formatDeadline(g.endsAt)}</span>
           </div>
         </button>
       ))}

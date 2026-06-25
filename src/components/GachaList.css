@@ -18,7 +18,7 @@
   color: var(--gacha-muted);
 }
 
-.gacha-card {
+.gacha-list-card {
   display: block;
   width: 100%;
   padding: 0;
@@ -32,32 +32,32 @@
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.gacha-card:hover {
+.gacha-list-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 24px rgba(230, 57, 70, 0.18);
 }
 
 /* バナーは横長。横幅に合わせて全体を表示する（切り抜かない） */
-.gacha-card__banner {
+.gacha-list-card__banner {
   width: 100%;
   height: auto;
   display: block;
 }
 
-.gacha-card__info {
+.gacha-list-card__info {
   padding: 0.85rem 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
 }
 
-.gacha-card__title {
+.gacha-list-card__title {
   font-weight: 800;
   font-size: 1.05rem;
   color: var(--gacha-ink);
 }
 
-.gacha-card__deadline {
+.gacha-list-card__deadline {
   color: var(--gacha-muted);
   font-size: 0.9rem;
 }
