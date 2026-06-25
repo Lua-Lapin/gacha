@@ -1,0 +1,44 @@
+.reveal-overlay {
+  position: fixed; inset: 0; z-index: 50;
+  background: radial-gradient(circle at 50% 38%, #2a2150 0%, #141426 60%, #0c0d17 100%);
+  animation: reveal-fade 0.3s ease-out both;
+}
+@keyframes reveal-fade { from { opacity: 0; } to { opacity: 1; } }
+
+.reveal-cat {
+  position: absolute; left: 50%; top: 45%;
+  width: 180px; margin-left: -90px; margin-top: -90px;
+  filter: drop-shadow(0 0 18px rgba(255, 210, 90, 0.65));
+  opacity: 0;
+  animation:
+    reveal-drop 0.7s cubic-bezier(.5, 1.6, .5, 1) forwards,
+    reveal-pulse 4.4s 0.7s ease-in-out forwards,
+    reveal-catout 0.5s 5.1s ease-in forwards;
+}
+@keyframes reveal-drop {
+  0% { top: -20%; opacity: 0; }
+  55% { top: 45%; opacity: 1; }
+  70% { top: 39%; }
+  100% { top: 45%; opacity: 1; }
+}
+@keyframes reveal-pulse {
+  0% { transform: scale(1); } 18% { transform: scale(1.7); } 36% { transform: scale(1); }
+  54% { transform: scale(1.7); } 72% { transform: scale(1); } 100% { transform: scale(1); }
+}
+@keyframes reveal-catout { to { opacity: 0; transform: scale(0.6); } }
+
+.reveal-spark {
+  position: absolute; width: 8px; height: 8px; border-radius: 50%;
+  background: #fff; box-shadow: 0 0 8px 2px rgba(255, 230, 140, 0.9);
+  opacity: 0; animation: reveal-sparkle 1s ease-out forwards;
+}
+@keyframes reveal-sparkle {
+  0% { opacity: 0; transform: scale(0); }
+  40% { opacity: 1; transform: scale(1.3); }
+  100% { opacity: 0; transform: scale(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-cat { animation: reveal-drop 0.2s ease-out forwards, reveal-catout 0.2s 0.4s ease-in forwards; }
+  .reveal-spark { animation: none; opacity: 0; }
+}
