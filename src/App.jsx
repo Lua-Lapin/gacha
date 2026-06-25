@@ -60,9 +60,15 @@ export default function App() {
     setView('gacha')
   }
 
+  const selectedGachaTitle = gachas.find((g) => g.id === selectedGacha)?.title
+  const headerLabel =
+    view === 'gacha' && selectedGachaTitle ? selectedGachaTitle
+    : view === 'generate' ? 'カード生成'
+    : 'ガチャ一覧'
+
   return (
     <div className="app">
-      <h1 className="app-title">役職ガチャ 🍸</h1>
+      <h1 className="app-title">{headerLabel}</h1>
 
       {view === 'list' && (
         <>
@@ -90,11 +96,6 @@ export default function App() {
       {view === 'gacha' && (
         <div className="sub-view">
           <BackButton onClick={handleBackToList} />
-          {selectedGacha && (
-            <p className="selected-gacha-title">
-              {gachas.find((g) => g.id === selectedGacha)?.title}
-            </p>
-          )}
           <GachaMachine
             shaking={phase === 'revealing'}
             onTurn={handleTurn}

@@ -29,10 +29,3 @@
 }
 /* ステージ上では名前ラベルを白系にして暗転背景で読めるようにする */
 .reveal-stage .save-result__label { color: #f0eefb; }
-
-.selected-gacha-title {
-  text-align: center;
-  font-weight: 800;
-  color: var(--gacha-accent);
-  margin: 0 0 16px;
-}
