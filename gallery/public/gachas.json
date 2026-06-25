@@ -1,0 +1,9 @@
+[
+  {
+    "id": "cocktail",
+    "title": "カクテル役職ガチャ",
+    "image": "images/banners/cocktail.png",
+    "endsAt": "2026-06-30T23:59:00+09:00",
+    "href": "http://localhost:5173/"
+  }
+]
