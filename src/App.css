@@ -13,3 +13,10 @@
   cursor: pointer; box-shadow: 0 4px 0 #b32a35;
 }
 .again-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #b32a35; }
+
+/* ガチャ演出: revealed 時の操作系を暗転オーバーレイ上に重ねる */
+.app:has(.reveal-overlay) .again-btn,
+.result ~ .save-result,
+.result ~ .again-btn {
+  position: relative; z-index: 70;
+}

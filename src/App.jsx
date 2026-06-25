@@ -1,15 +1,16 @@
 import { useState, useRef } from 'react'
 import './App.css'
 import GachaMachine from './components/GachaMachine.jsx'
-import Capsule from './components/Capsule.jsx'
+import GachaReveal, { REVEAL_MS } from './components/GachaReveal.jsx'
 import ResultDisplay from './components/ResultDisplay.jsx'
 import SaveResult from './components/SaveResult.jsx'
 import GeneratePage from './components/GeneratePage.jsx'
 import Button from './components/ui/Button.jsx'
+import catImage from './assets/gacha-cat.png'
 import { drawTitle, pickCapsuleColor } from './lib/draw.js'
 import { saveResult, fetchPeople, generate, registerCard, fetchPending, publishAll } from './lib/api.js'
 
-// phase: 'idle' | 'spinning' | 'dropping' | 'revealed'
+// phase: 'idle' | 'revealing' | 'revealed'
 export default function App() {
   const [view, setView] = useState('gacha') // 'gacha' | 'generate'
   const [phase, setPhase] = useState('idle')
@@ -27,9 +28,8 @@ export default function App() {
     clearTimers()
     setResult(drawTitle())
     setColor(pickCapsuleColor())
-    setPhase('spinning')
-    timers.current.push(setTimeout(() => setPhase('dropping'), 700))
-    timers.current.push(setTimeout(() => setPhase('revealed'), 1500))
+    setPhase('revealing')
+    timers.current.push(setTimeout(() => setPhase('revealed'), REVEAL_MS))
   }
 
   function handleReset() {
@@ -67,13 +67,15 @@ export default function App() {
       {view === 'gacha' && (
         <>
           <GachaMachine
-            shaking={phase === 'spinning'}
+            shaking={phase === 'revealing'}
             onTurn={handleTurn}
             disabled={phase !== 'idle'}
           />
 
-          {phase === 'dropping' && <Capsule color={color} phase="dropping" />}
-          {phase === 'revealed' && <Capsule color={color} phase="opening" />}
+          {phase === 'revealing' && (
+            <GachaReveal image={catImage} onComplete={() => setPhase('revealed')} />
+          )}
+
           {phase === 'revealed' && result && (
             <ResultDisplay title={result.title} info={result.info} />
           )}
@@ -83,12 +85,12 @@ export default function App() {
               info={result.info}
               onRegister={registerCard}
               onSave={(name) => saveResult({
-              name,
-              adjective: result.adjective,
-              cocktail: result.cocktail,
-              title: result.title,
-              color,
-            })} />
+                name,
+                adjective: result.adjective,
+                cocktail: result.cocktail,
+                title: result.title,
+                color,
+              })} />
           )}
 
           {phase === 'revealed' && (
