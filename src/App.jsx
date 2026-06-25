@@ -6,6 +6,7 @@ import ResultDisplay from './components/ResultDisplay.jsx'
 import SaveResult from './components/SaveResult.jsx'
 import GeneratePage from './components/GeneratePage.jsx'
 import GachaList from './components/GachaList.jsx'
+import BackButton from './components/ui/BackButton.jsx'
 import Button from './components/ui/Button.jsx'
 import { gachas } from './data/gachas.js'
 import catImage from './assets/gacha-cat.png'
@@ -46,6 +47,11 @@ export default function App() {
     clearTimers()
     setPhase('idle')
     setResult(null)
+  }
+
+  function handleBackToList() {
+    handleReset()
+    setView('list')
   }
 
   // 一覧でガチャを選んだら、その id を保持してガチャ画面へ遷移する。
@@ -90,16 +96,20 @@ export default function App() {
       )}
 
       {view === 'generate' && (
-        <GeneratePage
-          loadPeople={fetchPeople}
-          loadPending={fetchPending}
-          onGenerate={generate}
-          onPublish={publishAll}
-        />
+        <>
+          <BackButton onClick={() => setView('list')} />
+          <GeneratePage
+            loadPeople={fetchPeople}
+            loadPending={fetchPending}
+            onGenerate={generate}
+            onPublish={publishAll}
+          />
+        </>
       )}
 
       {view === 'gacha' && (
         <>
+          <BackButton onClick={handleBackToList} />
           {selectedGacha && (
             <p className="selected-gacha-title">
               {gachas.find((g) => g.id === selectedGacha)?.title}

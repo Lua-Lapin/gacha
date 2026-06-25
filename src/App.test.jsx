@@ -35,4 +35,11 @@ describe('App ナビゲーション', () => {
     fireEvent.click(screen.getByRole('button', { name: 'カードを生成する' }))
     expect(screen.getByRole('button', { name: '← 一覧に戻る' })).toBeInTheDocument()
   })
+
+  it('ガチャ画面の戻るボタンで一覧へ戻る', () => {
+    render(<App />)
+    fireEvent.click(screen.getByText('カクテル役職ガチャ'))
+    fireEvent.click(screen.getByRole('button', { name: '← 一覧に戻る' }))
+    expect(screen.getByText('新着ガチャ')).toBeInTheDocument()
+  })
 })
