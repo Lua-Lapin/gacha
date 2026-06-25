@@ -5,14 +5,17 @@ import GachaReveal, { REVEAL_MS } from './components/GachaReveal.jsx'
 import ResultDisplay from './components/ResultDisplay.jsx'
 import SaveResult from './components/SaveResult.jsx'
 import GeneratePage from './components/GeneratePage.jsx'
-import Button from './components/ui/Button.jsx'
+import GachaList from './components/GachaList.jsx'
+import BackButton from './components/ui/BackButton.jsx'
+import { gachas } from './data/gachas.js'
 import catImage from './assets/gacha-cat.png'
 import { drawTitle, pickCapsuleColor } from './lib/draw.js'
 import { saveResult, fetchPeople, generate, registerCard, fetchPending, publishAll } from './lib/api.js'
 
 // phase: 'idle' | 'revealing' | 'revealed'
 export default function App() {
-  const [view, setView] = useState('gacha') // 'gacha' | 'generate'
+  const [view, setView] = useState('list') // 'list' | 'gacha' | 'generate'
+  const [selectedGacha, setSelectedGacha] = useState(null)
   const [phase, setPhase] = useState('idle')
   const [result, setResult] = useState(null)
   const [color, setColor] = useState('#ff6b6b')
@@ -45,34 +48,54 @@ export default function App() {
     setResult(null)
   }
 
+  function handleBackToList() {
+    handleReset()
+    setView('list')
+  }
+
+  // 一覧でガチャを選んだら、その id を保持してガチャ画面へ遷移する。
+  function handleSelectGacha(id) {
+    handleReset()
+    setSelectedGacha(id)
+    setView('gacha')
+  }
+
+  const selectedGachaTitle = gachas.find((g) => g.id === selectedGacha)?.title
+  const headerLabel =
+    view === 'gacha' && selectedGachaTitle ? selectedGachaTitle
+    : view === 'generate' ? 'カード生成'
+    : 'ガチャ一覧'
+
   return (
     <div className="app">
-      <h1 className="app-title">役職ガチャ 🍸</h1>
+      <h1 className="app-title">{headerLabel}</h1>
 
-      <nav className="view-nav">
-        <Button
-          variant={view === 'gacha' ? 'primary' : 'secondary'}
-          className="view-nav__btn"
-          onClick={() => setView('gacha')}
-        >ガチャ</Button>
-        <Button
-          variant={view === 'generate' ? 'primary' : 'secondary'}
-          className="view-nav__btn"
-          onClick={() => setView('generate')}
-        >生成</Button>
-      </nav>
+      {view === 'list' && (
+        <>
+          <GachaList gachas={gachas} onSelect={handleSelectGacha} />
+          <button
+            type="button"
+            className="generate-entry"
+            onClick={() => setView('generate')}
+          >カードを生成する</button>
+        </>
+      )}
 
       {view === 'generate' && (
-        <GeneratePage
-          loadPeople={fetchPeople}
-          loadPending={fetchPending}
-          onGenerate={generate}
-          onPublish={publishAll}
-        />
+        <div className="sub-view">
+          <BackButton onClick={() => setView('list')} />
+          <GeneratePage
+            loadPeople={fetchPeople}
+            loadPending={fetchPending}
+            onGenerate={generate}
+            onPublish={publishAll}
+          />
+        </div>
       )}
 
       {view === 'gacha' && (
-        <>
+        <div className="sub-view">
+          <BackButton onClick={handleBackToList} />
           <GachaMachine
             shaking={phase === 'revealing'}
             onTurn={handleTurn}
@@ -100,7 +123,7 @@ export default function App() {
               <button className="again-btn" onClick={handleReset}>もう一回</button>
             </div>
           )}
-        </>
+        </div>
       )}
     </div>
   )
