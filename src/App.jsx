@@ -5,14 +5,17 @@ import GachaReveal, { REVEAL_MS } from './components/GachaReveal.jsx'
 import ResultDisplay from './components/ResultDisplay.jsx'
 import SaveResult from './components/SaveResult.jsx'
 import GeneratePage from './components/GeneratePage.jsx'
+import GachaList from './components/GachaList.jsx'
 import Button from './components/ui/Button.jsx'
+import { gachas } from './data/gachas.js'
 import catImage from './assets/gacha-cat.png'
 import { drawTitle, pickCapsuleColor } from './lib/draw.js'
 import { saveResult, fetchPeople, generate, registerCard, fetchPending, publishAll } from './lib/api.js'
 
 // phase: 'idle' | 'revealing' | 'revealed'
 export default function App() {
-  const [view, setView] = useState('gacha') // 'gacha' | 'generate'
+  const [view, setView] = useState('list') // 'list' | 'gacha' | 'generate'
+  const [selectedGacha, setSelectedGacha] = useState(null)
   const [phase, setPhase] = useState('idle')
   const [result, setResult] = useState(null)
   const [color, setColor] = useState('#ff6b6b')
@@ -45,15 +48,28 @@ export default function App() {
     setResult(null)
   }
 
+  // 一覧でガチャを選んだら、その id を保持してガチャ画面へ遷移する。
+  function handleSelectGacha(id) {
+    handleReset()
+    setSelectedGacha(id)
+    setView('gacha')
+  }
+
   return (
     <div className="app">
       <h1 className="app-title">役職ガチャ 🍸</h1>
 
       <nav className="view-nav">
         <Button
+          variant={view === 'list' ? 'primary' : 'secondary'}
+          className="view-nav__btn"
+          onClick={() => setView('list')}
+        >一覧</Button>
+        <Button
           variant={view === 'gacha' ? 'primary' : 'secondary'}
           className="view-nav__btn"
           onClick={() => setView('gacha')}
+          disabled={!selectedGacha}
         >ガチャ</Button>
         <Button
           variant={view === 'generate' ? 'primary' : 'secondary'}
@@ -61,6 +77,10 @@ export default function App() {
           onClick={() => setView('generate')}
         >生成</Button>
       </nav>
+
+      {view === 'list' && (
+        <GachaList gachas={gachas} onSelect={handleSelectGacha} />
+      )}
 
       {view === 'generate' && (
         <GeneratePage
@@ -73,6 +93,11 @@ export default function App() {
 
       {view === 'gacha' && (
         <>
+          {selectedGacha && (
+            <p className="selected-gacha-title">
+              {gachas.find((g) => g.id === selectedGacha)?.title}
+            </p>
+          )}
           <GachaMachine
             shaking={phase === 'revealing'}
             onTurn={handleTurn}

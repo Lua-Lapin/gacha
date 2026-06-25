@@ -19,6 +19,8 @@ afterEach(() => vi.useRealTimers())
 describe('App ガチャ演出フェーズ', () => {
   it('回すと演出オーバーレイが出て、REVEAL_MS 後に結果が出る', () => {
     render(<App />)
+    // 入口は一覧画面。ガチャを選んでからガチャ機を回す。
+    fireEvent.click(screen.getByText('カクテル役職ガチャ'))
     fireEvent.click(screen.getByLabelText('ガチャを回す'))
     expect(screen.getByTestId('reveal-overlay')).toBeInTheDocument()
     act(() => { vi.advanceTimersByTime(REVEAL_MS) })
