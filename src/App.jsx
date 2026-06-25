@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import './App.css'
 import GachaMachine from './components/GachaMachine.jsx'
 import GachaReveal, { REVEAL_MS } from './components/GachaReveal.jsx'
@@ -17,6 +17,13 @@ export default function App() {
   const [result, setResult] = useState(null)
   const [color, setColor] = useState('#ff6b6b')
   const timers = useRef([])
+
+  // 演出中（暗転オーバーレイ表示中）は背面ページのスクロールを止める。
+  // これが無いと裏のガチャ機がスクロールでオーバーレイに被って見える。
+  useEffect(() => {
+    document.body.style.overflow = phase === 'idle' ? '' : 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [phase])
 
   function clearTimers() {
     timers.current.forEach(clearTimeout)
@@ -77,24 +84,21 @@ export default function App() {
           )}
 
           {phase === 'revealed' && result && (
-            <ResultDisplay title={result.title} info={result.info} />
-          )}
-          {phase === 'revealed' && result && (
-            <SaveResult
-              title={result.title}
-              info={result.info}
-              onRegister={registerCard}
-              onSave={(name) => saveResult({
-                name,
-                adjective: result.adjective,
-                cocktail: result.cocktail,
-                title: result.title,
-                color,
-              })} />
-          )}
-
-          {phase === 'revealed' && (
-            <button className="again-btn" onClick={handleReset}>もう一回</button>
+            <div className="reveal-stage">
+              <ResultDisplay title={result.title} info={result.info} />
+              <SaveResult
+                title={result.title}
+                info={result.info}
+                onRegister={registerCard}
+                onSave={(name) => saveResult({
+                  name,
+                  adjective: result.adjective,
+                  cocktail: result.cocktail,
+                  title: result.title,
+                  color,
+                })} />
+              <button className="again-btn" onClick={handleReset}>もう一回</button>
+            </div>
           )}
         </>
       )}
