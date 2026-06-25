@@ -1,7 +1,7 @@
 .back-button {
   display: block;
   width: fit-content;
-  margin: 0 0 16px;
+  margin: 0 auto 16px;
   padding: 4px 0;
   font-size: 0.9rem;
   font-weight: 700;

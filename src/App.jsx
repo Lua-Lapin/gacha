@@ -76,7 +76,7 @@ export default function App() {
       )}
 
       {view === 'generate' && (
-        <>
+        <div className="sub-view">
           <BackButton onClick={() => setView('list')} />
           <GeneratePage
             loadPeople={fetchPeople}
@@ -84,11 +84,11 @@ export default function App() {
             onGenerate={generate}
             onPublish={publishAll}
           />
-        </>
+        </div>
       )}
 
       {view === 'gacha' && (
-        <>
+        <div className="sub-view">
           <BackButton onClick={handleBackToList} />
           {selectedGacha && (
             <p className="selected-gacha-title">
@@ -122,7 +122,7 @@ export default function App() {
               <button className="again-btn" onClick={handleReset}>もう一回</button>
             </div>
           )}
-        </>
+        </div>
       )}
     </div>
   )
