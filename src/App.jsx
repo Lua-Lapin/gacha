@@ -7,7 +7,6 @@ import SaveResult from './components/SaveResult.jsx'
 import GeneratePage from './components/GeneratePage.jsx'
 import GachaList from './components/GachaList.jsx'
 import BackButton from './components/ui/BackButton.jsx'
-import Button from './components/ui/Button.jsx'
 import { gachas } from './data/gachas.js'
 import catImage from './assets/gacha-cat.png'
 import { drawTitle, pickCapsuleColor } from './lib/draw.js'
@@ -64,25 +63,6 @@ export default function App() {
   return (
     <div className="app">
       <h1 className="app-title">役職ガチャ 🍸</h1>
-
-      <nav className="view-nav">
-        <Button
-          variant={view === 'list' ? 'primary' : 'secondary'}
-          className="view-nav__btn"
-          onClick={() => setView('list')}
-        >一覧</Button>
-        <Button
-          variant={view === 'gacha' ? 'primary' : 'secondary'}
-          className="view-nav__btn"
-          onClick={() => setView('gacha')}
-          disabled={!selectedGacha}
-        >ガチャ</Button>
-        <Button
-          variant={view === 'generate' ? 'primary' : 'secondary'}
-          className="view-nav__btn"
-          onClick={() => setView('generate')}
-        >生成</Button>
-      </nav>
 
       {view === 'list' && (
         <>

@@ -42,4 +42,9 @@ describe('App ナビゲーション', () => {
     fireEvent.click(screen.getByRole('button', { name: '← 一覧に戻る' }))
     expect(screen.getByText('新着ガチャ')).toBeInTheDocument()
   })
+
+  it('常時タブナビは表示されない', () => {
+    const { container } = render(<App />)
+    expect(container.querySelector('.view-nav')).toBeNull()
+  })
 })
