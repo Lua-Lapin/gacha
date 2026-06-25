@@ -28,3 +28,11 @@ describe('App ガチャ演出フェーズ', () => {
     expect(screen.getByText('もう一回')).toBeInTheDocument()
   })
 })
+
+describe('App ナビゲーション', () => {
+  it('一覧の生成入口から生成画面へ遷移できる', () => {
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: 'カードを生成する' }))
+    expect(screen.getByRole('button', { name: '← 一覧に戻る' })).toBeInTheDocument()
+  })
+})

@@ -79,7 +79,14 @@ export default function App() {
       </nav>
 
       {view === 'list' && (
-        <GachaList gachas={gachas} onSelect={handleSelectGacha} />
+        <>
+          <GachaList gachas={gachas} onSelect={handleSelectGacha} />
+          <button
+            type="button"
+            className="generate-entry"
+            onClick={() => setView('generate')}
+          >カードを生成する</button>
+        </>
       )}
 
       {view === 'generate' && (
