@@ -43,3 +43,25 @@ describe('pickCapsuleColor', () => {
     }
   })
 })
+
+describe('drawTitle excluding already-used cocktails', () => {
+  it('never returns a cocktail included in the exclude list', () => {
+    const excluded = cocktails.slice(0, cocktails.length - 1)
+    for (let i = 0; i < 50; i++) {
+      const result = drawTitle(excluded)
+      expect(result.cocktail).toBe(cocktails[cocktails.length - 1])
+    }
+  })
+
+  it('still picks the adjective from the full range when excluding cocktails', () => {
+    const excluded = cocktails.slice(0, cocktails.length - 1)
+    for (let i = 0; i < 50; i++) {
+      const { adjective } = drawTitle(excluded)
+      expect(adjectives).toContain(adjective)
+    }
+  })
+
+  it('returns null when every cocktail is excluded', () => {
+    expect(drawTitle(cocktails)).toBeNull()
+  })
+})

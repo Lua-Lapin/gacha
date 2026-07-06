@@ -9,6 +9,12 @@
       "autoPort": false
     },
     {
+      "name": "gacha-server",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "server"],
+      "port": 3001
+    },
+    {
       "name": "gallery",
       "runtimeExecutable": "npx",
       "runtimeArgs": ["vite", "gallery"],

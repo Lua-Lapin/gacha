@@ -7,9 +7,13 @@ function pick(arr) {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
-export function drawTitle() {
+export function drawTitle(excludeCocktails = []) {
+  const excluded = new Set(excludeCocktails)
+  const available = cocktails.filter((c) => !excluded.has(c))
+  if (available.length === 0) return null
+
   const adjective = pick(adjectives)
-  const cocktail = pick(cocktails)
+  const cocktail = pick(available)
   return { adjective, cocktail, title: adjective + cocktail, info: cocktailInfo[cocktail] }
 }
 
