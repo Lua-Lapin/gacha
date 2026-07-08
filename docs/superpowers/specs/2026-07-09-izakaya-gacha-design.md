@@ -147,7 +147,7 @@ export function buildPrompt(gachaId, title) {
 - 現状の UI テキストを確認し、「カクテル」直書きがあれば汎用ラベル or `gacha.topicLabel` に置換。過度に汎用化はしない（カクテルガチャ内では「カクテル」ラベルが自然）。
 
 **バナー画像**:
-- ユーザー確認 → 「既に入ってるデータが消えないように」との指示は主眼が DB。バナーは仮のプレースホルダ画像（例: 単色に「居酒屋役職ガチャ」の日本語をベタ書きした簡易 PNG）を用意する。実装時にサンプル画像を追加し、後日差し替え可能。ファイル名は `src/assets/izakaya-banner.png`。
+- `src/assets/izakaya-banner.png` に既に配置済み（ユーザー提供、居酒屋・和柄・派手系のアートワーク）。カクテルバナー（`cocktail-banner.png`）と同様に `gachas.js` から `import` して使用する。
 
 ## テスト戦略（TDD）
 
