@@ -16,8 +16,11 @@ export async function saveResult(result) {
   }))
 }
 
-export async function fetchPeople() {
-  return handle(await fetch(`${BASE}/api/people`))
+export async function fetchPeople(gachaId) {
+  const url = gachaId
+    ? `${BASE}/api/people?gacha=${encodeURIComponent(gachaId)}`
+    : `${BASE}/api/people`
+  return handle(await fetch(url))
 }
 
 export async function generate(personId, file) {
