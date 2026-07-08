@@ -5,7 +5,7 @@ import './CardShare.css'
 
 // 保存後にカードPNGを生成してギャラリー(ビューワー)へ自動登録するだけのコンポーネント。
 // シェアはビューワー側で行うため、ここに表示用プレビューやシェアボタンは持たない。
-export default function CardShare({ title, info, personId, onRegister }) {
+export default function CardShare({ title, info, personId, onRegister, itemLabel, itemEmoji }) {
   const cardRef = useRef(null)
   // registering | done | error
   const [registerStatus, setRegisterStatus] = useState('idle')
@@ -31,7 +31,7 @@ export default function CardShare({ title, info, personId, onRegister }) {
     <div className="card-share">
       {/* PNG化のためだけに画面外でレンダリングする（表示はしない） */}
       <div className="card-share__capture" aria-hidden="true">
-        <ShareableCard ref={cardRef} title={title} info={info} />
+        <ShareableCard ref={cardRef} title={title} info={info} itemLabel={itemLabel} itemEmoji={itemEmoji} />
       </div>
       {registerStatus === 'registering' && <p className="card-share__msg">ギャラリーに登録中…</p>}
       {registerStatus === 'done' && <p className="card-share__msg">ギャラリーに登録しました ✓</p>}
