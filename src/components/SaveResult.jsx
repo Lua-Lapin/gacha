@@ -3,7 +3,7 @@ import Button from './ui/Button.jsx'
 import CardShare from './CardShare.jsx'
 import './SaveResult.css'
 
-export default function SaveResult({ onSave, onRegister, title, info }) {
+export default function SaveResult({ onSave, onRegister, title, info, itemLabel, itemEmoji }) {
   const [name, setName] = useState('')
   const [savedId, setSavedId] = useState(null)
 
@@ -33,6 +33,8 @@ export default function SaveResult({ onSave, onRegister, title, info }) {
           info={info}
           personId={savedId}
           onRegister={onRegister}
+          itemLabel={itemLabel}
+          itemEmoji={itemEmoji}
         />
       )}
     </div>

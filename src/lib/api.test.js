@@ -4,17 +4,30 @@ import { saveResult, fetchPeople, generate, registerCard, fetchPending, publishA
 beforeEach(() => { globalThis.fetch = vi.fn() })
 
 describe('api', () => {
-  it('saveResult POSTs JSON to /api/results', async () => {
+  it('saveResult POSTs JSON to /api/results with topic and gachaId', async () => {
     fetch.mockResolvedValue({ ok: true, json: async () => ({ id: 1 }) })
-    const out = await saveResult({ name: 'a', adjective: 'b', cocktail: 'c', title: 'bc', color: '#000' })
+    const out = await saveResult({
+      name: 'a', adjective: 'b', topic: 'ポテトサラダ',
+      title: 'bポテトサラダ', color: '#000', gachaId: 'izakaya',
+    })
     expect(out.id).toBe(1)
     expect(fetch.mock.calls[0][0]).toMatch(/\/api\/results$/)
     expect(fetch.mock.calls[0][1].method).toBe('POST')
+    const body = JSON.parse(fetch.mock.calls[0][1].body)
+    expect(body.topic).toBe('ポテトサラダ')
+    expect(body.gachaId).toBe('izakaya')
   })
 
-  it('fetchPeople GETs /api/people', async () => {
+  it('fetchPeople GETs /api/people without query when no gachaId', async () => {
     fetch.mockResolvedValue({ ok: true, json: async () => [{ id: 1 }] })
     expect(await fetchPeople()).toHaveLength(1)
+    expect(fetch.mock.calls[0][0]).toMatch(/\/api\/people$/)
+  })
+
+  it('fetchPeople appends gacha query param when gachaId provided', async () => {
+    fetch.mockResolvedValue({ ok: true, json: async () => [] })
+    await fetchPeople('izakaya')
+    expect(fetch.mock.calls[0][0]).toMatch(/\/api\/people\?gacha=izakaya$/)
   })
 
   it('generate posts multipart and returns json', async () => {

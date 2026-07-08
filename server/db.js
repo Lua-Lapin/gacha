@@ -8,9 +8,10 @@ export function createDb(path = 'data/gacha.db') {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       adjective TEXT NOT NULL,
-      cocktail TEXT NOT NULL,
+      topic TEXT NOT NULL,
       title TEXT NOT NULL,
       color TEXT NOT NULL,
+      gacha_id TEXT NOT NULL DEFAULT 'cocktail',
       created_at TEXT NOT NULL
     );
     CREATE TABLE IF NOT EXISTS generations (
@@ -24,22 +25,39 @@ export function createDb(path = 'data/gacha.db') {
     );
   `)
 
-  // generations.published を後付けで追加（既存DBにも安全に適用するマイグレーション）。
-  const cols = sqlite.prepare(`PRAGMA table_info(generations)`).all()
-  if (!cols.some((c) => c.name === 'published')) {
+  const genCols = sqlite.prepare(`PRAGMA table_info(generations)`).all()
+  if (!genCols.some((c) => c.name === 'published')) {
     sqlite.exec(`ALTER TABLE generations ADD COLUMN published INTEGER NOT NULL DEFAULT 0`)
+  }
+
+  // people への gacha_id / topic マイグレーション（旧 DB 対応）
+  const peopleCols = sqlite.prepare(`PRAGMA table_info(people)`).all()
+  const hasGachaId = peopleCols.some((c) => c.name === 'gacha_id')
+  const hasTopic = peopleCols.some((c) => c.name === 'topic')
+  const hasCocktail = peopleCols.some((c) => c.name === 'cocktail')
+
+  if (!hasGachaId) {
+    sqlite.exec(`ALTER TABLE people ADD COLUMN gacha_id TEXT NOT NULL DEFAULT 'cocktail'`)
+  }
+  if (!hasTopic && hasCocktail) {
+    sqlite.exec(`ALTER TABLE people RENAME COLUMN cocktail TO topic`)
   }
 
   return {
     raw: sqlite,
-    insertPerson({ name, adjective, cocktail, title, color }) {
+    insertPerson({ name, adjective, topic, title, color, gachaId }) {
       const info = sqlite.prepare(
-        `INSERT INTO people (name, adjective, cocktail, title, color, created_at)
-         VALUES (?, ?, ?, ?, ?, ?)`
-      ).run(name, adjective, cocktail, title, color, new Date().toISOString())
+        `INSERT INTO people (name, adjective, topic, title, color, gacha_id, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`
+      ).run(name, adjective, topic, title, color, gachaId, new Date().toISOString())
       return Number(info.lastInsertRowid)
     },
-    listPeople() {
+    listPeople({ gachaId } = {}) {
+      if (gachaId) {
+        return sqlite.prepare(
+          `SELECT * FROM people WHERE gacha_id = ? ORDER BY created_at DESC`
+        ).all(gachaId)
+      }
       return sqlite.prepare(`SELECT * FROM people ORDER BY created_at DESC`).all()
     },
     getPerson(id) {

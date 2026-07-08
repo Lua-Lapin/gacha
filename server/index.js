@@ -31,15 +31,16 @@ export function createApp({ db, generateImage, writeGenerationFiles, publishPend
   }
 
   app.get('/api/people', (req, res) => {
-    res.json(db.listPeople())
+    const gachaId = req.query.gacha
+    res.json(db.listPeople(gachaId ? { gachaId } : undefined))
   })
 
   app.post('/api/results', (req, res) => {
-    const { name, adjective, cocktail, title, color } = req.body || {}
-    if (!name || !adjective || !cocktail || !title || !color) {
+    const { name, adjective, topic, title, color, gachaId } = req.body || {}
+    if (!name || !adjective || !topic || !title || !color || !gachaId) {
       return res.status(400).json({ error: 'missing required fields' })
     }
-    const id = db.insertPerson({ name, adjective, cocktail, title, color })
+    const id = db.insertPerson({ name, adjective, topic, title, color, gachaId })
     res.status(201).json({ id })
   })
 
@@ -51,7 +52,7 @@ export function createApp({ db, generateImage, writeGenerationFiles, publishPend
     const person = db.getPerson(personId)
     if (!person) return res.status(404).json({ error: 'person not found' })
 
-    const prompt = buildPrompt(person.title)
+    const prompt = buildPrompt(person.gacha_id, person.title)
     try {
       const imageBuffer = await generateImage({
         prompt,

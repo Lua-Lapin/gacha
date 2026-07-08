@@ -1,37 +1,67 @@
 import { describe, it, expect } from 'vitest'
 import { drawTitle, pickCapsuleColor, CAPSULE_COLORS } from './draw.js'
-import { adjectives, cocktails } from '../data/words.js'
-import { cocktailInfo } from '../data/cocktails.js'
+import { gachas, getGachaById } from '../data/gachas.js'
 
-describe('drawTitle', () => {
-  it('returns an adjective concatenated with a cocktail from the data', () => {
+const cocktailGacha = getGachaById('cocktail')
+const izakayaGacha = getGachaById('izakaya')
+
+describe('drawTitle for cocktail gacha', () => {
+  it('returns an adjective concatenated with a topic from the gacha', () => {
     for (let i = 0; i < 200; i++) {
-      const { adjective, cocktail, title } = drawTitle()
-      expect(adjectives).toContain(adjective)
-      expect(cocktails).toContain(cocktail)
-      expect(title).toBe(adjective + cocktail)
+      const { adjective, topic, title } = drawTitle(cocktailGacha)
+      expect(cocktailGacha.words.adjectives).toContain(adjective)
+      expect(cocktailGacha.words.topics).toContain(topic)
+      expect(title).toBe(adjective + topic)
     }
   })
 
-  it('includes the drawn cocktail info', () => {
+  it('includes the drawn topic info', () => {
     for (let i = 0; i < 200; i++) {
-      const { cocktail, info } = drawTitle()
-      expect(info).toBe(cocktailInfo[cocktail])
+      const { topic, info } = drawTitle(cocktailGacha)
+      expect(info).toBe(cocktailGacha.itemInfo[topic])
+    }
+  })
+
+  it('sets gachaId on the result', () => {
+    const { gachaId } = drawTitle(cocktailGacha)
+    expect(gachaId).toBe('cocktail')
+  })
+
+  it('never returns a topic in the exclude list', () => {
+    const topics = cocktailGacha.words.topics
+    const excluded = topics.slice(0, topics.length - 1)
+    for (let i = 0; i < 50; i++) {
+      const result = drawTitle(cocktailGacha, excluded)
+      expect(result.topic).toBe(topics[topics.length - 1])
+    }
+  })
+
+  it('returns null when every topic is excluded', () => {
+    expect(drawTitle(cocktailGacha, cocktailGacha.words.topics)).toBeNull()
+  })
+})
+
+describe('drawTitle for izakaya gacha', () => {
+  it('draws from izakaya topics', () => {
+    for (let i = 0; i < 50; i++) {
+      const { topic, gachaId } = drawTitle(izakayaGacha)
+      expect(izakayaGacha.words.topics).toContain(topic)
+      expect(gachaId).toBe('izakaya')
     }
   })
 })
 
-describe('cocktailInfo', () => {
-  it('has an entry for every cocktail', () => {
-    expect(Object.keys(cocktailInfo).length).toBe(cocktails.length)
-  })
-
-  it('gives every cocktail a meaning, note, and ingredients', () => {
-    for (const [name, info] of Object.entries(cocktailInfo)) {
-      expect(info.meaning, name).toBeTruthy()
-      expect(info.note, name).toBeTruthy()
-      expect(Array.isArray(info.ingredients), name).toBe(true)
-      expect(info.ingredients.length, name).toBeGreaterThan(0)
+describe('itemInfo integrity per gacha', () => {
+  it('every gacha has itemInfo for every topic', () => {
+    for (const g of gachas) {
+      for (const t of g.words.topics) {
+        const info = g.itemInfo[t]
+        expect(info, `${g.id}:${t}`).toBeTruthy()
+        expect(info.meaning, `${g.id}:${t}`).toBeTruthy()
+        expect(info.note, `${g.id}:${t}`).toBeTruthy()
+        expect(Array.isArray(info.ingredients), `${g.id}:${t}`).toBe(true)
+        expect(info.ingredients.length, `${g.id}:${t}`).toBeGreaterThan(0)
+      }
     }
   })
 })
@@ -41,27 +71,5 @@ describe('pickCapsuleColor', () => {
     for (let i = 0; i < 200; i++) {
       expect(CAPSULE_COLORS).toContain(pickCapsuleColor())
     }
-  })
-})
-
-describe('drawTitle excluding already-used cocktails', () => {
-  it('never returns a cocktail included in the exclude list', () => {
-    const excluded = cocktails.slice(0, cocktails.length - 1)
-    for (let i = 0; i < 50; i++) {
-      const result = drawTitle(excluded)
-      expect(result.cocktail).toBe(cocktails[cocktails.length - 1])
-    }
-  })
-
-  it('still picks the adjective from the full range when excluding cocktails', () => {
-    const excluded = cocktails.slice(0, cocktails.length - 1)
-    for (let i = 0; i < 50; i++) {
-      const { adjective } = drawTitle(excluded)
-      expect(adjectives).toContain(adjective)
-    }
-  })
-
-  it('returns null when every cocktail is excluded', () => {
-    expect(drawTitle(cocktails)).toBeNull()
   })
 })

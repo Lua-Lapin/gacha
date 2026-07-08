@@ -2,7 +2,7 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
 import { render, screen, cleanup, fireEvent, act } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
-import { cocktails } from './data/words.js'
+import { getGachaById } from './data/gachas.js'
 
 const fetchPeopleMock = vi.fn().mockResolvedValue([])
 vi.mock('./lib/api.js', () => ({
@@ -25,6 +25,8 @@ import App from './App.jsx'
 import { REVEAL_MS } from './components/GachaReveal.jsx'
 import { drawTitle } from './lib/draw.js'
 
+const cocktailTopics = getGachaById('cocktail').words.topics
+
 afterEach(cleanup)
 afterEach(() => { fetchPeopleMock.mockClear(); fetchPeopleMock.mockResolvedValue([]); drawTitle.mockClear() })
 beforeEach(() => vi.useFakeTimers())
@@ -33,9 +35,8 @@ afterEach(() => vi.useRealTimers())
 describe('App ガチャ演出フェーズ', () => {
   it('回すと演出オーバーレイが出て、REVEAL_MS 後に結果が出る', async () => {
     render(<App />)
-    // 入口は一覧画面。ガチャを選んでからガチャ機を回す。
     fireEvent.click(screen.getByText('カクテル役職ガチャ'))
-    await act(async () => {}) // 使用済みカクテル取得の解決を待つ
+    await act(async () => {})
     fireEvent.click(screen.getByLabelText('ガチャを回す'))
     expect(screen.getByTestId('reveal-overlay')).toBeInTheDocument()
     act(() => { vi.advanceTimersByTime(REVEAL_MS) })
@@ -64,28 +65,29 @@ describe('App ナビゲーション', () => {
   })
 })
 
-describe('役職(カクテル)の重複排除', () => {
-  it('ガチャ画面に入ると使用済みカクテルをfetchし、抽選から除外する', async () => {
-    fetchPeopleMock.mockResolvedValueOnce([{ cocktail: 'モヒート' }, { cocktail: 'マティーニ' }])
+describe('役職(topic)の重複排除', () => {
+  it('ガチャ画面に入ると該当ガチャの使用済み topic をfetchし、抽選から除外する', async () => {
+    fetchPeopleMock.mockResolvedValueOnce([{ topic: 'モヒート' }, { topic: 'マティーニ' }])
     render(<App />)
     fireEvent.click(screen.getByText('カクテル役職ガチャ'))
     await act(async () => {})
+    expect(fetchPeopleMock).toHaveBeenCalledWith('cocktail')
     fireEvent.click(screen.getByLabelText('ガチャを回す'))
     expect(drawTitle).toHaveBeenCalledTimes(1)
-    const excluded = drawTitle.mock.calls[0][0]
+    const excluded = drawTitle.mock.calls[0][1]
     expect(excluded).toEqual(expect.arrayContaining(['モヒート', 'マティーニ']))
     expect(excluded).toHaveLength(2)
   })
 
-  it('使用済みカクテル取得中は抽選ボタンを無効化する', () => {
+  it('使用済み topic 取得中は抽選ボタンを無効化する', () => {
     fetchPeopleMock.mockReturnValueOnce(new Promise(() => {}))
     render(<App />)
     fireEvent.click(screen.getByText('カクテル役職ガチャ'))
     expect(screen.getByLabelText('ガチャを回す')).toBeDisabled()
   })
 
-  it('全カクテルが使用済みの場合は抽選ボタンを無効化し案内を表示する', async () => {
-    fetchPeopleMock.mockResolvedValueOnce(cocktails.map((c) => ({ cocktail: c })))
+  it('全 topic が使用済みの場合は抽選ボタンを無効化し案内を表示する', async () => {
+    fetchPeopleMock.mockResolvedValueOnce(cocktailTopics.map((t) => ({ topic: t })))
     render(<App />)
     fireEvent.click(screen.getByText('カクテル役職ガチャ'))
     await act(async () => {})
@@ -93,10 +95,11 @@ describe('役職(カクテル)の重複排除', () => {
     expect(screen.getByText('役職はすべて割り当て済みです')).toBeInTheDocument()
   })
 
-  it('保存すると、同一セッション内でそのカクテルが次の抽選から除外される', async () => {
+  it('保存すると、同一セッション内でその topic が次の抽選から除外される', async () => {
     drawTitle.mockReturnValueOnce({
-      adjective: '落ち着いた', cocktail: 'モヒート', title: '落ち着いたモヒート',
+      adjective: '落ち着いた', topic: 'モヒート', title: '落ち着いたモヒート',
       info: { meaning: '心の渇きを癒して', note: 'x', ingredients: ['ラム'] },
+      gachaId: 'cocktail',
     })
     render(<App />)
     fireEvent.click(screen.getByText('カクテル役職ガチャ'))
@@ -110,6 +113,6 @@ describe('役職(カクテル)の重複排除', () => {
     fireEvent.click(screen.getByText('もう一回'))
     fireEvent.click(screen.getByLabelText('ガチャを回す'))
     expect(drawTitle).toHaveBeenCalledTimes(2)
-    expect(drawTitle.mock.calls[1][0]).toEqual(expect.arrayContaining(['モヒート']))
+    expect(drawTitle.mock.calls[1][1]).toEqual(expect.arrayContaining(['モヒート']))
   })
 })
