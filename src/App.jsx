@@ -7,8 +7,7 @@ import SaveResult from './components/SaveResult.jsx'
 import GeneratePage from './components/GeneratePage.jsx'
 import GachaList from './components/GachaList.jsx'
 import BackButton from './components/ui/BackButton.jsx'
-import { gachas } from './data/gachas.js'
-import { cocktails } from './data/words.js'
+import { gachas, getGachaById } from './data/gachas.js'
 import catImage from './assets/gacha-cat.png'
 import { drawTitle, pickCapsuleColor } from './lib/draw.js'
 import { saveResult, fetchPeople, generate, registerCard, fetchPending, publishAll } from './lib/api.js'
@@ -21,13 +20,15 @@ export default function App() {
   const [result, setResult] = useState(null)
   const [color, setColor] = useState('#ff6b6b')
   const timers = useRef([])
-  // 既に割り当て済みの役職(カクテル)。同じカクテルが2人に出ないよう抽選から除外する。
-  const [usedCocktails, setUsedCocktails] = useState([])
-  const [cocktailStatus, setCocktailStatus] = useState('idle') // 'idle' | 'loading' | 'ready' | 'error'
-  const isExhausted = cocktailStatus === 'ready' && usedCocktails.length >= cocktails.length
+  // 既に割り当て済みの topic 名。同じ topic が2人に出ないよう抽選から除外する。
+  const [usedTopics, setUsedTopics] = useState([])
+  const [topicsStatus, setTopicsStatus] = useState('idle') // 'idle' | 'loading' | 'ready' | 'error'
+
+  const selectedGachaObj = getGachaById(selectedGacha)
+  const totalTopics = selectedGachaObj?.words.topics.length ?? 0
+  const isExhausted = topicsStatus === 'ready' && usedTopics.length >= totalTopics
 
   // 演出中（暗転オーバーレイ表示中）は背面ページのスクロールを止める。
-  // これが無いと裏のガチャ機がスクロールでオーバーレイに被って見える。
   useEffect(() => {
     document.body.style.overflow = phase === 'idle' ? '' : 'hidden'
     return () => { document.body.style.overflow = '' }
@@ -39,8 +40,8 @@ export default function App() {
   }
 
   function handleTurn() {
-    if (phase !== 'idle' || cocktailStatus !== 'ready' || isExhausted) return
-    const draw = drawTitle(usedCocktails)
+    if (phase !== 'idle' || topicsStatus !== 'ready' || isExhausted) return
+    const draw = drawTitle(selectedGachaObj, usedTopics)
     if (!draw) return
     clearTimers()
     setResult(draw)
@@ -61,23 +62,22 @@ export default function App() {
   }
 
   // 一覧でガチャを選んだら、その id を保持してガチャ画面へ遷移する。
-  // 併せて、既に割り当て済みの役職(カクテル)を取得して抽選から除外する。
+  // 併せて、そのガチャで割り当て済みの topic を取得して抽選から除外する。
   function handleSelectGacha(id) {
     handleReset()
     setSelectedGacha(id)
     setView('gacha')
-    setCocktailStatus('loading')
-    fetchPeople()
+    setTopicsStatus('loading')
+    fetchPeople(id)
       .then((people) => {
-        setUsedCocktails(people.map((p) => p.cocktail))
-        setCocktailStatus('ready')
+        setUsedTopics(people.map((p) => p.topic))
+        setTopicsStatus('ready')
       })
-      .catch(() => setCocktailStatus('error'))
+      .catch(() => setTopicsStatus('error'))
   }
 
-  const selectedGachaTitle = gachas.find((g) => g.id === selectedGacha)?.title
   const headerLabel =
-    view === 'gacha' && selectedGachaTitle ? selectedGachaTitle
+    view === 'gacha' && selectedGachaObj ? selectedGachaObj.title
     : view === 'generate' ? 'カード生成'
     : 'ガチャ一覧'
 
@@ -111,8 +111,8 @@ export default function App() {
       {view === 'gacha' && (
         <div className="sub-view">
           <BackButton onClick={handleBackToList} />
-          {cocktailStatus === 'loading' && <p className="gacha-status">読み込み中…</p>}
-          {cocktailStatus === 'error' && (
+          {topicsStatus === 'loading' && <p className="gacha-status">読み込み中…</p>}
+          {topicsStatus === 'error' && (
             <p className="gacha-status gacha-status--error">使用済み役職の取得に失敗しました</p>
           )}
           {isExhausted && (
@@ -121,29 +121,37 @@ export default function App() {
           <GachaMachine
             shaking={phase === 'revealing'}
             onTurn={handleTurn}
-            disabled={phase !== 'idle' || cocktailStatus !== 'ready' || isExhausted}
+            disabled={phase !== 'idle' || topicsStatus !== 'ready' || isExhausted}
           />
 
           {phase === 'revealing' && (
             <GachaReveal image={catImage} onComplete={() => setPhase('revealed')} />
           )}
 
-          {phase === 'revealed' && result && (
+          {phase === 'revealed' && result && selectedGachaObj && (
             <div className="reveal-stage">
-              <ResultDisplay title={result.title} info={result.info} />
+              <ResultDisplay
+                title={result.title}
+                info={result.info}
+                itemLabel={selectedGachaObj.itemLabel}
+                itemEmoji={selectedGachaObj.itemEmoji}
+              />
               <SaveResult
                 title={result.title}
                 info={result.info}
+                itemLabel={selectedGachaObj.itemLabel}
+                itemEmoji={selectedGachaObj.itemEmoji}
                 onRegister={registerCard}
                 onSave={async (name) => {
                   const saved = await saveResult({
                     name,
                     adjective: result.adjective,
-                    cocktail: result.cocktail,
+                    topic: result.topic,
                     title: result.title,
                     color,
+                    gachaId: result.gachaId,
                   })
-                  setUsedCocktails((prev) => [...prev, result.cocktail])
+                  setUsedTopics((prev) => [...prev, result.topic])
                   return saved
                 }} />
               <button className="again-btn" onClick={handleReset}>もう一回</button>
