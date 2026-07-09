@@ -87,12 +87,12 @@ export default function App() {
 
       {view === 'list' && (
         <>
-          <GachaList gachas={gachas} onSelect={handleSelectGacha} />
           <button
             type="button"
             className="generate-entry"
             onClick={() => setView('generate')}
           >カードを生成する</button>
+          <GachaList gachas={gachas} onSelect={handleSelectGacha} />
         </>
       )}
 
