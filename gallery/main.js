@@ -1,4 +1,5 @@
 import { cardPagePath } from './cardPage.js'
+import { shareOrDownload } from './share.js'
 
 // 本番（GitHub Pages）の絶対URL。ツイートのカードページURLとメタタグの解決に使う。
 export const BASE = 'https://lua-lapin.github.io/gacha/'
@@ -34,6 +35,22 @@ export function renderGallery(entries, base = '') {
   `).join('')
 }
 
+// 共有シート対応環境では <a download> を Web Share API に差し替える。
+// 非対応環境はデフォルトの <a> 挙動 (DL) のまま。
+export function upgradeDownloadLinks(root) {
+  if (!(navigator.canShare && navigator.share)) return
+  root.querySelectorAll('a.download').forEach((a) => {
+    a.addEventListener('click', async (e) => {
+      e.preventDefault()
+      try {
+        await shareOrDownload(a.href, a.getAttribute('download'), a.getAttribute('download') || document.title)
+      } catch {
+        // ユーザーが共有をキャンセルした場合など。再クリックで再試行可。
+      }
+    })
+  })
+}
+
 // ブラウザ実行時のみ動作（テスト環境では document が無い）
 if (typeof document !== 'undefined') {
   // 生成直後でも最新を出すため、キャッシュを避けて取得する。
@@ -42,7 +59,9 @@ if (typeof document !== 'undefined') {
   fetch(`manifest.json?ts=${Date.now()}`, { cache: 'no-store' })
     .then((r) => r.json())
     .then((entries) => {
-      document.getElementById('gallery').innerHTML = renderGallery(entries, location.href)
+      const container = document.getElementById('gallery')
+      container.innerHTML = renderGallery(entries, location.href)
+      upgradeDownloadLinks(container)
     })
     .catch(() => {
       document.getElementById('gallery').innerHTML = renderGallery([])
