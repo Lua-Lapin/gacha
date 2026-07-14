@@ -3,6 +3,25 @@
 // og:image などのメタタグを持つHTMLページをリンクしたときだけ画像カードに展開する。
 // そのためカードごとにメタタグ入りページを用意し、ツイートはこのページURLを指す。
 
+// Web Share API (files) が使える環境では <a class="download"> を共有シートに差し替える。
+// 非対応環境ではデフォルトの DL 挙動のまま。iOS/Android では写真アプリへの保存導線が開く。
+const SHARE_UPGRADE_SCRIPT = `
+(() => {
+  const a = document.querySelector('a.download');
+  if (!a || !navigator.share) return;
+  a.addEventListener('click', async (e) => {
+    const res = await fetch(a.href).catch(() => null);
+    if (!res) return;
+    const blob = await res.blob();
+    const file = new File([blob], a.getAttribute('download'), { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      e.preventDefault();
+      try { await navigator.share({ files: [file], title: document.title }); } catch {}
+    }
+  });
+})();
+`
+
 function escapeHtml(s) {
   return String(s)
     .replace(/&/g, '&amp;')
@@ -70,6 +89,7 @@ export function cardPageHtml(entry, base) {
     <img src="${img}" alt="${t}" />
     <a class="download" href="${img}" download="${t}.png">⬇ 保存</a>
     <a href="${gallery}">← ギャラリーへ</a>
+    <script>${SHARE_UPGRADE_SCRIPT}</script>
   </body>
 </html>
 `

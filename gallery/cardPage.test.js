@@ -39,6 +39,12 @@ describe('cardPageHtml', () => {
     expect(html).toContain('download="せっかちなハイボール.png"')
   })
 
+  it('includes an inline script to upgrade the download link to Web Share', () => {
+    const html = cardPageHtml(entry, BASE)
+    expect(html).toContain('navigator.canShare')
+    expect(html).toContain('navigator.share')
+  })
+
   it('escapes html-special characters in the title', () => {
     const html = cardPageHtml({ ...entry, title: '<b>"x"</b>' }, BASE)
     expect(html).not.toContain('<b>"x"</b>')
