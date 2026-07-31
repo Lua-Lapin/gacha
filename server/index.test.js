@@ -134,13 +134,12 @@ describe('POST /api/cards', () => {
     expect(db.listPendingGenerations()).toHaveLength(1)
   })
 
-  it('keeps prior entries non-null in the written manifest', async () => {
+  it('excludes card rows (prompt: "card") from the written manifest', async () => {
     const id = db.insertPerson({ name: 'あや', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
     await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('a'), 'a.png')
     await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('b'), 'b.png')
     const manifest = writeGenerationFiles.mock.calls.at(-1)[0].manifest
-    expect(manifest).toHaveLength(2)
-    expect(manifest.every((m) => m.image && m.image.startsWith('images/'))).toBe(true)
+    expect(manifest).toHaveLength(0)
   })
 
   it('returns 400 when personId missing', async () => {
