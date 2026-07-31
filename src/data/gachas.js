@@ -6,8 +6,9 @@ import { izakayaMenuInfo } from './izakaya.js'
 
 // 各ガチャの完全定義。id をキーに、フロント/サーバー双方で参照する。
 // words: 抽選に使う { adjectives, topics }
-// itemInfo: 役職ごとの meaning/note/ingredients
+// itemInfo: 役職ごとの meaning/note/details
 // itemLabel: UI で「◯◯言葉」の◯◯部分に使う（例: 'カクテル' / '役職'）
+// detailLabel: UI で details 行の見出しに使う（例: '材料' / '特徴'）
 export const gachas = [
   {
     id: 'cocktail',
@@ -18,6 +19,7 @@ export const gachas = [
     itemInfo: cocktailInfo,
     itemLabel: 'カクテル',
     itemEmoji: '🍸',
+    detailLabel: '材料',
   },
   {
     id: 'izakaya',
@@ -28,6 +30,7 @@ export const gachas = [
     itemInfo: izakayaMenuInfo,
     itemLabel: '役職',
     itemEmoji: '🍶',
+    detailLabel: '材料',
   },
 ]
 

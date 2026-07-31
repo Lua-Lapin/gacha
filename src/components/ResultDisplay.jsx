@@ -1,6 +1,6 @@
 import './ResultDisplay.css'
 
-export default function ResultDisplay({ title, info, itemLabel = 'カクテル', itemEmoji = '🍸' }) {
+export default function ResultDisplay({ title, info, itemLabel = 'カクテル', itemEmoji = '🍸', detailLabel = '材料' }) {
   return (
     <div className="result">
       <p className="result-title">{title}</p>
@@ -9,8 +9,8 @@ export default function ResultDisplay({ title, info, itemLabel = 'カクテル',
         <div className="cocktail-info">
           <p className="cocktail-meaning">{itemEmoji} {itemLabel}言葉：「{info.meaning}」</p>
           <p className="cocktail-note">ひとこと：{info.note}</p>
-          <p className="cocktail-ingredients">
-            材料：{info.ingredients.join(' / ')}
+          <p className="cocktail-details">
+            {detailLabel}：{info.details.join(' / ')}
           </p>
         </div>
       )}

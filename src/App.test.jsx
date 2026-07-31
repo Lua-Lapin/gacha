@@ -94,7 +94,7 @@ describe('役職(topic)の重複排除', () => {
   it('保存すると、同一セッション内でその topic が次の抽選から除外される', async () => {
     drawTitle.mockReturnValueOnce({
       adjective: '落ち着いた', topic: 'モヒート', title: '落ち着いたモヒート',
-      info: { meaning: '心の渇きを癒して', note: 'x', ingredients: ['ラム'] },
+      info: { meaning: '心の渇きを癒して', note: 'x', details: ['ラム'] },
       gachaId: 'cocktail',
     })
     render(<App />)

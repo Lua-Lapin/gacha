@@ -9,7 +9,7 @@ afterEach(cleanup)
 const info = {
   meaning: '切ない恋心',
   note: '気品で場を仕切る貫禄の持ち主',
-  ingredients: ['ウイスキー', 'スイートベルモット', 'ビターズ'],
+  details: ['ウイスキー', 'スイートベルモット', 'ビターズ'],
 }
 
 describe('ResultDisplay', () => {
@@ -26,11 +26,24 @@ describe('ResultDisplay', () => {
     render(
       <ResultDisplay
         title="心優しいポテトサラダ"
-        info={{ meaning: 'みんなをまとめる', note: 'x', ingredients: ['じゃがいも'] }}
+        info={{ meaning: 'みんなをまとめる', note: 'x', details: ['じゃがいも'] }}
         itemLabel="役職"
         itemEmoji="🍶"
       />,
     )
     expect(screen.getByText(/🍶 役職言葉：「みんなをまとめる」/)).toBeInTheDocument()
+  })
+
+  it('labels the details line with the given detailLabel', () => {
+    render(
+      <ResultDisplay
+        title="ゆらゆらしたクラゲ"
+        info={{ meaning: 'ただよう癒し', note: 'x', details: ['透明', '発光'] }}
+        itemLabel="海の生き物"
+        itemEmoji="🐙"
+        detailLabel="特徴"
+      />
+    )
+    expect(screen.getByText('特徴：透明 / 発光')).toBeTruthy()
   })
 })
