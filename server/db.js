@@ -72,8 +72,8 @@ export function createDb(path = 'data/gacha.db') {
     },
     listSuccessfulGenerations() {
       return sqlite.prepare(`
-        SELECT g.id, g.image_path AS imagePath, g.created_at AS createdAt,
-               p.name, p.title
+        SELECT g.id, g.image_path AS imagePath, g.created_at AS createdAt, g.prompt,
+               p.name, p.title, p.gacha_id AS gachaId
         FROM generations g JOIN people p ON p.id = g.person_id
         WHERE g.status = 'success'
         ORDER BY g.created_at DESC

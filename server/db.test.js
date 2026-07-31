@@ -138,3 +138,19 @@ describe('generations', () => {
     expect(db.listSuccessfulGenerations()).toHaveLength(2)
   })
 })
+
+describe('listSuccessfulGenerations', () => {
+  it('returns gachaId and prompt for each row', () => {
+    const personId = db.insertPerson({
+      name: 'あや', adjective: '陽気な', topic: 'モヒート',
+      title: '陽気なモヒート', color: '#000', gachaId: 'izakaya',
+    })
+    db.insertGeneration({
+      personId, imagePath: 'images/1.png', prompt: 'card', status: 'success', error: null,
+    })
+    const rows = db.listSuccessfulGenerations()
+    expect(rows).toHaveLength(1)
+    expect(rows[0].gachaId).toBe('izakaya')
+    expect(rows[0].prompt).toBe('card')
+  })
+})
