@@ -21,4 +21,12 @@ describe('SaveResult', () => {
     await userEvent.click(screen.getByRole('button', { name: '保存' }))
     expect(onSave).not.toHaveBeenCalled()
   })
+
+  it('shows the saved message after a successful save', async () => {
+    const onSave = vi.fn().mockResolvedValue(undefined)
+    render(<SaveResult onSave={onSave} />)
+    await userEvent.type(screen.getByLabelText('名前'), 'あや')
+    await userEvent.click(screen.getByRole('button', { name: '保存' }))
+    expect(await screen.findByText(/保存しました/)).toBeTruthy()
+  })
 })
