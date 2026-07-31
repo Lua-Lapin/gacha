@@ -16,9 +16,9 @@
     },
     {
       "name": "gallery",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["vite", "gallery"],
-      "port": 5175
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "gallery:dev", "--", "--port", "5174", "--strictPort"],
+      "port": 5174
     },
     {
       "name": "gallery-dist",

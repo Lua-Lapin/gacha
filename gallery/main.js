@@ -103,9 +103,28 @@ if (typeof document !== 'undefined') {
   fetch(`manifest.json?ts=${Date.now()}`, { cache: 'no-store' })
     .then((r) => r.json())
     .then((entries) => {
+      const tabsEl = document.getElementById('tabs')
       const container = document.getElementById('gallery')
-      container.innerHTML = renderGallery(entries, location.href)
-      upgradeDownloadLinks(container)
+      const tabs = buildTabs(entries)
+      let active = resolveInitialTab(location.hash, entries)
+
+      function draw() {
+        tabsEl.innerHTML = renderTabs(tabs, active)
+        container.innerHTML = renderGallery(filterByGacha(entries, active), location.href)
+        // タブ切替のたびに innerHTML を差し替えるので、共有リンクの差し替えも都度やり直す
+        upgradeDownloadLinks(container)
+      }
+
+      tabsEl.addEventListener('click', (e) => {
+        const btn = e.target.closest('.tab')
+        if (!btn) return
+        active = btn.dataset.gacha
+        // 履歴を汚さずリロード・共有で復元できるようにする
+        history.replaceState(null, '', active === 'all' ? location.pathname : `#${active}`)
+        draw()
+      })
+
+      draw()
     })
     .catch(() => {
       document.getElementById('gallery').innerHTML = renderGallery([])
