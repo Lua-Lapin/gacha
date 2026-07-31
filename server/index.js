@@ -1,5 +1,7 @@
 import express from 'express'
 import multer from 'multer'
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 import { buildPrompt } from './prompt.js'
 import { buildManifest } from './manifest.js'
 
@@ -82,8 +84,23 @@ export function createApp({ db, generateImage, writeGenerationFiles, publishPend
       const generations = pending
         .map((g) => ({ id: g.id, imagePath: g.imagePath }))
         .sort((a, b) => a.id - b.id)
-      const { committed } = await publishPending({ galleryDir, generations })
-      db.markPublished(committed)
+      // ファイルが既に消えている行は二度と git add できないため、そのままにすると
+      // 以降のすべての publish を永久にブロックしてしまう。git には送らず、
+      // 存在する分と合わせて published 済みにして詰まりを解消する。
+      const existing = []
+      const missingIds = []
+      for (const g of generations) {
+        if (existsSync(join(galleryDir, g.imagePath))) existing.push(g)
+        else missingIds.push(g.id)
+      }
+
+      if (!existing.length) {
+        db.markPublished(missingIds)
+        return res.json({ committed: [] })
+      }
+
+      const { committed } = await publishPending({ galleryDir, generations: existing })
+      db.markPublished([...committed, ...missingIds])
       res.json({ committed, pushed: true })
     } catch (err) {
       res.status(500).json({ error: String(err.message || err) })
