@@ -70,22 +70,6 @@ export function createApp({ db, generateImage, writeGenerationFiles, publishPend
     }
   })
 
-  // クライアントで生成したカードPNGを受け取り、そのままギャラリーへ登録する
-  app.post('/api/cards', upload.single('image'), async (req, res) => {
-    const personId = Number(req.body.personId)
-    if (!personId) return res.status(400).json({ error: 'personId required' })
-    if (!req.file) return res.status(400).json({ error: 'image required' })
-
-    const person = db.getPerson(personId)
-    if (!person) return res.status(404).json({ error: 'person not found' })
-
-    try {
-      res.json(recordGeneration({ personId, imageBuffer: req.file.buffer, prompt: 'card' }))
-    } catch (err) {
-      res.status(500).json({ error: String(err.message || err) })
-    }
-  })
-
   app.get('/api/pending', (req, res) => {
     res.json(db.listPendingGenerations())
   })

@@ -118,54 +118,10 @@ describe('POST /api/generate', () => {
   })
 })
 
-describe('POST /api/cards', () => {
-  it('records the uploaded card png without committing', async () => {
-    const id = db.insertPerson({ name: 'あや', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
-    const res = await request(app)
-      .post('/api/cards')
-      .field('personId', String(id))
-      .attach('image', Buffer.from('cardpng'), 'card.png')
-    expect(res.status).toBe(200)
-    expect(res.body.imagePath).toBe('images/1.png')
-    expect(generateImage).not.toHaveBeenCalled()
-    expect(publishPending).not.toHaveBeenCalled()
-    const buf = writeGenerationFiles.mock.calls[0][0].imageBuffer
-    expect(buf.toString()).toBe('cardpng')
-    expect(db.listPendingGenerations()).toHaveLength(1)
-  })
-
-  it('excludes card rows (prompt: "card") from the written manifest', async () => {
-    const id = db.insertPerson({ name: 'あや', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
-    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('a'), 'a.png')
-    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('b'), 'b.png')
-    const manifest = writeGenerationFiles.mock.calls.at(-1)[0].manifest
-    expect(manifest).toHaveLength(0)
-  })
-
-  it('returns 400 when personId missing', async () => {
-    const res = await request(app).post('/api/cards').attach('image', Buffer.from('a'), 'a.png')
-    expect(res.status).toBe(400)
-  })
-
-  it('returns 400 when image missing', async () => {
-    const id = db.insertPerson({ name: 'b', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
-    const res = await request(app).post('/api/cards').field('personId', String(id))
-    expect(res.status).toBe(400)
-  })
-
-  it('returns 404 when person not found', async () => {
-    const res = await request(app)
-      .post('/api/cards')
-      .field('personId', '999')
-      .attach('image', Buffer.from('a'), 'a.png')
-    expect(res.status).toBe(404)
-  })
-})
-
 describe('GET /api/pending', () => {
   it('lists only unpublished successful generations', async () => {
     const id = db.insertPerson({ name: 'b', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
-    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('a'), 'a.png')
+    await request(app).post('/api/generate').field('personId', String(id)).attach('avatar', Buffer.from('a'), 'a.png')
     const res = await request(app).get('/api/pending')
     expect(res.status).toBe(200)
     expect(res.body).toHaveLength(1)
@@ -176,8 +132,8 @@ describe('GET /api/pending', () => {
 describe('POST /api/publish', () => {
   it('publishes all pending, marks them published, and returns ids', async () => {
     const id = db.insertPerson({ name: 'b', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
-    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('a'), 'a.png')
-    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('b'), 'b.png')
+    await request(app).post('/api/generate').field('personId', String(id)).attach('avatar', Buffer.from('a'), 'a.png')
+    await request(app).post('/api/generate').field('personId', String(id)).attach('avatar', Buffer.from('b'), 'b.png')
     const res = await request(app).post('/api/publish')
     expect(res.status).toBe(200)
     expect(publishPending).toHaveBeenCalledOnce()
@@ -194,7 +150,7 @@ describe('POST /api/publish', () => {
 
   it('returns 500 and leaves rows pending when push fails', async () => {
     const id = db.insertPerson({ name: 'b', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
-    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('a'), 'a.png')
+    await request(app).post('/api/generate').field('personId', String(id)).attach('avatar', Buffer.from('a'), 'a.png')
     publishPending.mockRejectedValueOnce(new Error('push failed'))
     const res = await request(app).post('/api/publish')
     expect(res.status).toBe(500)
