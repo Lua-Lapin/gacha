@@ -71,8 +71,12 @@ export function renderGallery(entries, base = '') {
         <span class="title">${e.title}</span>
         <span class="name">${e.name}</span>
         <div class="actions">
-          <a class="tweet" href="${tweetHref(e, base)}" target="_blank" rel="noopener">𝕏 でシェア</a>
-          <a class="download" href="${e.image}" download="${e.title}.png">⬇ 保存</a>
+          <a class="tweet" href="${tweetHref(e, base)}" target="_blank" rel="noopener" aria-label="Xでシェア">
+            𝕏<span class="actions__label"> でシェア</span>
+          </a>
+          <a class="download" href="${e.image}" download="${e.title}.png" aria-label="保存">
+            ⬇<span class="actions__label"> 保存</span>
+          </a>
         </div>
       </figcaption>
     </figure>
