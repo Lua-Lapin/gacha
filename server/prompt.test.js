@@ -25,4 +25,15 @@ describe('buildPrompt', () => {
     expect(PROMPT_TEMPLATES.cocktail).toContain('{カクテル名}')
     expect(PROMPT_TEMPLATES.izakaya).toContain('{役職名}')
   })
+
+  it('builds the sea prompt with the title filled in', () => {
+    const out = buildPrompt('sea', 'ゆらゆらしたクラゲ')
+    expect(out).toContain('ゆらゆらしたクラゲ')
+    expect(out).toContain('役職名は「形容詞＋海の生き物」という構成です。')
+  })
+
+  it('leaves no unreplaced placeholder in the sea prompt', () => {
+    const out = buildPrompt('sea', 'ゆらゆらしたクラゲ')
+    expect(out).not.toContain('{')
+  })
 })
