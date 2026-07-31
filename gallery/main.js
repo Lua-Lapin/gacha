@@ -16,6 +16,50 @@ export function tweetHref(entry, base = BASE) {
   return `https://twitter.com/intent/tweet?${params.toString()}`
 }
 
+// ガチャ種別の表示名。ここに無い gachaId は id をそのままラベルにする。
+// （src/data/gachas.js は banner 画像を import する React 側の資産なので参照しない）
+const GACHA_LABELS = {
+  cocktail: '🍸 カクテル',
+  izakaya: '🍶 居酒屋',
+}
+
+export function buildTabs(entries) {
+  const counts = new Map()
+  for (const e of entries) {
+    counts.set(e.gachaId, (counts.get(e.gachaId) || 0) + 1)
+  }
+  // 既知のガチャを定義順に並べ、未知のものは manifest の登場順で後ろに続ける
+  const known = Object.keys(GACHA_LABELS).filter((id) => counts.has(id))
+  const unknown = [...counts.keys()].filter((id) => id && !(id in GACHA_LABELS))
+  return [
+    { id: 'all', label: 'すべて', count: entries.length },
+    ...[...known, ...unknown].map((id) => ({
+      id,
+      label: GACHA_LABELS[id] || id,
+      count: counts.get(id),
+    })),
+  ]
+}
+
+export function filterByGacha(entries, gachaId) {
+  return gachaId === 'all' ? entries : entries.filter((e) => e.gachaId === gachaId)
+}
+
+export function resolveInitialTab(hash, entries) {
+  const id = (hash || '').replace(/^#/, '')
+  if (!id || id === 'all') return 'all'
+  return entries.some((e) => e.gachaId === id) ? id : 'all'
+}
+
+export function renderTabs(tabs, activeId) {
+  return tabs.map((t) => `
+    <button class="tab${t.id === activeId ? ' is-active' : ''}" role="tab"
+      aria-selected="${t.id === activeId}" data-gacha="${t.id}">
+      ${t.label} <span class="tab__count">(${t.count})</span>
+    </button>
+  `).join('')
+}
+
 export function renderGallery(entries, base = '') {
   if (!entries.length) {
     return '<p class="empty">まだ画像がありません</p>'
@@ -27,8 +71,12 @@ export function renderGallery(entries, base = '') {
         <span class="title">${e.title}</span>
         <span class="name">${e.name}</span>
         <div class="actions">
-          <a class="tweet" href="${tweetHref(e, base)}" target="_blank" rel="noopener">𝕏 でシェア</a>
-          <a class="download" href="${e.image}" download="${e.title}.png">⬇ 保存</a>
+          <a class="tweet" href="${tweetHref(e, base)}" target="_blank" rel="noopener" aria-label="Xでシェア">
+            𝕏<span class="actions__label"> でシェア</span>
+          </a>
+          <a class="download" href="${e.image}" download="${e.title}.png" aria-label="保存">
+            ⬇<span class="actions__label"> 保存</span>
+          </a>
         </div>
       </figcaption>
     </figure>
@@ -59,9 +107,28 @@ if (typeof document !== 'undefined') {
   fetch(`manifest.json?ts=${Date.now()}`, { cache: 'no-store' })
     .then((r) => r.json())
     .then((entries) => {
+      const tabsEl = document.getElementById('tabs')
       const container = document.getElementById('gallery')
-      container.innerHTML = renderGallery(entries, location.href)
-      upgradeDownloadLinks(container)
+      const tabs = buildTabs(entries)
+      let active = resolveInitialTab(location.hash, entries)
+
+      function draw() {
+        tabsEl.innerHTML = renderTabs(tabs, active)
+        container.innerHTML = renderGallery(filterByGacha(entries, active), location.href)
+        // タブ切替のたびに innerHTML を差し替えるので、共有リンクの差し替えも都度やり直す
+        upgradeDownloadLinks(container)
+      }
+
+      tabsEl.addEventListener('click', (e) => {
+        const btn = e.target.closest('.tab')
+        if (!btn) return
+        active = btn.dataset.gacha
+        // 履歴を汚さずリロード・共有で復元できるようにする
+        history.replaceState(null, '', active === 'all' ? location.pathname : `#${active}`)
+        draw()
+      })
+
+      draw()
     })
     .catch(() => {
       document.getElementById('gallery').innerHTML = renderGallery([])

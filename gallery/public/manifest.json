@@ -1,625 +1,354 @@
 [
   {
+    "id": 99,
+    "name": "るん",
+    "title": "不敵な冷奴",
+    "image": "images/99.png",
+    "createdAt": "2026-07-24T15:01:42.603Z",
+    "gachaId": "izakaya"
+  },
+  {
+    "id": 97,
+    "name": "るん",
+    "title": "軽やかなモヒート",
+    "image": "images/97.png",
+    "createdAt": "2026-07-24T14:57:10.437Z",
+    "gachaId": "cocktail"
+  },
+  {
     "id": 95,
     "name": "のちゃん",
     "title": "なんか強そうなブラッディメアリー",
     "image": "images/95.png",
-    "createdAt": "2026-07-24T14:48:05.922Z"
+    "createdAt": "2026-07-24T14:48:05.922Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 94,
     "name": "飯田るま",
     "title": "冷静すぎるブルーハワイ",
     "image": "images/94.png",
-    "createdAt": "2026-07-24T14:46:07.790Z"
-  },
-  {
-    "id": 93,
-    "name": "のちゃん",
-    "title": "なんか強そうなブラッディメアリー",
-    "image": "images/93.png",
-    "createdAt": "2026-07-24T14:45:56.585Z"
+    "createdAt": "2026-07-24T14:46:07.790Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 92,
     "name": "夢楽",
     "title": "すぐ謝るきゅうりの浅漬け",
     "image": "images/92.png",
-    "createdAt": "2026-07-24T14:41:48.963Z"
+    "createdAt": "2026-07-24T14:41:48.963Z",
+    "gachaId": "izakaya"
   },
   {
     "id": 91,
     "name": "夢楽",
     "title": "無駄に熱いマティーニ",
     "image": "images/91.png",
-    "createdAt": "2026-07-24T14:41:48.582Z"
-  },
-  {
-    "id": 90,
-    "name": "飯田るま",
-    "title": "冷静すぎるブルーハワイ",
-    "image": "images/90.png",
-    "createdAt": "2026-07-24T14:41:35.904Z"
-  },
-  {
-    "id": 89,
-    "name": "夢楽",
-    "title": "すぐ謝るきゅうりの浅漬け",
-    "image": "images/89.png",
-    "createdAt": "2026-07-24T14:38:11.244Z"
-  },
-  {
-    "id": 88,
-    "name": "夢楽",
-    "title": "無駄に熱いマティーニ",
-    "image": "images/88.png",
-    "createdAt": "2026-07-24T14:36:39.631Z"
+    "createdAt": "2026-07-24T14:41:48.582Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 87,
     "name": "りすた",
     "title": "口数の多いブラックルシアン",
     "image": "images/87.png",
-    "createdAt": "2026-07-12T11:54:29.656Z"
+    "createdAt": "2026-07-12T11:54:29.656Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 86,
     "name": "りすた",
     "title": "眠そうな焼き餃子",
     "image": "images/86.png",
-    "createdAt": "2026-07-12T11:54:28.234Z"
-  },
-  {
-    "id": 85,
-    "name": "りすた",
-    "title": "眠そうな焼き餃子",
-    "image": "images/85.png",
-    "createdAt": "2026-07-12T11:45:02.534Z"
-  },
-  {
-    "id": 84,
-    "name": "りすた",
-    "title": "口数の多いブラックルシアン",
-    "image": "images/84.png",
-    "createdAt": "2026-07-12T11:44:15.192Z"
+    "createdAt": "2026-07-12T11:54:28.234Z",
+    "gachaId": "izakaya"
   },
   {
     "id": 83,
     "name": "ゆん",
     "title": "踊り狂う揚げ出し豆腐",
     "image": "images/83.png",
-    "createdAt": "2026-07-12T09:11:43.764Z"
-  },
-  {
-    "id": 82,
-    "name": "ゆん",
-    "title": "踊り狂う揚げ出し豆腐",
-    "image": "images/82.png",
-    "createdAt": "2026-07-12T09:09:29.896Z"
+    "createdAt": "2026-07-12T09:11:43.764Z",
+    "gachaId": "izakaya"
   },
   {
     "id": 81,
     "name": "のん",
     "title": "ピリついたたこわさ",
     "image": "images/81.png",
-    "createdAt": "2026-07-12T09:01:30.172Z"
+    "createdAt": "2026-07-12T09:01:30.172Z",
+    "gachaId": "izakaya"
   },
   {
     "id": 80,
     "name": "のん",
     "title": "腰の低いホワイトレディ",
     "image": "images/80.png",
-    "createdAt": "2026-07-12T09:01:26.210Z"
-  },
-  {
-    "id": 79,
-    "name": "のん",
-    "title": "ピリついたたこわさ",
-    "image": "images/79.png",
-    "createdAt": "2026-07-12T08:56:31.570Z"
-  },
-  {
-    "id": 78,
-    "name": "のん",
-    "title": "腰の低いホワイトレディ",
-    "image": "images/78.png",
-    "createdAt": "2026-07-12T08:55:49.779Z"
+    "createdAt": "2026-07-12T09:01:26.210Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 77,
     "name": "さとう",
     "title": "踊り狂う唐揚げ",
     "image": "images/77.png",
-    "createdAt": "2026-07-11T16:08:27.228Z"
+    "createdAt": "2026-07-11T16:08:27.228Z",
+    "gachaId": "izakaya"
   },
   {
     "id": 76,
     "name": "さとう",
     "title": "反省しているテキーラサンライズ",
     "image": "images/76.png",
-    "createdAt": "2026-07-11T16:08:20.886Z"
-  },
-  {
-    "id": 75,
-    "name": "さとう",
-    "title": "踊り狂う唐揚げ",
-    "image": "images/75.png",
-    "createdAt": "2026-07-11T16:06:33.023Z"
-  },
-  {
-    "id": 74,
-    "name": "さとう",
-    "title": "反省しているテキーラサンライズ",
-    "image": "images/74.png",
-    "createdAt": "2026-07-11T16:05:18.683Z"
+    "createdAt": "2026-07-11T16:08:20.886Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 73,
     "name": "かんず",
     "title": "冷静すぎる梅きゅう",
     "image": "images/73.png",
-    "createdAt": "2026-07-11T14:27:52.124Z"
-  },
-  {
-    "id": 72,
-    "name": "かんず",
-    "title": "冷静すぎる梅きゅう",
-    "image": "images/72.png",
-    "createdAt": "2026-07-11T14:26:17.405Z"
+    "createdAt": "2026-07-11T14:27:52.124Z",
+    "gachaId": "izakaya"
   },
   {
     "id": 71,
     "name": "めーあ",
     "title": "うさんくさい板わさ",
     "image": "images/71.png",
-    "createdAt": "2026-07-10T17:27:52.316Z"
+    "createdAt": "2026-07-10T17:27:52.316Z",
+    "gachaId": "izakaya"
   },
   {
     "id": 70,
     "name": "ちづ",
     "title": "会議に強い明太子",
     "image": "images/70.png",
-    "createdAt": "2026-07-10T17:27:07.758Z"
-  },
-  {
-    "id": 69,
-    "name": "めーあ",
-    "title": "うさんくさい板わさ",
-    "image": "images/69.png",
-    "createdAt": "2026-07-10T17:26:18.972Z"
-  },
-  {
-    "id": 68,
-    "name": "ちづ",
-    "title": "会議に強い明太子",
-    "image": "images/68.png",
-    "createdAt": "2026-07-10T17:25:28.387Z"
+    "createdAt": "2026-07-10T17:27:07.758Z",
+    "gachaId": "izakaya"
   },
   {
     "id": 67,
     "name": "ルミ",
     "title": "軽やかな茶碗蒸し",
     "image": "images/67.png",
-    "createdAt": "2026-07-10T17:24:49.840Z"
-  },
-  {
-    "id": 66,
-    "name": "ルミ",
-    "title": "軽やかな茶碗蒸し",
-    "image": "images/66.png",
-    "createdAt": "2026-07-10T17:23:11.573Z"
+    "createdAt": "2026-07-10T17:24:49.840Z",
+    "gachaId": "izakaya"
   },
   {
     "id": 65,
     "name": "竜胆",
     "title": "ご機嫌な天ぷら盛り合わせ",
     "image": "images/65.png",
-    "createdAt": "2026-07-09T16:10:36.653Z"
-  },
-  {
-    "id": 64,
-    "name": "竜胆",
-    "title": "ご機嫌な天ぷら盛り合わせ",
-    "image": "images/64.png",
-    "createdAt": "2026-07-09T16:07:33.183Z"
+    "createdAt": "2026-07-09T16:10:36.653Z",
+    "gachaId": "izakaya"
   },
   {
     "id": 63,
     "name": "いと",
     "title": "不敵な軟骨唐揚げ",
     "image": "images/63.png",
-    "createdAt": "2026-07-09T16:01:13.300Z"
-  },
-  {
-    "id": 62,
-    "name": "いと",
-    "title": "不敵な軟骨唐揚げ",
-    "image": "images/62.png",
-    "createdAt": "2026-07-09T15:54:22.895Z"
+    "createdAt": "2026-07-09T16:01:13.300Z",
+    "gachaId": "izakaya"
   },
   {
     "id": 61,
     "name": "Y",
     "title": "踊り狂うブルドッグ",
     "image": "images/61.png",
-    "createdAt": "2026-07-09T14:37:09.277Z"
+    "createdAt": "2026-07-09T14:37:09.277Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 60,
     "name": "Y",
     "title": "声が大きい砂肝",
     "image": "images/60.png",
-    "createdAt": "2026-07-09T14:36:59.727Z"
-  },
-  {
-    "id": 59,
-    "name": "Y",
-    "title": "声が大きい砂肝",
-    "image": "images/59.png",
-    "createdAt": "2026-07-09T14:35:25.719Z"
-  },
-  {
-    "id": 58,
-    "name": "Y",
-    "title": "踊り狂うブルドッグ",
-    "image": "images/58.png",
-    "createdAt": "2026-07-09T14:34:37.264Z"
+    "createdAt": "2026-07-09T14:36:59.727Z",
+    "gachaId": "izakaya"
   },
   {
     "id": 57,
     "name": "シエル",
     "title": "伝説の焼きそば",
     "image": "images/57.png",
-    "createdAt": "2026-07-09T13:46:44.066Z"
-  },
-  {
-    "id": 56,
-    "name": "シエル",
-    "title": "伝説の焼きそば",
-    "image": "images/56.png",
-    "createdAt": "2026-07-09T13:44:16.398Z"
+    "createdAt": "2026-07-09T13:46:44.066Z",
+    "gachaId": "izakaya"
   },
   {
     "id": 54,
     "name": "りん",
     "title": "説明が長いイカ焼き",
     "image": "images/54.png",
-    "createdAt": "2026-07-09T13:21:42.617Z"
-  },
-  {
-    "id": 53,
-    "name": "りん",
-    "title": "説明が長いイカ焼き",
-    "image": "images/53.png",
-    "createdAt": "2026-07-09T13:19:40.828Z"
+    "createdAt": "2026-07-09T13:21:42.617Z",
+    "gachaId": "izakaya"
   },
   {
     "id": 52,
     "name": "じゅり",
     "title": "気まずい肉じゃが",
     "image": "images/52.png",
-    "createdAt": "2026-07-09T13:14:38.871Z"
-  },
-  {
-    "id": 51,
-    "name": "じゅり",
-    "title": "気まずい肉じゃが",
-    "image": "images/51.png",
-    "createdAt": "2026-07-09T13:11:23.424Z"
+    "createdAt": "2026-07-09T13:14:38.871Z",
+    "gachaId": "izakaya"
   },
   {
     "id": 48,
     "name": "リヒト",
     "title": "反省しているジントニック",
     "image": "images/48.png",
-    "createdAt": "2026-07-08T16:15:10.992Z"
+    "createdAt": "2026-07-08T16:15:10.992Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 47,
     "name": "ゆう",
     "title": "目つきの鋭いネグローニ",
     "image": "images/47.png",
-    "createdAt": "2026-07-08T16:14:09.247Z"
-  },
-  {
-    "id": 46,
-    "name": "リヒト",
-    "title": "反省しているジントニック",
-    "image": "images/46.png",
-    "createdAt": "2026-07-08T16:11:14.472Z"
-  },
-  {
-    "id": 45,
-    "name": "ゆう",
-    "title": "目つきの鋭いネグローニ",
-    "image": "images/45.png",
-    "createdAt": "2026-07-08T16:09:33.702Z"
+    "createdAt": "2026-07-08T16:14:09.247Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 43,
     "name": "かんず",
     "title": "眠そうなトムコリンズ",
     "image": "images/43.png",
-    "createdAt": "2026-07-08T14:37:10.429Z"
-  },
-  {
-    "id": 42,
-    "name": "さとう",
-    "title": "やたら元気なカンパリソーダ",
-    "image": "images/42.png",
-    "createdAt": "2026-07-08T14:35:30.857Z"
+    "createdAt": "2026-07-08T14:37:10.429Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 41,
     "name": "さとう",
     "title": "やたら元気なカンパリソーダ",
     "image": "images/41.png",
-    "createdAt": "2026-07-08T14:34:38.309Z"
-  },
-  {
-    "id": 40,
-    "name": "かんず",
-    "title": "眠そうなトムコリンズ",
-    "image": "images/40.png",
-    "createdAt": "2026-07-08T14:33:34.244Z"
+    "createdAt": "2026-07-08T14:34:38.309Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 39,
     "name": "竜胆",
     "title": "気まずいマルガリータ",
     "image": "images/39.png",
-    "createdAt": "2026-07-08T14:29:51.452Z"
-  },
-  {
-    "id": 38,
-    "name": "さとう",
-    "title": "やたら元気なカンパリソーダ",
-    "image": "images/38.png",
-    "createdAt": "2026-07-08T14:29:39.377Z"
-  },
-  {
-    "id": 37,
-    "name": "竜胆",
-    "title": "気まずいマルガリータ",
-    "image": "images/37.png",
-    "createdAt": "2026-07-08T14:26:57.087Z"
+    "createdAt": "2026-07-08T14:29:51.452Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 36,
     "name": "うみ",
     "title": "冷静すぎるコスモポリタン",
     "image": "images/36.png",
-    "createdAt": "2026-07-08T14:14:41.692Z"
+    "createdAt": "2026-07-08T14:14:41.692Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 35,
     "name": "めーあ",
     "title": "踊り狂うレッドアイ",
     "image": "images/35.png",
-    "createdAt": "2026-07-08T14:11:42.408Z"
-  },
-  {
-    "id": 34,
-    "name": "めーあ",
-    "title": "踊り狂うレッドアイ",
-    "image": "images/34.png",
-    "createdAt": "2026-07-08T14:09:42.367Z"
-  },
-  {
-    "id": 33,
-    "name": "うみ",
-    "title": "冷静すぎるコスモポリタン",
-    "image": "images/33.png",
-    "createdAt": "2026-07-08T13:59:51.243Z"
+    "createdAt": "2026-07-08T14:11:42.408Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 32,
     "name": "リリ",
     "title": "妙に詳しいウーロンハイ",
     "image": "images/32.png",
-    "createdAt": "2026-07-08T13:22:27.750Z"
+    "createdAt": "2026-07-08T13:22:27.750Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 31,
     "name": "ピノ3",
     "title": "口数の多いオールドファッションド",
     "image": "images/31.png",
-    "createdAt": "2026-07-08T13:22:22.506Z"
-  },
-  {
-    "id": 30,
-    "name": "リリ",
-    "title": "妙に詳しいウーロンハイ",
-    "image": "images/30.png",
-    "createdAt": "2026-07-08T13:19:56.098Z"
-  },
-  {
-    "id": 29,
-    "name": "ピノ3",
-    "title": "口数の多いオールドファッションド",
-    "image": "images/29.png",
-    "createdAt": "2026-07-08T13:13:59.530Z"
+    "createdAt": "2026-07-08T13:22:22.506Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 28,
     "name": "ツナ",
     "title": "ちょっと偉そうなキールロワイヤル",
     "image": "images/28.png",
-    "createdAt": "2026-07-08T12:59:25.944Z"
-  },
-  {
-    "id": 27,
-    "name": "ツナ",
-    "title": "ちょっと偉そうなキールロワイヤル",
-    "image": "images/27.png",
-    "createdAt": "2026-07-08T12:57:08.772Z"
+    "createdAt": "2026-07-08T12:59:25.944Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 25,
     "name": "ゆん",
     "title": "冷静すぎるゴッドマザー",
     "image": "images/25.png",
-    "createdAt": "2026-07-07T14:03:13.271Z"
-  },
-  {
-    "id": 24,
-    "name": "ゆん",
-    "title": "冷静すぎるゴッドマザー",
-    "image": "images/24.png",
-    "createdAt": "2026-07-07T13:59:22.617Z"
-  },
-  {
-    "id": 23,
-    "name": "おもち",
-    "title": "説明が長いキール",
-    "image": "images/23.png",
-    "createdAt": "2026-07-07T13:26:30.368Z"
-  },
-  {
-    "id": 22,
-    "name": "いと",
-    "title": "すぐ謝るスプモーニ",
-    "image": "images/22.png",
-    "createdAt": "2026-07-07T12:49:45.647Z"
+    "createdAt": "2026-07-07T14:03:13.271Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 21,
     "name": "じゅり",
     "title": "現場主義のピニャコラーダ",
     "image": "images/21.png",
-    "createdAt": "2026-07-07T12:49:28.789Z"
-  },
-  {
-    "id": 20,
-    "name": "じゅり",
-    "title": "現場主義のピニャコラーダ",
-    "image": "images/20.png",
-    "createdAt": "2026-07-07T12:45:41.949Z"
+    "createdAt": "2026-07-07T12:49:28.789Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 19,
     "name": "にこ",
     "title": "踊り狂うマイタイ",
     "image": "images/19.png",
-    "createdAt": "2026-07-06T23:10:13.495Z"
+    "createdAt": "2026-07-06T23:10:13.495Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 18,
     "name": "紫苑",
     "title": "たぶん有能なファジーネーブル",
     "image": "images/18.png",
-    "createdAt": "2026-07-06T16:35:39.040Z"
+    "createdAt": "2026-07-06T16:35:39.040Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 17,
     "name": "ルミ",
     "title": "陽気なダイキリ",
     "image": "images/17.png",
-    "createdAt": "2026-07-06T16:35:23.981Z"
-  },
-  {
-    "id": 16,
-    "name": "ルミ",
-    "title": "陽気なダイキリ",
-    "image": "images/16.png",
-    "createdAt": "2026-07-06T16:22:02.233Z"
-  },
-  {
-    "id": 15,
-    "name": "紫苑",
-    "title": "たぶん有能なファジーネーブル",
-    "image": "images/15.png",
-    "createdAt": "2026-07-06T15:46:30.066Z"
+    "createdAt": "2026-07-06T16:35:23.981Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 14,
     "name": "ちづ",
     "title": "渋いジンフィズ",
     "image": "images/14.png",
-    "createdAt": "2026-07-06T15:46:23.867Z"
-  },
-  {
-    "id": 13,
-    "name": "kouu",
-    "title": "物静かなミモザ",
-    "image": "images/13.png",
-    "createdAt": "2026-07-06T15:08:30.367Z"
-  },
-  {
-    "id": 12,
-    "name": "ちづ",
-    "title": "渋いジンフィズ",
-    "image": "images/12.png",
-    "createdAt": "2026-07-06T14:56:22.241Z"
-  },
-  {
-    "id": 11,
-    "name": "にこ",
-    "title": "踊り狂うマイタイ",
-    "image": "images/11.png",
-    "createdAt": "2026-07-06T14:46:14.679Z"
+    "createdAt": "2026-07-06T15:46:23.867Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 10,
     "name": "りん",
     "title": "ちょっと偉そうなベリーニ",
     "image": "images/10.png",
-    "createdAt": "2026-07-06T14:37:07.036Z"
-  },
-  {
-    "id": 9,
-    "name": "りん",
-    "title": "ちょっと偉そうなベリーニ",
-    "image": "images/9.png",
-    "createdAt": "2026-07-06T14:34:38.512Z"
-  },
-  {
-    "id": 8,
-    "name": "りむ",
-    "title": "踊り狂うカシスオレンジ",
-    "image": "images/8.png",
-    "createdAt": "2026-07-06T14:30:25.146Z"
+    "createdAt": "2026-07-06T14:37:07.036Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 7,
     "name": "竜胆",
     "title": "無駄に熱いカルーアミルク",
     "image": "images/7.png",
-    "createdAt": "2026-07-06T14:20:59.264Z"
+    "createdAt": "2026-07-06T14:20:59.264Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 6,
     "name": "シエル",
     "title": "たぶん有能なゴッドファーザー",
     "image": "images/6.png",
-    "createdAt": "2026-07-06T14:19:27.751Z"
+    "createdAt": "2026-07-06T14:19:27.751Z",
+    "gachaId": "cocktail"
   },
   {
     "id": 5,
     "name": "カンズ",
     "title": "たぶん有能なハイボール",
     "image": "images/5.png",
-    "createdAt": "2026-07-06T14:19:10.022Z"
-  },
-  {
-    "id": 4,
-    "name": "竜胆",
-    "title": "無駄に熱いカルーアミルク",
-    "image": "images/4.png",
-    "createdAt": "2026-07-06T14:15:52.273Z"
-  },
-  {
-    "id": 3,
-    "name": "シエル",
-    "title": "たぶん有能なゴッドファーザー",
-    "image": "images/3.png",
-    "createdAt": "2026-07-06T14:08:25.376Z"
-  },
-  {
-    "id": 2,
-    "name": "カンズ",
-    "title": "たぶん有能なハイボール",
-    "image": "images/2.png",
-    "createdAt": "2026-07-06T13:12:37.294Z"
+    "createdAt": "2026-07-06T14:19:10.022Z",
+    "gachaId": "cocktail"
   }
 ]

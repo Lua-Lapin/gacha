@@ -1,15 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import request from 'supertest'
+import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { createApp } from './index.js'
 import { createDb } from './db.js'
 
-let app, db, generateImage, writeGenerationFiles, publishPending
+let app, db, generateImage, writeGenerationFiles, publishPending, galleryDir
 beforeEach(() => {
   db = createDb(':memory:')
   generateImage = vi.fn().mockResolvedValue(Buffer.from('png'))
   writeGenerationFiles = vi.fn(({ generationId }) => ({ imagePath: `images/${generationId}.png` }))
   publishPending = vi.fn(async ({ generations }) => ({ committed: generations.map((g) => g.id) }))
-  app = createApp({ db, generateImage, writeGenerationFiles, publishPending, galleryDir: '/tmp/g' })
+  galleryDir = mkdtempSync(join(tmpdir(), 'gacha-test-'))
+  mkdirSync(join(galleryDir, 'images'), { recursive: true })
+  app = createApp({ db, generateImage, writeGenerationFiles, publishPending, galleryDir })
 })
 
 describe('POST /api/results', () => {
@@ -118,55 +123,10 @@ describe('POST /api/generate', () => {
   })
 })
 
-describe('POST /api/cards', () => {
-  it('records the uploaded card png without committing', async () => {
-    const id = db.insertPerson({ name: 'あや', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
-    const res = await request(app)
-      .post('/api/cards')
-      .field('personId', String(id))
-      .attach('image', Buffer.from('cardpng'), 'card.png')
-    expect(res.status).toBe(200)
-    expect(res.body.imagePath).toBe('images/1.png')
-    expect(generateImage).not.toHaveBeenCalled()
-    expect(publishPending).not.toHaveBeenCalled()
-    const buf = writeGenerationFiles.mock.calls[0][0].imageBuffer
-    expect(buf.toString()).toBe('cardpng')
-    expect(db.listPendingGenerations()).toHaveLength(1)
-  })
-
-  it('keeps prior entries non-null in the written manifest', async () => {
-    const id = db.insertPerson({ name: 'あや', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
-    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('a'), 'a.png')
-    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('b'), 'b.png')
-    const manifest = writeGenerationFiles.mock.calls.at(-1)[0].manifest
-    expect(manifest).toHaveLength(2)
-    expect(manifest.every((m) => m.image && m.image.startsWith('images/'))).toBe(true)
-  })
-
-  it('returns 400 when personId missing', async () => {
-    const res = await request(app).post('/api/cards').attach('image', Buffer.from('a'), 'a.png')
-    expect(res.status).toBe(400)
-  })
-
-  it('returns 400 when image missing', async () => {
-    const id = db.insertPerson({ name: 'b', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
-    const res = await request(app).post('/api/cards').field('personId', String(id))
-    expect(res.status).toBe(400)
-  })
-
-  it('returns 404 when person not found', async () => {
-    const res = await request(app)
-      .post('/api/cards')
-      .field('personId', '999')
-      .attach('image', Buffer.from('a'), 'a.png')
-    expect(res.status).toBe(404)
-  })
-})
-
 describe('GET /api/pending', () => {
   it('lists only unpublished successful generations', async () => {
     const id = db.insertPerson({ name: 'b', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
-    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('a'), 'a.png')
+    await request(app).post('/api/generate').field('personId', String(id)).attach('avatar', Buffer.from('a'), 'a.png')
     const res = await request(app).get('/api/pending')
     expect(res.status).toBe(200)
     expect(res.body).toHaveLength(1)
@@ -177,8 +137,10 @@ describe('GET /api/pending', () => {
 describe('POST /api/publish', () => {
   it('publishes all pending, marks them published, and returns ids', async () => {
     const id = db.insertPerson({ name: 'b', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
-    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('a'), 'a.png')
-    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('b'), 'b.png')
+    await request(app).post('/api/generate').field('personId', String(id)).attach('avatar', Buffer.from('a'), 'a.png')
+    await request(app).post('/api/generate').field('personId', String(id)).attach('avatar', Buffer.from('b'), 'b.png')
+    writeFileSync(join(galleryDir, 'images/1.png'), Buffer.from('a'))
+    writeFileSync(join(galleryDir, 'images/2.png'), Buffer.from('b'))
     const res = await request(app).post('/api/publish')
     expect(res.status).toBe(200)
     expect(publishPending).toHaveBeenCalledOnce()
@@ -195,11 +157,50 @@ describe('POST /api/publish', () => {
 
   it('returns 500 and leaves rows pending when push fails', async () => {
     const id = db.insertPerson({ name: 'b', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
-    await request(app).post('/api/cards').field('personId', String(id)).attach('image', Buffer.from('a'), 'a.png')
+    await request(app).post('/api/generate').field('personId', String(id)).attach('avatar', Buffer.from('a'), 'a.png')
+    writeFileSync(join(galleryDir, 'images/1.png'), Buffer.from('a'))
     publishPending.mockRejectedValueOnce(new Error('push failed'))
     const res = await request(app).post('/api/publish')
     expect(res.status).toBe(500)
     expect(db.listPendingGenerations()).toHaveLength(1)
+  })
+
+  it('excludes a pending row whose image file is missing from git, but still marks it published', async () => {
+    const id = db.insertPerson({ name: 'b', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
+    // generation 1: file present on disk
+    await request(app).post('/api/generate').field('personId', String(id)).attach('avatar', Buffer.from('a'), 'a.png')
+    writeFileSync(join(galleryDir, 'images/1.png'), Buffer.from('a'))
+    // generation 2: recorded in DB but its file was deleted (simulating the real-world regression)
+    await request(app).post('/api/generate').field('personId', String(id)).attach('avatar', Buffer.from('b'), 'b.png')
+
+    const res = await request(app).post('/api/publish')
+    expect(res.status).toBe(200)
+    expect(publishPending).toHaveBeenCalledOnce()
+    const generationsArg = publishPending.mock.calls[0][0].generations
+    expect(generationsArg.map((g) => g.id)).toEqual([1])
+    expect(db.listPendingGenerations()).toHaveLength(0)
+  })
+
+  it('publishes a pending row normally when its image file exists', async () => {
+    const id = db.insertPerson({ name: 'b', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
+    await request(app).post('/api/generate').field('personId', String(id)).attach('avatar', Buffer.from('a'), 'a.png')
+    writeFileSync(join(galleryDir, 'images/1.png'), Buffer.from('a'))
+
+    const res = await request(app).post('/api/publish')
+    expect(res.status).toBe(200)
+    expect(res.body.committed).toEqual([1])
+    expect(db.listPendingGenerations()).toHaveLength(0)
+  })
+
+  it('skips calling publishPending when every pending row is missing its file', async () => {
+    const id = db.insertPerson({ name: 'b', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
+    await request(app).post('/api/generate').field('personId', String(id)).attach('avatar', Buffer.from('a'), 'a.png')
+    // no file written to disk for generation 1
+
+    const res = await request(app).post('/api/publish')
+    expect(res.status).toBe(200)
+    expect(publishPending).not.toHaveBeenCalled()
+    expect(db.listPendingGenerations()).toHaveLength(0)
   })
 })
 
