@@ -8,12 +8,8 @@ const fetchPeopleMock = vi.fn().mockResolvedValue([])
 vi.mock('./lib/api.js', () => ({
   saveResult: vi.fn().mockResolvedValue({ id: 1 }),
   fetchPeople: (...args) => fetchPeopleMock(...args),
-  generate: vi.fn(), registerCard: vi.fn().mockResolvedValue(undefined),
+  generate: vi.fn(),
   fetchPending: vi.fn().mockResolvedValue([]), publishAll: vi.fn(),
-}))
-
-vi.mock('./lib/cardImage.js', () => ({
-  captureCardPng: vi.fn().mockResolvedValue(new Blob(['x'], { type: 'image/png' })),
 }))
 
 vi.mock('./lib/draw.js', async (importOriginal) => {

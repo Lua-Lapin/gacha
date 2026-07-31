@@ -10,7 +10,7 @@ import BackButton from './components/ui/BackButton.jsx'
 import { gachas, getGachaById } from './data/gachas.js'
 import catImage from './assets/gacha-cat.png'
 import { drawTitle, pickCapsuleColor } from './lib/draw.js'
-import { saveResult, fetchPeople, generate, registerCard, fetchPending, publishAll } from './lib/api.js'
+import { saveResult, fetchPeople, generate, fetchPending, publishAll } from './lib/api.js'
 
 // phase: 'idle' | 'revealing' | 'revealed'
 export default function App() {
@@ -137,11 +137,6 @@ export default function App() {
                 itemEmoji={selectedGachaObj.itemEmoji}
               />
               <SaveResult
-                title={result.title}
-                info={result.info}
-                itemLabel={selectedGachaObj.itemLabel}
-                itemEmoji={selectedGachaObj.itemEmoji}
-                onRegister={registerCard}
                 onSave={async (name) => {
                   const saved = await saveResult({
                     name,

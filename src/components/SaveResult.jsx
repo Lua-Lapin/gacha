@@ -1,19 +1,16 @@
 import { useState } from 'react'
 import Button from './ui/Button.jsx'
-import CardShare from './CardShare.jsx'
 import './SaveResult.css'
 
-export default function SaveResult({ onSave, onRegister, title, info, itemLabel, itemEmoji }) {
+export default function SaveResult({ onSave }) {
   const [name, setName] = useState('')
-  const [savedId, setSavedId] = useState(null)
+  const [saved, setSaved] = useState(false)
 
   async function handleSave() {
     if (!name.trim()) return
-    const result = await onSave(name.trim())
-    setSavedId(result?.id ?? null)
+    await onSave(name.trim())
+    setSaved(true)
   }
-
-  const saved = savedId !== null
 
   return (
     <div className="save-result">
@@ -27,16 +24,6 @@ export default function SaveResult({ onSave, onRegister, title, info, itemLabel,
       />
       <Button variant="secondary" onClick={handleSave}>保存</Button>
       {saved && <span className="save-result__msg">保存しました ✓</span>}
-      {saved && (
-        <CardShare
-          title={title}
-          info={info}
-          personId={savedId}
-          onRegister={onRegister}
-          itemLabel={itemLabel}
-          itemEmoji={itemEmoji}
-        />
-      )}
     </div>
   )
 }

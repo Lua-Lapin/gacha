@@ -30,13 +30,6 @@ export async function generate(personId, file) {
   return handle(await fetch(`${BASE}/api/generate`, { method: 'POST', body: form }))
 }
 
-export async function registerCard(personId, blob) {
-  const form = new FormData()
-  form.append('personId', String(personId))
-  form.append('image', blob, 'card.png')
-  return handle(await fetch(`${BASE}/api/cards`, { method: 'POST', body: form }))
-}
-
 export async function fetchPending() {
   return handle(await fetch(`${BASE}/api/pending`))
 }
