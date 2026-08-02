@@ -6,6 +6,7 @@ import ResultDisplay from './components/ResultDisplay.jsx'
 import SaveResult from './components/SaveResult.jsx'
 import GeneratePage from './components/GeneratePage.jsx'
 import GachaList from './components/GachaList.jsx'
+import ManualTitleForm from './components/ManualTitleForm.jsx'
 import BackButton from './components/ui/BackButton.jsx'
 import { gachas, getGachaById } from './data/gachas.js'
 import catImage from './assets/gacha-cat.png'
@@ -69,12 +70,25 @@ export default function App() {
     setSelectedGacha(id)
     setView('gacha')
     setTopicsStatus('loading')
+    setUsedTopics([])
     fetchPeople(id)
       .then((people) => {
-        setUsedTopics(people.map((p) => p.topic))
+        // 読み込み中に指定作成された topic を取りこぼさないため、上書きせずマージする。
+        setUsedTopics((prev) => [...new Set([...prev, ...people.map((p) => p.topic)])])
         setTopicsStatus('ready')
       })
       .catch(() => setTopicsStatus('error'))
+  }
+
+  // ガチャ結果の保存と指定作成で共通の保存処理。色は毎回ランダムに割り当てる。
+  async function persistPerson({ name, adjective, topic, title, color }) {
+    const saved = await saveResult({
+      name, adjective, topic, title,
+      color: color ?? pickCapsuleColor(),
+      gachaId: selectedGacha,
+    })
+    setUsedTopics((prev) => [...prev, topic])
+    return saved
   }
 
   const headerLabel =
@@ -125,6 +139,13 @@ export default function App() {
             disabled={phase !== 'idle' || topicsStatus !== 'ready' || isExhausted}
           />
 
+          {phase === 'idle' && selectedGachaObj && (
+            <ManualTitleForm
+              itemLabel={selectedGachaObj.itemLabel}
+              onCreate={persistPerson}
+            />
+          )}
+
           {phase === 'revealing' && (
             <GachaReveal image={catImage} onComplete={() => setPhase('revealed')} />
           )}
@@ -139,18 +160,13 @@ export default function App() {
                 detailLabel={selectedGachaObj.detailLabel}
               />
               <SaveResult
-                onSave={async (name) => {
-                  const saved = await saveResult({
-                    name,
-                    adjective: result.adjective,
-                    topic: result.topic,
-                    title: result.title,
-                    color,
-                    gachaId: result.gachaId,
-                  })
-                  setUsedTopics((prev) => [...prev, result.topic])
-                  return saved
-                }} />
+                onSave={(name) => persistPerson({
+                  name,
+                  adjective: result.adjective,
+                  topic: result.topic,
+                  title: result.title,
+                  color,
+                })} />
               <button className="again-btn" onClick={handleReset}>もう一回</button>
             </div>
           )}

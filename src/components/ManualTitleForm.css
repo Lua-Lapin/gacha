@@ -1,0 +1,24 @@
+@import './ui/theme.css';
+
+.manual-title-form {
+  margin-top: 24px;
+}
+.manual-title-form__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 320px;
+  margin: 0 auto;
+}
+.manual-title-form__msg {
+  color: var(--gacha-success);
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin: 12px 0 0;
+}
+.manual-title-form__error {
+  color: #e63946;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin: 12px 0 0;
+}
