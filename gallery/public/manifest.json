@@ -1,5 +1,21 @@
 [
   {
+    "id": 111,
+    "name": "竜胆",
+    "title": "潮の香りがするハリセンボン",
+    "image": "images/111.png",
+    "createdAt": "2026-08-02T10:12:01.753Z",
+    "gachaId": "sea"
+  },
+  {
+    "id": 110,
+    "name": "カンズ",
+    "title": "ひたむきなイルカ",
+    "image": "images/110.png",
+    "createdAt": "2026-08-02T10:11:38.059Z",
+    "gachaId": "sea"
+  },
+  {
     "id": 109,
     "name": "カンズ",
     "title": "ひたむきなイルカ",
