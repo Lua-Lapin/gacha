@@ -1,5 +1,21 @@
 [
   {
+    "id": 108,
+    "name": "さとう",
+    "title": "怒りのタツノオトシゴ",
+    "image": "images/108.png",
+    "createdAt": "2026-08-02T09:31:26.990Z",
+    "gachaId": "sea"
+  },
+  {
+    "id": 107,
+    "name": "あんず",
+    "title": "流されがちなイソギンチャク",
+    "image": "images/107.png",
+    "createdAt": "2026-08-02T09:30:32.409Z",
+    "gachaId": "sea"
+  },
+  {
     "id": 106,
     "name": "ゆん",
     "title": "まじめなサンゴ",
