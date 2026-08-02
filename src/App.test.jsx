@@ -20,11 +20,17 @@ vi.mock('./lib/draw.js', async (importOriginal) => {
 import App from './App.jsx'
 import { REVEAL_MS } from './components/GachaReveal.jsx'
 import { drawTitle } from './lib/draw.js'
+import { saveResult } from './lib/api.js'
 
 const seaTopics = getGachaById('sea').words.topics
 
 afterEach(cleanup)
-afterEach(() => { fetchPeopleMock.mockClear(); fetchPeopleMock.mockResolvedValue([]); drawTitle.mockClear() })
+afterEach(() => {
+  fetchPeopleMock.mockClear()
+  fetchPeopleMock.mockResolvedValue([])
+  drawTitle.mockClear()
+  saveResult.mockClear()
+})
 beforeEach(() => {
   vi.useFakeTimers()
   // 海ガチャの公開期間中に固定する。実時間に依存すると 2026-09-01 以降にテストが壊れる。
@@ -122,5 +128,62 @@ describe('役職(topic)の重複排除', () => {
     fireEvent.click(screen.getByLabelText('ガチャを回す'))
     expect(drawTitle).toHaveBeenCalledTimes(2)
     expect(drawTitle.mock.calls[1][1]).toEqual(expect.arrayContaining(['クラゲ']))
+  })
+})
+
+describe('役職の指定作成', () => {
+  it('ガチャ画面のフォームから作成すると gachaId 付きで保存される', async () => {
+    render(<App />)
+    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
+    await act(async () => {})
+    fireEvent.click(screen.getByRole('button', { name: '役職を指定して作る' }))
+    fireEvent.change(screen.getByLabelText('名前'), { target: { value: 'あや' } })
+    fireEvent.change(screen.getByLabelText('形容詞'), { target: { value: 'ゆらゆらした' } })
+    fireEvent.change(screen.getByLabelText('海の生き物'), { target: { value: 'メンダコ' } })
+    fireEvent.click(screen.getByRole('button', { name: '作成' }))
+    await act(async () => {})
+    expect(saveResult).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: 'あや',
+        adjective: 'ゆらゆらした',
+        topic: 'メンダコ',
+        title: 'ゆらゆらしたメンダコ',
+        gachaId: 'sea',
+      })
+    )
+    // color はランダムだが必ず付いていること
+    expect(saveResult.mock.calls[0][0].color).toMatch(/^#[0-9a-f]{6}$/i)
+  })
+
+  it('作成したお題は以降のガチャ抽選から除外される', async () => {
+    render(<App />)
+    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
+    await act(async () => {})
+    fireEvent.click(screen.getByRole('button', { name: '役職を指定して作る' }))
+    fireEvent.change(screen.getByLabelText('名前'), { target: { value: 'あや' } })
+    fireEvent.change(screen.getByLabelText('形容詞'), { target: { value: 'ゆらゆらした' } })
+    fireEvent.change(screen.getByLabelText('海の生き物'), { target: { value: 'メンダコ' } })
+    fireEvent.click(screen.getByRole('button', { name: '作成' }))
+    await act(async () => {})
+    fireEvent.click(screen.getByLabelText('ガチャを回す'))
+    expect(drawTitle.mock.calls[0][1]).toEqual(expect.arrayContaining(['メンダコ']))
+  })
+
+  it('全 topic が使用済みでも指定作成のフォームは使える', async () => {
+    fetchPeopleMock.mockResolvedValueOnce(seaTopics.map((t) => ({ topic: t })))
+    render(<App />)
+    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
+    await act(async () => {})
+    expect(screen.getByLabelText('ガチャを回す')).toBeDisabled()
+    expect(screen.getByRole('button', { name: '役職を指定して作る' })).toBeEnabled()
+  })
+
+  it('ガチャ結果の表示中はフォームを出さない', async () => {
+    render(<App />)
+    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
+    await act(async () => {})
+    fireEvent.click(screen.getByLabelText('ガチャを回す'))
+    act(() => { vi.advanceTimersByTime(REVEAL_MS) })
+    expect(screen.queryByRole('button', { name: '役職を指定して作る' })).toBeNull()
   })
 })
