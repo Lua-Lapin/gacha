@@ -37,3 +37,27 @@ describe('buildPrompt', () => {
     expect(out).not.toContain('{')
   })
 })
+
+describe('SEA_STYLES', () => {
+  it('lists the card style first (default) and the jacket style second', async () => {
+    const { SEA_STYLES } = await import('./prompts/sea.js')
+    expect(SEA_STYLES.map((s) => s.id)).toEqual(['card', 'jacket'])
+    expect(SEA_STYLES[0].label).toBe('かわいいカード風')
+    expect(SEA_STYLES[1].label).toBe('ジャケット風')
+  })
+
+  it('gives every style a template containing the 役職名 placeholder', async () => {
+    const { SEA_STYLES } = await import('./prompts/sea.js')
+    for (const s of SEA_STYLES) {
+      expect(s.template).toContain('{役職名}')
+    }
+  })
+
+  it('makes the jacket template an album-jacket brief, not the card one', async () => {
+    const { SEA_STYLES } = await import('./prompts/sea.js')
+    const jacket = SEA_STYLES.find((s) => s.id === 'jacket')
+    expect(jacket.template).toContain('音楽アルバムジャケット風')
+    expect(jacket.template).toContain('明朝体')
+    expect(jacket.template).not.toContain('リボン型バナー')
+  })
+})
