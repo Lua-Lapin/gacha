@@ -25,6 +25,7 @@ export default function App() {
   // 既に割り当て済みの topic 名。同じ topic が2人に出ないよう抽選から除外する。
   const [usedTopics, setUsedTopics] = useState([])
   const [topicsStatus, setTopicsStatus] = useState('idle') // 'idle' | 'loading' | 'ready' | 'error'
+  const topicsRequestId = useRef(0)
 
   const selectedGachaObj = getGachaById(selectedGacha)
   const totalTopics = selectedGachaObj?.words.topics.length ?? 0
@@ -70,14 +71,21 @@ export default function App() {
     setSelectedGacha(id)
     setView('gacha')
     setTopicsStatus('loading')
+    // 取得ごとに番号を振る。切り替え後に前のガチャの取得が遅れて返ってきても、
+    // 番号が古ければ捨てる（別ガチャの topic が混ざるのを防ぐ）。
+    const reqId = ++topicsRequestId.current
     setUsedTopics([])
     fetchPeople(id)
       .then((people) => {
+        if (reqId !== topicsRequestId.current) return
         // 読み込み中に指定作成された topic を取りこぼさないため、上書きせずマージする。
         setUsedTopics((prev) => [...new Set([...prev, ...people.map((p) => p.topic)])])
         setTopicsStatus('ready')
       })
-      .catch(() => setTopicsStatus('error'))
+      .catch(() => {
+        if (reqId !== topicsRequestId.current) return
+        setTopicsStatus('error')
+      })
   }
 
   // ガチャ結果の保存と指定作成で共通の保存処理。色は毎回ランダムに割り当てる。

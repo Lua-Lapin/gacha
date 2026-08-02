@@ -129,6 +129,25 @@ describe('役職(topic)の重複排除', () => {
     expect(drawTitle).toHaveBeenCalledTimes(2)
     expect(drawTitle.mock.calls[1][1]).toEqual(expect.arrayContaining(['クラゲ']))
   })
+
+  it('ガチャを切り替えると、遅れて届いた前のガチャの取得結果は捨てる', async () => {
+    // カクテル・海の両方が公開中の時刻に固定して、ガチャを切り替えられるようにする。
+    vi.setSystemTime(new Date('2026-06-15T12:00:00+09:00'))
+    let resolveCocktail
+    fetchPeopleMock.mockReturnValueOnce(new Promise((resolve) => { resolveCocktail = resolve }))
+    fetchPeopleMock.mockResolvedValueOnce([{ topic: 'クラゲ' }])
+    render(<App />)
+    fireEvent.click(screen.getByText('カクテル役職ガチャ'))
+    await act(async () => {})
+    fireEvent.click(screen.getByRole('button', { name: '← 一覧に戻る' }))
+    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
+    await act(async () => {})
+    // カクテルの取得がここでやっと返ってくる。海の usedTopics を汚してはいけない。
+    resolveCocktail([{ topic: 'マティーニ' }])
+    await act(async () => {})
+    fireEvent.click(screen.getByLabelText('ガチャを回す'))
+    expect(drawTitle.mock.calls[0][1]).toEqual(['クラゲ'])
+  })
 })
 
 describe('役職の指定作成', () => {
