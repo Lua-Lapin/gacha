@@ -61,3 +61,20 @@ describe('SEA_STYLES', () => {
     expect(jacket.template).not.toContain('リボン型バナー')
   })
 })
+
+describe('single-style gachas', () => {
+  it('exposes one standard style for cocktail', async () => {
+    const { COCKTAIL_STYLES } = await import('./prompts/cocktail.js')
+    expect(COCKTAIL_STYLES).toHaveLength(1)
+    expect(COCKTAIL_STYLES[0].id).toBe('standard')
+    expect(COCKTAIL_STYLES[0].label).toBe('スタンダード')
+    expect(COCKTAIL_STYLES[0].template).toContain('{カクテル名}')
+  })
+
+  it('exposes one standard style for izakaya', async () => {
+    const { IZAKAYA_STYLES } = await import('./prompts/izakaya.js')
+    expect(IZAKAYA_STYLES).toHaveLength(1)
+    expect(IZAKAYA_STYLES[0].id).toBe('standard')
+    expect(IZAKAYA_STYLES[0].template).toContain('{役職名}')
+  })
+})

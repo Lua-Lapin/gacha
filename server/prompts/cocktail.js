@@ -30,3 +30,7 @@ export const COCKTAIL_TEMPLATE = `添付したアバターを元に、正方形�
 日本語の文字は正確にしてください。
 
 全体は高品質なアニメ調、華やかなライティング、キラキラしたアイコン風にしてください。`
+
+export const COCKTAIL_STYLES = [
+  { id: 'standard', label: 'スタンダード', template: COCKTAIL_TEMPLATE },
+]
