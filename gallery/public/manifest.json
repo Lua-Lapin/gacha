@@ -1,5 +1,29 @@
 [
   {
+    "id": 118,
+    "name": "翠",
+    "title": "しょっぱいトビウオ",
+    "image": "images/118.png",
+    "createdAt": "2026-08-02T10:48:23.372Z",
+    "gachaId": "sea"
+  },
+  {
+    "id": 117,
+    "name": "きょん",
+    "title": "すぐ謝るタカアシガニ",
+    "image": "images/117.png",
+    "createdAt": "2026-08-02T10:42:46.814Z",
+    "gachaId": "sea"
+  },
+  {
+    "id": 116,
+    "name": "めーあ‼️",
+    "title": "やかましいクリオネ",
+    "image": "images/116.png",
+    "createdAt": "2026-08-02T10:33:37.433Z",
+    "gachaId": "sea"
+  },
+  {
     "id": 115,
     "name": "ちづ",
     "title": "潮の香りがするオウムガイ",
