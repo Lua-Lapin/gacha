@@ -121,6 +121,62 @@ describe('POST /api/generate', () => {
     expect(res.status).toBe(500)
     expect(db.listPendingGenerations()).toHaveLength(0)
   })
+
+  it('uses the requested style template and records it', async () => {
+    const id = db.insertPerson({
+      name: 'ゆ', adjective: '怒りの', topic: 'タツノオトシゴ',
+      title: '怒りのタツノオトシゴ', color: '#000', gachaId: 'sea',
+    })
+    const res = await request(app).post('/api/generate')
+      .field('personId', String(id))
+      .field('styleId', 'jacket')
+      .attach('avatar', Buffer.from('a'), 'a.png')
+    expect(res.status).toBe(200)
+    expect(generateImage.mock.calls[0][0].prompt).toContain('音楽アルバムジャケット風')
+    expect(db.listSuccessfulGenerations()[0].styleId).toBe('jacket')
+  })
+
+  it('falls back to the default style when styleId is omitted', async () => {
+    const id = db.insertPerson({
+      name: 'ゆ', adjective: 'ゆらゆらした', topic: 'クラゲ',
+      title: 'ゆらゆらしたクラゲ', color: '#000', gachaId: 'sea',
+    })
+    await request(app).post('/api/generate')
+      .field('personId', String(id))
+      .attach('avatar', Buffer.from('a'), 'a.png')
+    expect(generateImage.mock.calls[0][0].prompt).toContain('リボン型バナー')
+    expect(db.listSuccessfulGenerations()[0].styleId).toBe('card')
+  })
+
+  it('returns 400 for an unknown styleId without generating', async () => {
+    const id = db.insertPerson({
+      name: 'ゆ', adjective: 'ゆらゆらした', topic: 'クラゲ',
+      title: 'ゆらゆらしたクラゲ', color: '#000', gachaId: 'sea',
+    })
+    const res = await request(app).post('/api/generate')
+      .field('personId', String(id))
+      .field('styleId', 'poster')
+      .attach('avatar', Buffer.from('a'), 'a.png')
+    expect(res.status).toBe(400)
+    expect(generateImage).not.toHaveBeenCalled()
+    expect(db.listSuccessfulGenerations()).toHaveLength(0)
+  })
+
+  it('records the styleId on a failed generation', async () => {
+    const id = db.insertPerson({
+      name: 'ゆ', adjective: '怒りの', topic: 'タツノオトシゴ',
+      title: '怒りのタツノオトシゴ', color: '#000', gachaId: 'sea',
+    })
+    generateImage.mockRejectedValueOnce(new Error('boom'))
+    await request(app).post('/api/generate')
+      .field('personId', String(id))
+      .field('styleId', 'jacket')
+      .attach('avatar', Buffer.from('a'), 'a.png')
+    const row = db.raw.prepare(
+      `SELECT style_id, status FROM generations ORDER BY id DESC LIMIT 1`
+    ).get()
+    expect(row).toEqual({ style_id: 'jacket', status: 'failed' })
+  })
 })
 
 describe('GET /api/pending', () => {

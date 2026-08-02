@@ -2,7 +2,7 @@ import express from 'express'
 import multer from 'multer'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { buildPrompt, listStyles } from './prompt.js'
+import { buildPrompt, listStyles, defaultStyleId } from './prompt.js'
 import { buildManifest } from './manifest.js'
 
 const upload = multer({ storage: multer.memoryStorage() })
@@ -21,9 +21,9 @@ export function createApp({ db, generateImage, writeGenerationFiles, publishPend
   })
 
   // 生成物をDBに記録し、ギャラリーへローカル書き出しする（git は publish 時にまとめて実行）。
-  function recordGeneration({ personId, imageBuffer, prompt }) {
+  function recordGeneration({ personId, imageBuffer, prompt, styleId }) {
     const genId = db.insertGeneration({
-      personId, imagePath: null, prompt, status: 'success', error: null,
+      personId, imagePath: null, prompt, status: 'success', error: null, styleId,
     })
     const imagePath = `images/${genId}.png`
     db.raw.prepare('UPDATE generations SET image_path = ? WHERE id = ?').run(imagePath, genId)
@@ -64,7 +64,16 @@ export function createApp({ db, generateImage, writeGenerationFiles, publishPend
     const person = db.getPerson(personId)
     if (!person) return res.status(404).json({ error: 'person not found' })
 
-    const prompt = buildPrompt(person.gacha_id, person.title)
+    // プロンプト構築は生成前に済ませる。未知のスタイルIDはここで 400 になり、
+    // 画像生成もDB記録も一切行わない。
+    const styleId = req.body.styleId || defaultStyleId(person.gacha_id)
+    let prompt
+    try {
+      prompt = buildPrompt(person.gacha_id, person.title, styleId)
+    } catch (err) {
+      return res.status(400).json({ error: String(err.message || err) })
+    }
+
     try {
       const imageBuffer = await generateImage({
         prompt,
@@ -73,10 +82,11 @@ export function createApp({ db, generateImage, writeGenerationFiles, publishPend
         size: '1024x1024',
         quality: 'medium',
       })
-      res.json(recordGeneration({ personId, imageBuffer, prompt }))
+      res.json(recordGeneration({ personId, imageBuffer, prompt, styleId }))
     } catch (err) {
       db.insertGeneration({
-        personId, imagePath: null, prompt, status: 'failed', error: String(err.message || err),
+        personId, imagePath: null, prompt, status: 'failed',
+        error: String(err.message || err), styleId,
       })
       res.status(500).json({ error: String(err.message || err) })
     }
