@@ -1,5 +1,37 @@
 [
   {
+    "id": 115,
+    "name": "ちづ",
+    "title": "潮の香りがするオウムガイ",
+    "image": "images/115.png",
+    "createdAt": "2026-08-02T10:25:09.939Z",
+    "gachaId": "sea"
+  },
+  {
+    "id": 114,
+    "name": "めーあ",
+    "title": "渋いカニ",
+    "image": "images/114.png",
+    "createdAt": "2026-08-02T10:23:32.221Z",
+    "gachaId": "sea"
+  },
+  {
+    "id": 113,
+    "name": "さとう(竜胆)",
+    "title": "さわやかなシロイルカ",
+    "image": "images/113.png",
+    "createdAt": "2026-08-02T10:21:47.813Z",
+    "gachaId": "sea"
+  },
+  {
+    "id": 112,
+    "name": "きょん",
+    "title": "すぐ謝るホタテ",
+    "image": "images/112.png",
+    "createdAt": "2026-08-02T10:16:58.053Z",
+    "gachaId": "sea"
+  },
+  {
     "id": 111,
     "name": "竜胆",
     "title": "潮の香りがするハリセンボン",
