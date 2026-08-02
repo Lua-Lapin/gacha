@@ -1,5 +1,13 @@
 [
   {
+    "id": 119,
+    "name": "りり",
+    "title": "せっかちなアザラシ",
+    "image": "images/119.png",
+    "createdAt": "2026-08-02T10:55:42.884Z",
+    "gachaId": "sea"
+  },
+  {
     "id": 118,
     "name": "翠",
     "title": "しょっぱいトビウオ",
