@@ -10,5 +10,6 @@ export function buildManifest(rows) {
       image: r.imagePath,
       createdAt: r.createdAt,
       gachaId: r.gachaId,
+      styleId: r.styleId,
     }))
 }

@@ -4,13 +4,23 @@ import { buildManifest } from './manifest.js'
 describe('buildManifest', () => {
   it('maps generation rows to manifest entries with gachaId', () => {
     const rows = [
-      { id: 2, name: 'あや', title: '陽気なモヒート', imagePath: 'images/2.png', createdAt: '2026-06-19T10:00:00.000Z', prompt: 'アバターを元に…', gachaId: 'cocktail' },
-      { id: 1, name: 'けん', title: '不敵な冷奴', imagePath: 'images/1.png', createdAt: '2026-06-18T10:00:00.000Z', prompt: 'アバターを元に…', gachaId: 'izakaya' },
+      { id: 2, name: 'あや', title: '陽気なモヒート', imagePath: 'images/2.png', createdAt: '2026-06-19T10:00:00.000Z', prompt: 'アバターを元に…', gachaId: 'cocktail', styleId: 'standard' },
+      { id: 1, name: 'けん', title: '不敵な冷奴', imagePath: 'images/1.png', createdAt: '2026-06-18T10:00:00.000Z', prompt: 'アバターを元に…', gachaId: 'izakaya', styleId: 'standard' },
     ]
     expect(buildManifest(rows)).toEqual([
-      { id: 2, name: 'あや', title: '陽気なモヒート', image: 'images/2.png', createdAt: '2026-06-19T10:00:00.000Z', gachaId: 'cocktail' },
-      { id: 1, name: 'けん', title: '不敵な冷奴', image: 'images/1.png', createdAt: '2026-06-18T10:00:00.000Z', gachaId: 'izakaya' },
+      { id: 2, name: 'あや', title: '陽気なモヒート', image: 'images/2.png', createdAt: '2026-06-19T10:00:00.000Z', gachaId: 'cocktail', styleId: 'standard' },
+      { id: 1, name: 'けん', title: '不敵な冷奴', image: 'images/1.png', createdAt: '2026-06-18T10:00:00.000Z', gachaId: 'izakaya', styleId: 'standard' },
     ])
+  })
+
+  it('includes styleId in each entry', () => {
+    const rows = [
+      { id: 1, name: 'ゆ', title: '怒りのタツノオトシゴ', imagePath: 'images/1.png', createdAt: 'a', prompt: 'p', gachaId: 'sea', styleId: 'jacket' },
+    ]
+    expect(buildManifest(rows)[0]).toEqual({
+      id: 1, name: 'ゆ', title: '怒りのタツノオトシゴ', image: 'images/1.png',
+      createdAt: 'a', gachaId: 'sea', styleId: 'jacket',
+    })
   })
 
   it('excludes client-rendered card rows (prompt === "card")', () => {
