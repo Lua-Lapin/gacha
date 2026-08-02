@@ -211,3 +211,24 @@ describe('CORS', () => {
     expect(res.headers['access-control-allow-origin']).toBe('*')
   })
 })
+
+describe('GET /api/styles', () => {
+  it('lists the styles of the given gacha', async () => {
+    const res = await request(app).get('/api/styles?gacha=sea')
+    expect(res.status).toBe(200)
+    expect(res.body).toEqual([
+      { id: 'card', label: 'かわいいカード風' },
+      { id: 'jacket', label: 'ジャケット風' },
+    ])
+  })
+
+  it('returns 400 for an unknown gacha', async () => {
+    const res = await request(app).get('/api/styles?gacha=ramen')
+    expect(res.status).toBe(400)
+  })
+
+  it('returns 400 when the gacha param is missing', async () => {
+    const res = await request(app).get('/api/styles')
+    expect(res.status).toBe(400)
+  })
+})

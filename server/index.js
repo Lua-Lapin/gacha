@@ -2,7 +2,7 @@ import express from 'express'
 import multer from 'multer'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { buildPrompt } from './prompt.js'
+import { buildPrompt, listStyles } from './prompt.js'
 import { buildManifest } from './manifest.js'
 
 const upload = multer({ storage: multer.memoryStorage() })
@@ -35,6 +35,16 @@ export function createApp({ db, generateImage, writeGenerationFiles, publishPend
   app.get('/api/people', (req, res) => {
     const gachaId = req.query.gacha
     res.json(db.listPeople(gachaId ? { gachaId } : undefined))
+  })
+
+  app.get('/api/styles', (req, res) => {
+    const gachaId = req.query.gacha
+    if (!gachaId) return res.status(400).json({ error: 'gacha required' })
+    try {
+      res.json(listStyles(gachaId))
+    } catch (err) {
+      res.status(400).json({ error: String(err.message || err) })
+    }
   })
 
   app.post('/api/results', (req, res) => {
