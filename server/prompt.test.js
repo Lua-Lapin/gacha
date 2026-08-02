@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildPrompt, PROMPT_TEMPLATES } from './prompt.js'
+import { buildPrompt, listStyles, defaultStyleId } from './prompt.js'
 
 describe('buildPrompt', () => {
   it('embeds the title in the cocktail template', () => {
@@ -19,11 +19,6 @@ describe('buildPrompt', () => {
 
   it('throws for unknown gachaId', () => {
     expect(() => buildPrompt('unknown', 'x')).toThrow(/unknown gacha/)
-  })
-
-  it('exposes both templates with their placeholders', () => {
-    expect(PROMPT_TEMPLATES.cocktail).toContain('{カクテル名}')
-    expect(PROMPT_TEMPLATES.izakaya).toContain('{役職名}')
   })
 
   it('builds the sea prompt with the title filled in', () => {
@@ -76,5 +71,59 @@ describe('single-style gachas', () => {
     expect(IZAKAYA_STYLES).toHaveLength(1)
     expect(IZAKAYA_STYLES[0].id).toBe('standard')
     expect(IZAKAYA_STYLES[0].template).toContain('{役職名}')
+  })
+})
+
+describe('listStyles', () => {
+  it('returns id and label for each style of the gacha', () => {
+    expect(listStyles('sea')).toEqual([
+      { id: 'card', label: 'かわいいカード風' },
+      { id: 'jacket', label: 'ジャケット風' },
+    ])
+  })
+
+  it('does not leak the template body', () => {
+    for (const s of listStyles('sea')) {
+      expect(s).not.toHaveProperty('template')
+    }
+  })
+
+  it('returns a single style for cocktail and izakaya', () => {
+    expect(listStyles('cocktail')).toEqual([{ id: 'standard', label: 'スタンダード' }])
+    expect(listStyles('izakaya')).toEqual([{ id: 'standard', label: 'スタンダード' }])
+  })
+
+  it('throws for unknown gachaId', () => {
+    expect(() => listStyles('ramen')).toThrow(/unknown gacha/)
+  })
+})
+
+describe('defaultStyleId', () => {
+  it('returns the first style id of the gacha', () => {
+    expect(defaultStyleId('sea')).toBe('card')
+    expect(defaultStyleId('cocktail')).toBe('standard')
+  })
+
+  it('throws for unknown gachaId', () => {
+    expect(() => defaultStyleId('ramen')).toThrow(/unknown gacha/)
+  })
+})
+
+describe('buildPrompt with styleId', () => {
+  it('uses the default style when styleId is omitted', () => {
+    expect(buildPrompt('sea', 'ゆらゆらしたクラゲ')).toBe(
+      buildPrompt('sea', 'ゆらゆらしたクラゲ', 'card')
+    )
+  })
+
+  it('uses the jacket template when styleId is jacket', () => {
+    const out = buildPrompt('sea', '怒りのタツノオトシゴ', 'jacket')
+    expect(out).toContain('音楽アルバムジャケット風')
+    expect(out).toContain('「怒りのタツノオトシゴ」')
+    expect(out).not.toContain('{')
+  })
+
+  it('throws for an unknown styleId instead of silently falling back', () => {
+    expect(() => buildPrompt('sea', 'x', 'poster')).toThrow(/unknown style/)
   })
 })
