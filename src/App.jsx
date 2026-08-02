@@ -8,11 +8,13 @@ import GeneratePage from './components/GeneratePage.jsx'
 import GachaList from './components/GachaList.jsx'
 import ManualTitleForm from './components/ManualTitleForm.jsx'
 import BackButton from './components/ui/BackButton.jsx'
+import Button from './components/ui/Button.jsx'
 import { gachas, getGachaById } from './data/gachas.js'
 import catImage from './assets/gacha-cat.png'
 import { drawTitle, pickCapsuleColor } from './lib/draw.js'
 import { saveResult, fetchPeople, generate, fetchPending, publishAll } from './lib/api.js'
 import { isActive } from './lib/deadline.js'
+import { galleryUrl } from './lib/galleryUrl.js'
 
 // phase: 'idle' | 'revealing' | 'revealed'
 export default function App() {
@@ -110,11 +112,20 @@ export default function App() {
 
       {view === 'list' && (
         <>
-          <button
-            type="button"
-            className="generate-entry"
-            onClick={() => setView('generate')}
-          >カードを生成する</button>
+          <div className="list-actions">
+            <Button variant="secondary" onClick={() => setView('generate')}>
+              カードを生成する
+            </Button>
+            <Button
+              as="a"
+              variant="secondary"
+              href={galleryUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              ギャラリーを見る
+            </Button>
+          </div>
           <GachaList gachas={gachas.filter((g) => isActive(g.endsAt))} onSelect={handleSelectGacha} />
         </>
       )}

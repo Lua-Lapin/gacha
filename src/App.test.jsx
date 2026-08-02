@@ -58,6 +58,14 @@ describe('App ナビゲーション', () => {
     expect(screen.getByRole('button', { name: '← 一覧に戻る' })).toBeInTheDocument()
   })
 
+  it('一覧にローカルギャラリーを別タブで開くリンクがある', () => {
+    render(<App />)
+    const link = screen.getByRole('link', { name: 'ギャラリーを見る' })
+    expect(link).toHaveAttribute('href', 'http://localhost:5174')
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link.getAttribute('rel')).toContain('noopener')
+  })
+
   it('ガチャ画面の戻るボタンで一覧へ戻る', () => {
     render(<App />)
     fireEvent.click(screen.getByText('海の生き物役職ガチャ'))

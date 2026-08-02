@@ -8,11 +8,12 @@
 .sub-view { max-width: 560px; margin: 0 auto; }
 .gacha-status { color: #5a5a6b; font-size: 0.9rem; margin: 0 0 12px; }
 .gacha-status--error { color: #e63946; font-weight: 700; }
-.generate-entry {
-  margin: 24px auto 0; display: block;
-  padding: 6px 14px; font-size: 0.85rem;
-  color: #8a8a99; background: transparent;
-  border: none; text-decoration: underline; cursor: pointer;
+.list-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 24px 0 0;
 }
 .again-btn {
   margin-top: 28px; padding: 12px 28px; font-size: 1rem; font-weight: 700;
