@@ -1,5 +1,21 @@
 [
   {
+    "id": 106,
+    "name": "ゆん",
+    "title": "まじめなサンゴ",
+    "image": "images/106.png",
+    "createdAt": "2026-08-02T09:22:53.721Z",
+    "gachaId": "sea"
+  },
+  {
+    "id": 105,
+    "name": "ゆん",
+    "title": "いつも酒飲んでるメンダコ",
+    "image": "images/105.png",
+    "createdAt": "2026-08-02T09:22:53.593Z",
+    "gachaId": "sea"
+  },
+  {
     "id": 104,
     "name": "さとう",
     "title": "気まずいウニ",
