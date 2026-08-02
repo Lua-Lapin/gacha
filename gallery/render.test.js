@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { renderGallery, tweetHref, buildTabs, filterByGacha, resolveInitialTab, renderTabs } from './main.js'
+import { renderGallery, tweetHref, buildTabs, filterByGacha, resolveInitialTab, renderTabs, buildStyleTabs, filterByStyle, renderStyleTabs } from './main.js'
 
 describe('renderGallery', () => {
   it('renders one card per manifest entry with title, name and image', () => {
@@ -94,15 +94,23 @@ describe('filterByGacha', () => {
 
 describe('resolveInitialTab', () => {
   it('reads the gachaId from the hash', () => {
-    expect(resolveInitialTab('#izakaya', SAMPLE)).toBe('izakaya')
+    expect(resolveInitialTab('#izakaya', SAMPLE)).toEqual({ gachaId: 'izakaya', styleId: 'all' })
   })
 
   it('falls back to all for an empty hash', () => {
-    expect(resolveInitialTab('', SAMPLE)).toBe('all')
+    expect(resolveInitialTab('', SAMPLE)).toEqual({ gachaId: 'all', styleId: 'all' })
   })
 
   it('falls back to all for a gacha with no entries', () => {
-    expect(resolveInitialTab('#ramen', SAMPLE)).toBe('all')
+    expect(resolveInitialTab('#ramen', SAMPLE)).toEqual({ gachaId: 'all', styleId: 'all' })
+  })
+
+  it('reads gacha and style from a "gacha:style" hash', () => {
+    expect(resolveInitialTab('#sea:jacket', SEA_SAMPLE)).toEqual({ gachaId: 'sea', styleId: 'jacket' })
+  })
+
+  it('falls back to all styles for a style with no entries in that gacha', () => {
+    expect(resolveInitialTab('#sea:poster', SEA_SAMPLE)).toEqual({ gachaId: 'sea', styleId: 'all' })
   })
 })
 
@@ -113,5 +121,67 @@ describe('renderTabs', () => {
     expect(html).toContain('aria-selected="true"')
     expect(html).toContain('🍸 カクテル')
     expect(html).toContain('(2)')
+  })
+})
+
+const SEA_SAMPLE = [
+  { id: 1, name: 'a', title: 't1', image: 'i1', createdAt: '', gachaId: 'sea', styleId: 'card' },
+  { id: 2, name: 'b', title: 't2', image: 'i2', createdAt: '', gachaId: 'sea', styleId: 'jacket' },
+  { id: 3, name: 'c', title: 't3', image: 'i3', createdAt: '', gachaId: 'sea', styleId: 'card' },
+  { id: 4, name: 'd', title: 't4', image: 'i4', createdAt: '', gachaId: 'cocktail', styleId: 'standard' },
+]
+
+describe('buildStyleTabs', () => {
+  it('lists all styles present in the selected gacha, with counts', () => {
+    expect(buildStyleTabs(SEA_SAMPLE, 'sea')).toEqual([
+      { id: 'all', label: 'すべて', count: 3 },
+      { id: 'card', label: 'かわいいカード風', count: 2 },
+      { id: 'jacket', label: 'ジャケット風', count: 1 },
+    ])
+  })
+
+  it('returns no tabs when the gacha has only one style', () => {
+    expect(buildStyleTabs(SEA_SAMPLE, 'cocktail')).toEqual([])
+  })
+
+  it('returns no tabs on the "all" gacha tab', () => {
+    expect(buildStyleTabs(SEA_SAMPLE, 'all')).toEqual([])
+  })
+
+  it('falls back to the raw styleId for unknown styles', () => {
+    const entries = [
+      { id: 1, gachaId: 'sea', styleId: 'card' },
+      { id: 2, gachaId: 'sea', styleId: 'poster' },
+    ]
+    expect(buildStyleTabs(entries, 'sea')[2]).toEqual({ id: 'poster', label: 'poster', count: 1 })
+  })
+})
+
+describe('filterByStyle', () => {
+  it('returns every entry for "all"', () => {
+    expect(filterByStyle(SEA_SAMPLE, 'all')).toHaveLength(4)
+  })
+
+  it('returns only the matching style', () => {
+    expect(filterByStyle(SEA_SAMPLE, 'jacket').map((e) => e.id)).toEqual([2])
+  })
+
+  it('excludes entries with no styleId when filtering', () => {
+    const entries = [{ id: 9, gachaId: 'sea' }, { id: 10, gachaId: 'sea', styleId: 'card' }]
+    expect(filterByStyle(entries, 'card').map((e) => e.id)).toEqual([10])
+  })
+})
+
+describe('renderStyleTabs', () => {
+  it('marks the active style and exposes the style id', () => {
+    const html = renderStyleTabs(buildStyleTabs(SEA_SAMPLE, 'sea'), 'jacket')
+    expect(html).toContain('data-style="jacket"')
+    expect(html).toContain('aria-selected="true"')
+    expect(html).toContain('かわいいカード風')
+    expect(html).toContain('(2)')
+  })
+
+  it('renders nothing for an empty tab list', () => {
+    expect(renderStyleTabs([], 'all')).toBe('')
   })
 })

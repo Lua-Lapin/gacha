@@ -24,6 +24,13 @@ const GACHA_LABELS = {
   sea: '🐙 海の生き物',
 }
 
+// スタイルの表示名。GACHA_LABELS と同じ理由で、React 側の資産は参照せずここに持つ。
+const STYLE_LABELS = {
+  standard: 'スタンダード',
+  card: 'かわいいカード風',
+  jacket: 'ジャケット風',
+}
+
 export function buildTabs(entries) {
   const counts = new Map()
   for (const e of entries) {
@@ -46,16 +53,61 @@ export function filterByGacha(entries, gachaId) {
   return gachaId === 'all' ? entries : entries.filter((e) => e.gachaId === gachaId)
 }
 
+// 選択中ガチャの中に複数スタイルがあるときだけタブを出す。
+// 'all' タブではガチャをまたぐのでスタイル軸は出さない。
+export function buildStyleTabs(entries, gachaId) {
+  if (gachaId === 'all') return []
+  const inGacha = entries.filter((e) => e.gachaId === gachaId)
+  const counts = new Map()
+  for (const e of inGacha) {
+    if (!e.styleId) continue
+    counts.set(e.styleId, (counts.get(e.styleId) || 0) + 1)
+  }
+  if (counts.size < 2) return []
+  const known = Object.keys(STYLE_LABELS).filter((id) => counts.has(id))
+  const unknown = [...counts.keys()].filter((id) => !(id in STYLE_LABELS))
+  return [
+    { id: 'all', label: 'すべて', count: inGacha.length },
+    ...[...known, ...unknown].map((id) => ({
+      id,
+      label: STYLE_LABELS[id] || id,
+      count: counts.get(id),
+    })),
+  ]
+}
+
+export function filterByStyle(entries, styleId) {
+  return styleId === 'all' ? entries : entries.filter((e) => e.styleId === styleId)
+}
+
+// hash は '#sea'（ガチャのみ）または '#sea:jacket'（ガチャ＋スタイル）。
+// 実体の無いIDは 'all' に落とす。
 export function resolveInitialTab(hash, entries) {
-  const id = (hash || '').replace(/^#/, '')
-  if (!id || id === 'all') return 'all'
-  return entries.some((e) => e.gachaId === id) ? id : 'all'
+  const raw = (hash || '').replace(/^#/, '')
+  const [gachaPart, stylePart] = raw.split(':')
+  if (!gachaPart || gachaPart === 'all') return { gachaId: 'all', styleId: 'all' }
+  if (!entries.some((e) => e.gachaId === gachaPart)) return { gachaId: 'all', styleId: 'all' }
+  const styleId = stylePart
+    && entries.some((e) => e.gachaId === gachaPart && e.styleId === stylePart)
+    ? stylePart
+    : 'all'
+  return { gachaId: gachaPart, styleId }
 }
 
 export function renderTabs(tabs, activeId) {
   return tabs.map((t) => `
     <button class="tab${t.id === activeId ? ' is-active' : ''}" role="tab"
       aria-selected="${t.id === activeId}" data-gacha="${t.id}">
+      ${t.label} <span class="tab__count">(${t.count})</span>
+    </button>
+  `).join('')
+}
+
+export function renderStyleTabs(tabs, activeId) {
+  if (!tabs.length) return ''
+  return tabs.map((t) => `
+    <button class="tab tab--style${t.id === activeId ? ' is-active' : ''}" role="tab"
+      aria-selected="${t.id === activeId}" data-style="${t.id}">
       ${t.label} <span class="tab__count">(${t.count})</span>
     </button>
   `).join('')
