@@ -161,13 +161,26 @@ if (typeof document !== 'undefined') {
     .then((r) => r.json())
     .then((entries) => {
       const tabsEl = document.getElementById('tabs')
+      const styleTabsEl = document.getElementById('style-tabs')
       const container = document.getElementById('gallery')
       const tabs = buildTabs(entries)
-      let active = resolveInitialTab(location.hash, entries)
+      let { gachaId: active, styleId: activeStyle } = resolveInitialTab(location.hash, entries)
+
+      function syncHash() {
+        let hash = ''
+        if (active !== 'all') hash = activeStyle === 'all' ? `#${active}` : `#${active}:${activeStyle}`
+        // 履歴を汚さずリロード・共有で復元できるようにする
+        history.replaceState(null, '', hash || location.pathname)
+      }
 
       function draw() {
+        const styleTabs = buildStyleTabs(entries, active)
+        // タブが消えたのに絞り込みだけ残る状態を防ぐ
+        if (!styleTabs.some((t) => t.id === activeStyle)) activeStyle = 'all'
         tabsEl.innerHTML = renderTabs(tabs, active)
-        container.innerHTML = renderGallery(filterByGacha(entries, active), location.href)
+        styleTabsEl.innerHTML = renderStyleTabs(styleTabs, activeStyle)
+        const shown = filterByStyle(filterByGacha(entries, active), activeStyle)
+        container.innerHTML = renderGallery(shown, location.href)
         // タブ切替のたびに innerHTML を差し替えるので、共有リンクの差し替えも都度やり直す
         upgradeDownloadLinks(container)
       }
@@ -176,8 +189,16 @@ if (typeof document !== 'undefined') {
         const btn = e.target.closest('.tab')
         if (!btn) return
         active = btn.dataset.gacha
-        // 履歴を汚さずリロード・共有で復元できるようにする
-        history.replaceState(null, '', active === 'all' ? location.pathname : `#${active}`)
+        activeStyle = 'all'
+        syncHash()
+        draw()
+      })
+
+      styleTabsEl.addEventListener('click', (e) => {
+        const btn = e.target.closest('.tab')
+        if (!btn) return
+        activeStyle = btn.dataset.style
+        syncHash()
         draw()
       })
 
