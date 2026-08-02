@@ -63,25 +63,25 @@ describe('api', () => {
 describe('fetchStyles', () => {
   it('requests the styles of the given gacha', async () => {
     const styles = [{ id: 'card', label: 'かわいいカード風' }]
-    global.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => styles })
+    globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => styles })
     await expect(fetchStyles('sea')).resolves.toEqual(styles)
-    expect(global.fetch).toHaveBeenCalledWith('http://localhost:3001/api/styles?gacha=sea')
+    expect(globalThis.fetch).toHaveBeenCalledWith('http://localhost:3001/api/styles?gacha=sea')
   })
 })
 
 describe('generate with styleId', () => {
   it('appends styleId to the form data when given', async () => {
-    global.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) })
+    globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) })
     const file = new File(['x'], 'a.png', { type: 'image/png' })
     await generate(1, file, 'jacket')
-    const form = global.fetch.mock.calls[0][1].body
+    const form = globalThis.fetch.mock.calls[0][1].body
     expect(form.get('styleId')).toBe('jacket')
   })
 
   it('omits styleId when not given', async () => {
-    global.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) })
+    globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) })
     const file = new File(['x'], 'a.png', { type: 'image/png' })
     await generate(1, file)
-    expect(global.fetch.mock.calls[0][1].body.get('styleId')).toBeNull()
+    expect(globalThis.fetch.mock.calls[0][1].body.get('styleId')).toBeNull()
   })
 })

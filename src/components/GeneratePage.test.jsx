@@ -143,6 +143,33 @@ describe('style selection', () => {
     expect(screen.getByLabelText('スタイル').value).toBe('jacket')
   })
 
+  it('disables 生成 and never sends the old gacha styleId while the new gacha styles load', async () => {
+    let resolveCocktail
+    const loadStyles = vi.fn((gachaId) =>
+      gachaId === 'sea'
+        ? Promise.resolve(seaStyles)
+        : new Promise((r) => { resolveCocktail = r }),
+    )
+    const props = renderPage({
+      loadPeople: vi.fn().mockResolvedValue([...seaPeople, ...people]),
+      loadStyles,
+    })
+    // 先に sea の人物を選び、スタイルを解決させておく
+    const { file } = await selectSeaPersonAndUpload()
+    expect(screen.getByLabelText('スタイル').value).toBe('card')
+
+    // 別ガチャの人物へ切り替え。cocktail のスタイルは未解決のまま。
+    await userEvent.selectOptions(screen.getByLabelText('人を選択'), '1')
+    await waitFor(() => expect(screen.getByRole('button', { name: '生成' })).toBeDisabled())
+    await userEvent.click(screen.getByRole('button', { name: '生成' }))
+    expect(props.onGenerate).not.toHaveBeenCalled()
+
+    resolveCocktail([{ id: 'standard', label: 'スタンダード' }])
+    await waitFor(() => expect(screen.getByRole('button', { name: '生成' })).not.toBeDisabled())
+    await userEvent.click(screen.getByRole('button', { name: '生成' }))
+    await waitFor(() => expect(props.onGenerate).toHaveBeenCalledWith(1, file, 'standard'))
+  })
+
   it('loads styles once per gacha when the person changes', async () => {
     const loadStyles = vi.fn().mockResolvedValue(seaStyles)
     renderPage({

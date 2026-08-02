@@ -8,7 +8,8 @@ export default function GeneratePage({ loadPeople, loadPending, loadStyles, onGe
   const [people, setPeople] = useState([])
   const [personId, setPersonId] = useState('')
   const [file, setFile] = useState(null)
-  const [styles, setStyles] = useState([])
+  // 取得済みスタイルはどのガチャのものかを一緒に持つ。選択中ガチャと食い違う間は「未ロード」扱い。
+  const [loadedStyles, setLoadedStyles] = useState({ gachaId: '', list: [] })
   const [styleId, setStyleId] = useState('')
   const [jobs, setJobs] = useState([]) // { id, label, status: 'running' | 'done' | 'error', error }
   const [pending, setPending] = useState([])
@@ -18,6 +19,11 @@ export default function GeneratePage({ loadPeople, loadPending, loadStyles, onGe
 
   const selectedPerson = people.find((p) => String(p.id) === String(personId))
   const gachaId = selectedPerson?.gacha_id || ''
+
+  const stylesLoaded = loadedStyles.gachaId === gachaId
+  const styles = stylesLoaded ? loadedStyles.list : []
+  // 古いガチャの styleId が残っていても採用しない
+  const activeStyleId = styles.some((s) => s.id === styleId) ? styleId : (styles[0]?.id || '')
 
   useEffect(() => { loadPeople().then(setPeople) }, [loadPeople])
   useEffect(() => { loadPending().then(setPending) }, [loadPending])
@@ -29,8 +35,7 @@ export default function GeneratePage({ loadPeople, loadPending, loadStyles, onGe
     const loading = gachaId ? loadStyles(gachaId) : Promise.resolve([])
     loading.then((list) => {
       if (cancelled) return
-      setStyles(list)
-      setStyleId(list[0]?.id || '')
+      setLoadedStyles({ gachaId, list })
     })
     return () => { cancelled = true }
   }, [gachaId, loadStyles])
@@ -40,14 +45,14 @@ export default function GeneratePage({ loadPeople, loadPending, loadStyles, onGe
   }
 
   function handleGenerate() {
-    if (!personId || !file) return
+    if (!personId || !file || !stylesLoaded) return
     const id = nextJobId.current++
-    const style = styles.find((s) => s.id === styleId)
+    const style = styles.find((s) => s.id === activeStyleId)
     const who = selectedPerson ? `${selectedPerson.name}（${selectedPerson.title}）` : `#${personId}`
     // 同じ人物を複数スタイルで回すため、スタイル名までラベルに出す
     const label = styles.length > 1 && style ? `${who} — ${style.label}` : who
     setJobs((prev) => [{ id, label, status: 'running', error: '' }, ...prev])
-    onGenerate(Number(personId), file, styleId || undefined)
+    onGenerate(Number(personId), file, activeStyleId || undefined)
       .then(() => {
         setJobs((prev) => prev.map((j) => (j.id === id ? { ...j, status: 'done' } : j)))
         refreshPending()
@@ -95,7 +100,7 @@ export default function GeneratePage({ loadPeople, loadPending, loadStyles, onGe
           <select
             id="style-select"
             className="gacha-select"
-            value={styleId}
+            value={activeStyleId}
             onChange={(e) => setStyleId(e.target.value)}
           >
             {styles.map((s) => (
@@ -115,7 +120,7 @@ export default function GeneratePage({ loadPeople, loadPending, loadStyles, onGe
         />
       </Field>
 
-      <Button onClick={handleGenerate} disabled={!personId || !file}>
+      <Button onClick={handleGenerate} disabled={!personId || !file || !stylesLoaded}>
         生成
       </Button>
 
