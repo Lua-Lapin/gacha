@@ -27,7 +27,7 @@ export const gachas = [
     id: 'izakaya',
     title: '居酒屋役職ガチャ',
     banner: izakayaBanner,
-    endsAt: '2026-12-31T23:59:00+09:00',
+    endsAt: '2026-07-31T23:59:00+09:00',
     words: { adjectives, topics: Object.keys(izakayaMenuInfo) },
     itemInfo: izakayaMenuInfo,
     itemLabel: '役職',

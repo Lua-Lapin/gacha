@@ -21,17 +21,21 @@ import App from './App.jsx'
 import { REVEAL_MS } from './components/GachaReveal.jsx'
 import { drawTitle } from './lib/draw.js'
 
-const cocktailTopics = getGachaById('cocktail').words.topics
+const seaTopics = getGachaById('sea').words.topics
 
 afterEach(cleanup)
 afterEach(() => { fetchPeopleMock.mockClear(); fetchPeopleMock.mockResolvedValue([]); drawTitle.mockClear() })
-beforeEach(() => vi.useFakeTimers())
+beforeEach(() => {
+  vi.useFakeTimers()
+  // 海ガチャの公開期間中に固定する。実時間に依存すると 2026-09-01 以降にテストが壊れる。
+  vi.setSystemTime(new Date('2026-08-15T12:00:00+09:00'))
+})
 afterEach(() => vi.useRealTimers())
 
 describe('App ガチャ演出フェーズ', () => {
   it('回すと演出オーバーレイが出て、REVEAL_MS 後に結果が出る', async () => {
     render(<App />)
-    fireEvent.click(screen.getByText('カクテル役職ガチャ'))
+    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
     await act(async () => {})
     fireEvent.click(screen.getByLabelText('ガチャを回す'))
     expect(screen.getByTestId('reveal-overlay')).toBeInTheDocument()
@@ -50,7 +54,7 @@ describe('App ナビゲーション', () => {
 
   it('ガチャ画面の戻るボタンで一覧へ戻る', () => {
     render(<App />)
-    fireEvent.click(screen.getByText('カクテル役職ガチャ'))
+    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
     fireEvent.click(screen.getByRole('button', { name: '← 一覧に戻る' }))
     expect(screen.getByText('新着ガチャ')).toBeInTheDocument()
   })
@@ -59,33 +63,41 @@ describe('App ナビゲーション', () => {
     const { container } = render(<App />)
     expect(container.querySelector('.view-nav')).toBeNull()
   })
+
+  it('hides gachas whose deadline has passed', () => {
+    render(<App />)
+    // カクテル(6/30締切)と居酒屋(7/31締切)は固定時刻 8/15 時点で終了している
+    expect(screen.queryByText('カクテル役職ガチャ')).toBeNull()
+    expect(screen.queryByText('居酒屋役職ガチャ')).toBeNull()
+    expect(screen.getByText('海の生き物役職ガチャ')).toBeInTheDocument()
+  })
 })
 
 describe('役職(topic)の重複排除', () => {
   it('ガチャ画面に入ると該当ガチャの使用済み topic をfetchし、抽選から除外する', async () => {
-    fetchPeopleMock.mockResolvedValueOnce([{ topic: 'モヒート' }, { topic: 'マティーニ' }])
+    fetchPeopleMock.mockResolvedValueOnce([{ topic: 'クラゲ' }, { topic: 'シャチ' }])
     render(<App />)
-    fireEvent.click(screen.getByText('カクテル役職ガチャ'))
+    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
     await act(async () => {})
-    expect(fetchPeopleMock).toHaveBeenCalledWith('cocktail')
+    expect(fetchPeopleMock).toHaveBeenCalledWith('sea')
     fireEvent.click(screen.getByLabelText('ガチャを回す'))
     expect(drawTitle).toHaveBeenCalledTimes(1)
     const excluded = drawTitle.mock.calls[0][1]
-    expect(excluded).toEqual(expect.arrayContaining(['モヒート', 'マティーニ']))
+    expect(excluded).toEqual(expect.arrayContaining(['クラゲ', 'シャチ']))
     expect(excluded).toHaveLength(2)
   })
 
   it('使用済み topic 取得中は抽選ボタンを無効化する', () => {
     fetchPeopleMock.mockReturnValueOnce(new Promise(() => {}))
     render(<App />)
-    fireEvent.click(screen.getByText('カクテル役職ガチャ'))
+    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
     expect(screen.getByLabelText('ガチャを回す')).toBeDisabled()
   })
 
   it('全 topic が使用済みの場合は抽選ボタンを無効化し案内を表示する', async () => {
-    fetchPeopleMock.mockResolvedValueOnce(cocktailTopics.map((t) => ({ topic: t })))
+    fetchPeopleMock.mockResolvedValueOnce(seaTopics.map((t) => ({ topic: t })))
     render(<App />)
-    fireEvent.click(screen.getByText('カクテル役職ガチャ'))
+    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
     await act(async () => {})
     expect(screen.getByLabelText('ガチャを回す')).toBeDisabled()
     expect(screen.getByText('役職はすべて割り当て済みです')).toBeInTheDocument()
@@ -93,12 +105,12 @@ describe('役職(topic)の重複排除', () => {
 
   it('保存すると、同一セッション内でその topic が次の抽選から除外される', async () => {
     drawTitle.mockReturnValueOnce({
-      adjective: '落ち着いた', topic: 'モヒート', title: '落ち着いたモヒート',
-      info: { meaning: '心の渇きを癒して', note: 'x', details: ['ラム'] },
-      gachaId: 'cocktail',
+      adjective: 'ゆらゆらした', topic: 'クラゲ', title: 'ゆらゆらしたクラゲ',
+      info: { meaning: 'ただよう癒し', note: 'x', details: ['透明'] },
+      gachaId: 'sea',
     })
     render(<App />)
-    fireEvent.click(screen.getByText('カクテル役職ガチャ'))
+    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
     await act(async () => {})
     fireEvent.click(screen.getByLabelText('ガチャを回す'))
     act(() => { vi.advanceTimersByTime(REVEAL_MS) })
@@ -109,6 +121,6 @@ describe('役職(topic)の重複排除', () => {
     fireEvent.click(screen.getByText('もう一回'))
     fireEvent.click(screen.getByLabelText('ガチャを回す'))
     expect(drawTitle).toHaveBeenCalledTimes(2)
-    expect(drawTitle.mock.calls[1][1]).toEqual(expect.arrayContaining(['モヒート']))
+    expect(drawTitle.mock.calls[1][1]).toEqual(expect.arrayContaining(['クラゲ']))
   })
 })
