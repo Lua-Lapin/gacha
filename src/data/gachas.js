@@ -1,8 +1,10 @@
 import cocktailBanner from '../assets/cocktail-banner.png'
 import izakayaBanner from '../assets/izakaya-banner.png'
+import seaBanner from '../assets/sea-banner.png'
 import { adjectives } from './words.js'
 import { cocktailInfo } from './cocktails.js'
 import { izakayaMenuInfo } from './izakaya.js'
+import { seaAdjectives, seaCreatureInfo } from './sea.js'
 
 // 各ガチャの完全定義。id をキーに、フロント/サーバー双方で参照する。
 // words: 抽選に使う { adjectives, topics }
@@ -31,6 +33,17 @@ export const gachas = [
     itemLabel: '役職',
     itemEmoji: '🍶',
     detailLabel: '材料',
+  },
+  {
+    id: 'sea',
+    title: '海の生き物役職ガチャ',
+    banner: seaBanner,
+    endsAt: '2026-08-31T23:59:00+09:00',
+    words: { adjectives: seaAdjectives, topics: Object.keys(seaCreatureInfo) },
+    itemInfo: seaCreatureInfo,
+    itemLabel: '海の生き物',
+    itemEmoji: '🐙',
+    detailLabel: '特徴',
   },
 ]
 

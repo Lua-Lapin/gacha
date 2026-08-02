@@ -75,6 +75,11 @@ describe('buildTabs', () => {
   it('returns only the all tab for no entries', () => {
     expect(buildTabs([])).toEqual([{ id: 'all', label: 'すべて', count: 0 }])
   })
+
+  it('labels the sea gacha', () => {
+    const tabs = buildTabs([{ id: 1, name: 'n', title: 't', image: 'i', createdAt: '', gachaId: 'sea' }])
+    expect(tabs[1]).toEqual({ id: 'sea', label: '🐙 海の生き物', count: 1 })
+  })
 })
 
 describe('filterByGacha', () => {

@@ -21,6 +21,7 @@ export function tweetHref(entry, base = BASE) {
 const GACHA_LABELS = {
   cocktail: '🍸 カクテル',
   izakaya: '🍶 居酒屋',
+  sea: '🐙 海の生き物',
 }
 
 export function buildTabs(entries) {

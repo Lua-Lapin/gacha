@@ -135,6 +135,7 @@ export default function App() {
                 info={result.info}
                 itemLabel={selectedGachaObj.itemLabel}
                 itemEmoji={selectedGachaObj.itemEmoji}
+                detailLabel={selectedGachaObj.detailLabel}
               />
               <SaveResult
                 onSave={async (name) => {
