@@ -1,10 +1,14 @@
 @import './theme.css';
 
 .gacha-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 12px 28px;
   font-size: 1rem;
   font-weight: 700;
   font-family: inherit;
+  text-decoration: none;
   border: none;
   border-radius: var(--gacha-radius-pill);
   cursor: pointer;
