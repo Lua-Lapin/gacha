@@ -29,6 +29,8 @@
         background: linear-gradient(#fff5f5, rgba(255, 245, 245, 0.9));
       }
       #tabs::-webkit-scrollbar, #style-tabs::-webkit-scrollbar { display: none; }
+      /* サブタブは sticky にしない。2段が同じ top で重なるのを避ける */
+      #style-tabs { position: static; margin-top: -1rem; }
       #style-tabs .tab { font-size: 0.85em; }
       .tab {
         flex: 0 0 auto; cursor: pointer;
