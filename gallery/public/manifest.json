@@ -1,5 +1,13 @@
 [
   {
+    "id": 102,
+    "name": "さとう",
+    "title": "甚だしいタツノオトシゴ",
+    "image": "images/102.png",
+    "createdAt": "2026-08-02T09:05:10.974Z",
+    "gachaId": "sea"
+  },
+  {
     "id": 99,
     "name": "るん",
     "title": "不敵な冷奴",
