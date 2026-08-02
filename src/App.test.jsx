@@ -132,16 +132,24 @@ describe('役職(topic)の重複排除', () => {
 })
 
 describe('役職の指定作成', () => {
-  it('ガチャ画面のフォームから作成すると gachaId 付きで保存される', async () => {
+  async function selectSeaGacha() {
     render(<App />)
     fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
     await act(async () => {})
+  }
+
+  async function createManualTitle({ name = 'あや', adjective = 'ゆらゆらした', topic = 'メンダコ' } = {}) {
     fireEvent.click(screen.getByRole('button', { name: '役職を指定して作る' }))
-    fireEvent.change(screen.getByLabelText('名前'), { target: { value: 'あや' } })
-    fireEvent.change(screen.getByLabelText('形容詞'), { target: { value: 'ゆらゆらした' } })
-    fireEvent.change(screen.getByLabelText('海の生き物'), { target: { value: 'メンダコ' } })
+    fireEvent.change(screen.getByLabelText('名前'), { target: { value: name } })
+    fireEvent.change(screen.getByLabelText('形容詞'), { target: { value: adjective } })
+    fireEvent.change(screen.getByLabelText('海の生き物'), { target: { value: topic } })
     fireEvent.click(screen.getByRole('button', { name: '作成' }))
     await act(async () => {})
+  }
+
+  it('ガチャ画面のフォームから作成すると gachaId 付きで保存される', async () => {
+    await selectSeaGacha()
+    await createManualTitle()
     expect(saveResult).toHaveBeenCalledWith(
       expect.objectContaining({
         name: 'あや',
@@ -156,34 +164,37 @@ describe('役職の指定作成', () => {
   })
 
   it('作成したお題は以降のガチャ抽選から除外される', async () => {
-    render(<App />)
-    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
-    await act(async () => {})
-    fireEvent.click(screen.getByRole('button', { name: '役職を指定して作る' }))
-    fireEvent.change(screen.getByLabelText('名前'), { target: { value: 'あや' } })
-    fireEvent.change(screen.getByLabelText('形容詞'), { target: { value: 'ゆらゆらした' } })
-    fireEvent.change(screen.getByLabelText('海の生き物'), { target: { value: 'メンダコ' } })
-    fireEvent.click(screen.getByRole('button', { name: '作成' }))
-    await act(async () => {})
+    await selectSeaGacha()
+    await createManualTitle()
     fireEvent.click(screen.getByLabelText('ガチャを回す'))
     expect(drawTitle.mock.calls[0][1]).toEqual(expect.arrayContaining(['メンダコ']))
   })
 
   it('全 topic が使用済みでも指定作成のフォームは使える', async () => {
     fetchPeopleMock.mockResolvedValueOnce(seaTopics.map((t) => ({ topic: t })))
-    render(<App />)
-    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
-    await act(async () => {})
+    await selectSeaGacha()
     expect(screen.getByLabelText('ガチャを回す')).toBeDisabled()
     expect(screen.getByRole('button', { name: '役職を指定して作る' })).toBeEnabled()
   })
 
   it('ガチャ結果の表示中はフォームを出さない', async () => {
-    render(<App />)
-    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
-    await act(async () => {})
+    await selectSeaGacha()
     fireEvent.click(screen.getByLabelText('ガチャを回す'))
     act(() => { vi.advanceTimersByTime(REVEAL_MS) })
     expect(screen.queryByRole('button', { name: '役職を指定して作る' })).toBeNull()
+  })
+
+  it('使用済み topic 取得中に指定作成しても、取得完了後にその topic が失われない', async () => {
+    let resolveFetch
+    fetchPeopleMock.mockReturnValueOnce(new Promise((resolve) => { resolveFetch = resolve }))
+    render(<App />)
+    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
+    await act(async () => {})
+    await createManualTitle({ topic: 'メンダコ' })
+    resolveFetch([{ topic: 'クラゲ' }])
+    await act(async () => {})
+    fireEvent.click(screen.getByLabelText('ガチャを回す'))
+    const excluded = drawTitle.mock.calls[0][1]
+    expect(excluded).toEqual(expect.arrayContaining(['メンダコ', 'クラゲ']))
   })
 })

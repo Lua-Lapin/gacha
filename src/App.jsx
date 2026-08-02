@@ -70,9 +70,11 @@ export default function App() {
     setSelectedGacha(id)
     setView('gacha')
     setTopicsStatus('loading')
+    setUsedTopics([])
     fetchPeople(id)
       .then((people) => {
-        setUsedTopics(people.map((p) => p.topic))
+        // 読み込み中に指定作成された topic を取りこぼさないため、上書きせずマージする。
+        setUsedTopics((prev) => [...new Set([...prev, ...people.map((p) => p.topic)])])
         setTopicsStatus('ready')
       })
       .catch(() => setTopicsStatus('error'))
