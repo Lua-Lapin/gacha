@@ -92,4 +92,14 @@ describe('ManualTitleForm', () => {
     expect(await screen.findByText('保存に失敗しました')).toBeTruthy()
     expect(screen.getByLabelText('名前').value).toBe('あや')
   })
+
+  it('エラー表示後に入力を変更するとエラーメッセージが消える', async () => {
+    const onCreate = vi.fn().mockRejectedValue(new Error('保存に失敗しました'))
+    render(<ManualTitleForm itemLabel="海の生き物" onCreate={onCreate} />)
+    await openAndFill()
+    await userEvent.click(screen.getByRole('button', { name: '作成' }))
+    expect(await screen.findByText('保存に失敗しました')).toBeTruthy()
+    await userEvent.type(screen.getByLabelText('名前'), 'い')
+    expect(screen.queryByText('保存に失敗しました')).toBeNull()
+  })
 })

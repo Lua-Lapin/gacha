@@ -17,6 +17,14 @@ export default function ManualTitleForm({ itemLabel, onCreate }) {
   const values = { name: name.trim(), adjective: adjective.trim(), topic: topic.trim() }
   const canSubmit = Boolean(values.name && values.adjective && values.topic)
 
+  function handleChange(setter) {
+    return (e) => {
+      setter(e.target.value)
+      setError('')
+      setCreated(false)
+    }
+  }
+
   async function handleCreate() {
     if (!canSubmit) return
     setError('')
@@ -48,7 +56,7 @@ export default function ManualTitleForm({ itemLabel, onCreate }) {
             id="manual-name"
             className="gacha-input"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={handleChange(setName)}
           />
         </Field>
         <Field label="形容詞" htmlFor="manual-adjective">
@@ -56,7 +64,7 @@ export default function ManualTitleForm({ itemLabel, onCreate }) {
             id="manual-adjective"
             className="gacha-input"
             value={adjective}
-            onChange={(e) => setAdjective(e.target.value)}
+            onChange={handleChange(setAdjective)}
           />
         </Field>
         <Field label={itemLabel} htmlFor="manual-topic">
@@ -64,7 +72,7 @@ export default function ManualTitleForm({ itemLabel, onCreate }) {
             id="manual-topic"
             className="gacha-input"
             value={topic}
-            onChange={(e) => setTopic(e.target.value)}
+            onChange={handleChange(setTopic)}
           />
         </Field>
         <Button onClick={handleCreate} disabled={!canSubmit}>作成</Button>
