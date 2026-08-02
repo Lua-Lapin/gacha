@@ -26,9 +26,9 @@
 - `as === 'button'` のときのみ `type="button"` を既定で付与する。
   呼び出し側が `type` を渡した場合はそれを優先する。
 - クラス名の組み立て（`gacha-btn gacha-btn--{variant}` + `className`）は現状維持。
-- CSS は変更しない。`.gacha-btn` は `display` を指定していないため、
-  `<a>` として使ったときにパディングが効くよう `.list-actions` 側で
-  flex アイテムとして並べる（下記）。テキストは中央寄せにする。
+- `.gacha-btn` の見た目は、`<a>` として使っても `<button>` と揃うように
+  4節で調整する（`display: inline-flex` など）。既存の `<button>` 用途の
+  見た目は変えない。
 
 リンクとして使う理由: 新規タブで開く導線は `<a target="_blank">` が正しい
 セマンティクス（中クリック、URL プレビュー、ポップアップブロックの回避）を持つ。
@@ -39,11 +39,14 @@
 `src/lib/galleryUrl.js` を新設し、次の値を export する:
 
 ```js
-export const galleryUrl = import.meta.env.VITE_GALLERY_URL ?? 'http://localhost:5174'
+export const galleryUrl = import.meta.env.VITE_GALLERY_URL || 'http://localhost:5175'
 ```
 
-既定値が 5174 なのは、メインのフロントが 5173 を使うため
-`npm run gallery:dev` が 5174 にフォールバックするから。
+既定値が 5175 なのは、`gallery/vite.config.js` で
+`server: { port: 5175, strictPort: true }` を指定してギャラリーの
+起動ポートを固定しているため（`.claude/launch.json` の gallery 設定も同じポート）。
+`??` ではなく `||` を使うのは、`.env` の `VITE_GALLERY_URL=`（空文字）を
+`??` はそのまま通してしまい、`href=""` の自己リンクになってしまうため。
 ポートが変わる環境では `VITE_GALLERY_URL` で上書きする。
 
 ### 3. `App.jsx` の一覧画面
@@ -93,7 +96,7 @@ export const galleryUrl = import.meta.env.VITE_GALLERY_URL ?? 'http://localhost:
 
 - 既存の「カードを生成する」クリックで生成画面に遷移するテストが
   そのまま通ること（`getByRole('button', { name: 'カードを生成する' })`）。
-- 「ギャラリーを見る」リンクの `href` が既定値 `http://localhost:5174`、
+- 「ギャラリーを見る」リンクの `href` が既定値 `http://localhost:5175`、
   `target="_blank"`、`rel` に `noopener` を含むこと。
 
 ## スコープ外

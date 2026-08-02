@@ -21,6 +21,7 @@ import App from './App.jsx'
 import { REVEAL_MS } from './components/GachaReveal.jsx'
 import { drawTitle } from './lib/draw.js'
 import { saveResult } from './lib/api.js'
+import { galleryUrl } from './lib/galleryUrl.js'
 
 const seaTopics = getGachaById('sea').words.topics
 
@@ -56,6 +57,14 @@ describe('App ナビゲーション', () => {
     render(<App />)
     fireEvent.click(screen.getByRole('button', { name: 'カードを生成する' }))
     expect(screen.getByRole('button', { name: '← 一覧に戻る' })).toBeInTheDocument()
+  })
+
+  it('一覧にローカルギャラリーを別タブで開くリンクがある', () => {
+    render(<App />)
+    const link = screen.getByRole('link', { name: 'ギャラリーを見る' })
+    expect(link).toHaveAttribute('href', galleryUrl)
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link.getAttribute('rel')).toContain('noopener')
   })
 
   it('ガチャ画面の戻るボタンで一覧へ戻る', () => {

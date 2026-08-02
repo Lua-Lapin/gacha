@@ -207,9 +207,10 @@ Task 4 の `App.test.jsx` で既定値が使われることを検証する。
 
 ```js
 // ローカルで起動しているギャラリーの URL。
-// メインのフロントが 5173 を使うため、`npm run gallery:dev` は 5174 にフォールバックする。
+// ギャラリーは gallery/vite.config.js で 5175 に固定している
+// （.claude/launch.json の gallery 設定も同じポート）。
 // 別のポートで動かす場合は VITE_GALLERY_URL で上書きする。
-export const galleryUrl = import.meta.env.VITE_GALLERY_URL ?? 'http://localhost:5174'
+export const galleryUrl = import.meta.env.VITE_GALLERY_URL || 'http://localhost:5175'
 ```
 
 - [ ] **Step 2: Commit**
@@ -237,7 +238,7 @@ git commit -m "feat: add gallery URL module"
   it('一覧にローカルギャラリーを別タブで開くリンクがある', () => {
     render(<App />)
     const link = screen.getByRole('link', { name: 'ギャラリーを見る' })
-    expect(link).toHaveAttribute('href', 'http://localhost:5174')
+    expect(link).toHaveAttribute('href', galleryUrl)
     expect(link).toHaveAttribute('target', '_blank')
     expect(link.getAttribute('rel')).toContain('noopener')
   })
@@ -368,9 +369,11 @@ npm run dev
 npm run gallery:dev
 ```
 
-`npm run gallery:dev` の出力に表示された URL が `http://localhost:5174` で
-あることを確認する。違うポートなら `src/lib/galleryUrl.js` の既定値ではなく
-`.env` の `VITE_GALLERY_URL` で合わせる（既定値は変更しない）。
+`npm run gallery:dev` の出力に表示された URL が `http://localhost:5175` で
+あることを確認する。`gallery/vite.config.js` で `strictPort: true` を指定して
+いるため、ポートが埋まっている場合は起動に失敗する。違うポートで動かす場合は
+`src/lib/galleryUrl.js` の既定値ではなく `.env` の `VITE_GALLERY_URL` で
+合わせる（既定値は変更しない）。
 
 フロント（`http://localhost:5173`）の一覧画面で確認する:
 
