@@ -15,6 +15,7 @@ export default function GeneratePage({ loadPeople, loadPending, loadStyles, onGe
   const [pending, setPending] = useState([])
   const [publishing, setPublishing] = useState(false)
   const [publishError, setPublishError] = useState('')
+  const [stylesError, setStylesError] = useState('')
   const nextJobId = useRef(1)
 
   const selectedPerson = people.find((p) => String(p.id) === String(personId))
@@ -35,7 +36,12 @@ export default function GeneratePage({ loadPeople, loadPending, loadStyles, onGe
     const loading = gachaId ? loadStyles(gachaId) : Promise.resolve([])
     loading.then((list) => {
       if (cancelled) return
+      setStylesError('')
       setLoadedStyles({ gachaId, list })
+    }).catch((e) => {
+      if (cancelled) return
+      // スタイルが取れないと生成できないのでボタンは無効のまま。理由だけは伝える。
+      setStylesError(String(e.message || e))
     })
     return () => { cancelled = true }
   }, [gachaId, loadStyles])
@@ -123,6 +129,8 @@ export default function GeneratePage({ loadPeople, loadPending, loadStyles, onGe
       <Button onClick={handleGenerate} disabled={!personId || !file || !stylesLoaded}>
         生成
       </Button>
+
+      {stylesError && <p className="generate-page__error">スタイルの取得に失敗しました: {stylesError}</p>}
 
       {jobs.length > 0 && (
         <ul className="generate-page__jobs">

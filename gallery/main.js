@@ -176,7 +176,11 @@ if (typeof document !== 'undefined') {
       function draw() {
         const styleTabs = buildStyleTabs(entries, active)
         // タブが消えたのに絞り込みだけ残る状態を防ぐ
-        if (!styleTabs.some((t) => t.id === activeStyle)) activeStyle = 'all'
+        if (!styleTabs.some((t) => t.id === activeStyle)) {
+          activeStyle = 'all'
+          // 表示内容とURLがずれたまま共有されないよう、リセット分をハッシュにも反映する
+          syncHash()
+        }
         tabsEl.innerHTML = renderTabs(tabs, active)
         styleTabsEl.innerHTML = renderStyleTabs(styleTabs, activeStyle)
         const shown = filterByStyle(filterByGacha(entries, active), activeStyle)

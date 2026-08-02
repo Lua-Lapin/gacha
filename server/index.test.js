@@ -73,6 +73,16 @@ describe('POST /api/generate', () => {
     expect(db.listPendingGenerations()).toHaveLength(1)
   })
 
+  it('returns 400 without generating when the person has an unknown gachaId', async () => {
+    const id = db.insertPerson({ name: 'b', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'unknown-gacha' })
+    const res = await request(app)
+      .post('/api/generate')
+      .field('personId', String(id))
+      .attach('avatar', Buffer.from('avatar'), 'avatar.png')
+    expect(res.status).toBe(400)
+    expect(generateImage).not.toHaveBeenCalled()
+  })
+
   it('uses izakaya template when person is in izakaya gacha', async () => {
     const id = db.insertPerson({
       name: 'b', adjective: 'a', topic: 'ポテトサラダ',

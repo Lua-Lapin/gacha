@@ -32,6 +32,8 @@
       /* サブタブは sticky にしない。2段が同じ top で重なるのを避ける */
       #style-tabs { position: static; margin-top: -1rem; }
       #style-tabs .tab { font-size: 0.85em; }
+      /* スタイルタブが無いガチャで余白だけが残らないようにする */
+      #style-tabs:empty { display: none; }
       .tab {
         flex: 0 0 auto; cursor: pointer;
         padding: 0.5rem 1rem; border-radius: 999px;

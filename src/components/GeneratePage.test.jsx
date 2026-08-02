@@ -170,6 +170,17 @@ describe('style selection', () => {
     await waitFor(() => expect(props.onGenerate).toHaveBeenCalledWith(1, file, 'standard'))
   })
 
+  it('shows an error and keeps 生成 disabled when loadStyles fails', async () => {
+    renderPage({
+      loadPeople: vi.fn().mockResolvedValue(seaPeople),
+      loadStyles: vi.fn().mockRejectedValue(new Error('failed to fetch')),
+    })
+    await screen.findByText(/怒りのタツノオトシゴ/)
+    await userEvent.selectOptions(screen.getByLabelText('人を選択'), '2')
+    expect(await screen.findByText(/failed to fetch/)).toBeTruthy()
+    expect(screen.getByRole('button', { name: '生成' })).toBeDisabled()
+  })
+
   it('loads styles once per gacha when the person changes', async () => {
     const loadStyles = vi.fn().mockResolvedValue(seaStyles)
     renderPage({

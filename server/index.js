@@ -66,9 +66,10 @@ export function createApp({ db, generateImage, writeGenerationFiles, publishPend
 
     // プロンプト構築は生成前に済ませる。未知のスタイルIDはここで 400 になり、
     // 画像生成もDB記録も一切行わない。
-    const styleId = req.body.styleId || defaultStyleId(person.gacha_id)
+    let styleId
     let prompt
     try {
+      styleId = req.body.styleId || defaultStyleId(person.gacha_id)
       prompt = buildPrompt(person.gacha_id, person.title, styleId)
     } catch (err) {
       return res.status(400).json({ error: String(err.message || err) })
