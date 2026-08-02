@@ -8,3 +8,8 @@ export function formatDeadline(endsAt) {
   const [, month, day, hour, minute] = m
   return `${Number(month)}月${Number(day)}日 ${hour}:${minute} まで`
 }
+
+// endsAt を過ぎたガチャは一覧に出さない。now はテストから差し替えられるようにする。
+export function isActive(endsAt, now = new Date()) {
+  return new Date(endsAt) > now
+}

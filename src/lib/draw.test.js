@@ -59,8 +59,8 @@ describe('itemInfo integrity per gacha', () => {
         expect(info, `${g.id}:${t}`).toBeTruthy()
         expect(info.meaning, `${g.id}:${t}`).toBeTruthy()
         expect(info.note, `${g.id}:${t}`).toBeTruthy()
-        expect(Array.isArray(info.ingredients), `${g.id}:${t}`).toBe(true)
-        expect(info.ingredients.length, `${g.id}:${t}`).toBeGreaterThan(0)
+        expect(Array.isArray(info.details), `${g.id}:${t}`).toBe(true)
+        expect(info.details.length, `${g.id}:${t}`).toBeGreaterThan(0)
       }
     }
   })

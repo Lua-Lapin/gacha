@@ -24,7 +24,7 @@
 }
 .cocktail-meaning { margin: 0 0 8px; font-weight: 700; color: #ff5277; }
 .cocktail-note { margin: 0 0 6px; color: #444; font-size: 0.9rem; }
-.cocktail-ingredients { margin: 0; color: #555; font-size: 0.85rem; }
+.cocktail-details { margin: 0; color: #555; font-size: 0.85rem; }
 
 @media (prefers-reduced-motion: reduce) {
   .result-title, .cocktail-info { animation: none; }

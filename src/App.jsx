@@ -11,6 +11,7 @@ import { gachas, getGachaById } from './data/gachas.js'
 import catImage from './assets/gacha-cat.png'
 import { drawTitle, pickCapsuleColor } from './lib/draw.js'
 import { saveResult, fetchPeople, generate, fetchPending, publishAll } from './lib/api.js'
+import { isActive } from './lib/deadline.js'
 
 // phase: 'idle' | 'revealing' | 'revealed'
 export default function App() {
@@ -92,7 +93,7 @@ export default function App() {
             className="generate-entry"
             onClick={() => setView('generate')}
           >カードを生成する</button>
-          <GachaList gachas={gachas} onSelect={handleSelectGacha} />
+          <GachaList gachas={gachas.filter((g) => isActive(g.endsAt))} onSelect={handleSelectGacha} />
         </>
       )}
 
@@ -135,6 +136,7 @@ export default function App() {
                 info={result.info}
                 itemLabel={selectedGachaObj.itemLabel}
                 itemEmoji={selectedGachaObj.itemEmoji}
+                detailLabel={selectedGachaObj.detailLabel}
               />
               <SaveResult
                 onSave={async (name) => {
