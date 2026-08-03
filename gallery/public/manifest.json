@@ -1,11 +1,21 @@
 [
   {
+    "id": 122,
+    "name": "るん",
+    "title": "群れからはぐれたタチウオ",
+    "image": "images/122.png",
+    "createdAt": "2026-08-03T14:58:04.518Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
     "id": 120,
     "name": "きょん",
     "title": "やたら元気なシーラカンス",
     "image": "images/120.png",
     "createdAt": "2026-08-02T11:02:46.092Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 119,
@@ -13,7 +23,8 @@
     "title": "せっかちなアザラシ",
     "image": "images/119.png",
     "createdAt": "2026-08-02T10:55:42.884Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 118,
@@ -21,7 +32,8 @@
     "title": "しょっぱいトビウオ",
     "image": "images/118.png",
     "createdAt": "2026-08-02T10:48:23.372Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 117,
@@ -29,7 +41,8 @@
     "title": "すぐ謝るタカアシガニ",
     "image": "images/117.png",
     "createdAt": "2026-08-02T10:42:46.814Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 116,
@@ -37,7 +50,8 @@
     "title": "やかましいクリオネ",
     "image": "images/116.png",
     "createdAt": "2026-08-02T10:33:37.433Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 115,
@@ -45,7 +59,8 @@
     "title": "潮の香りがするオウムガイ",
     "image": "images/115.png",
     "createdAt": "2026-08-02T10:25:09.939Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 114,
@@ -53,7 +68,8 @@
     "title": "渋いカニ",
     "image": "images/114.png",
     "createdAt": "2026-08-02T10:23:32.221Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 113,
@@ -61,7 +77,8 @@
     "title": "さわやかなシロイルカ",
     "image": "images/113.png",
     "createdAt": "2026-08-02T10:21:47.813Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 112,
@@ -69,7 +86,8 @@
     "title": "すぐ謝るホタテ",
     "image": "images/112.png",
     "createdAt": "2026-08-02T10:16:58.053Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 111,
@@ -77,7 +95,8 @@
     "title": "潮の香りがするハリセンボン",
     "image": "images/111.png",
     "createdAt": "2026-08-02T10:12:01.753Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 110,
@@ -85,7 +104,8 @@
     "title": "ひたむきなイルカ",
     "image": "images/110.png",
     "createdAt": "2026-08-02T10:11:38.059Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 109,
@@ -93,7 +113,8 @@
     "title": "ひたむきなイルカ",
     "image": "images/109.png",
     "createdAt": "2026-08-02T09:56:28.138Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 108,
@@ -101,7 +122,8 @@
     "title": "怒りのタツノオトシゴ",
     "image": "images/108.png",
     "createdAt": "2026-08-02T09:31:26.990Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 107,
@@ -109,7 +131,8 @@
     "title": "流されがちなイソギンチャク",
     "image": "images/107.png",
     "createdAt": "2026-08-02T09:30:32.409Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 106,
@@ -117,7 +140,8 @@
     "title": "まじめなサンゴ",
     "image": "images/106.png",
     "createdAt": "2026-08-02T09:22:53.721Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 105,
@@ -125,7 +149,8 @@
     "title": "いつも酒飲んでるメンダコ",
     "image": "images/105.png",
     "createdAt": "2026-08-02T09:22:53.593Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 104,
@@ -133,7 +158,8 @@
     "title": "気まずいウニ",
     "image": "images/104.png",
     "createdAt": "2026-08-02T09:11:04.900Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 103,
@@ -141,7 +167,8 @@
     "title": "群れからはぐれたタチウオ",
     "image": "images/103.png",
     "createdAt": "2026-08-02T09:10:08.439Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 102,
@@ -149,7 +176,8 @@
     "title": "甚だしいタツノオトシゴ",
     "image": "images/102.png",
     "createdAt": "2026-08-02T09:05:10.974Z",
-    "gachaId": "sea"
+    "gachaId": "sea",
+    "styleId": "card"
   },
   {
     "id": 99,
@@ -157,7 +185,8 @@
     "title": "不敵な冷奴",
     "image": "images/99.png",
     "createdAt": "2026-07-24T15:01:42.603Z",
-    "gachaId": "izakaya"
+    "gachaId": "izakaya",
+    "styleId": "standard"
   },
   {
     "id": 97,
@@ -165,7 +194,8 @@
     "title": "軽やかなモヒート",
     "image": "images/97.png",
     "createdAt": "2026-07-24T14:57:10.437Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 95,
@@ -173,7 +203,8 @@
     "title": "なんか強そうなブラッディメアリー",
     "image": "images/95.png",
     "createdAt": "2026-07-24T14:48:05.922Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 94,
@@ -181,7 +212,8 @@
     "title": "冷静すぎるブルーハワイ",
     "image": "images/94.png",
     "createdAt": "2026-07-24T14:46:07.790Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 92,
@@ -189,7 +221,8 @@
     "title": "すぐ謝るきゅうりの浅漬け",
     "image": "images/92.png",
     "createdAt": "2026-07-24T14:41:48.963Z",
-    "gachaId": "izakaya"
+    "gachaId": "izakaya",
+    "styleId": "standard"
   },
   {
     "id": 91,
@@ -197,7 +230,8 @@
     "title": "無駄に熱いマティーニ",
     "image": "images/91.png",
     "createdAt": "2026-07-24T14:41:48.582Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 87,
@@ -205,7 +239,8 @@
     "title": "口数の多いブラックルシアン",
     "image": "images/87.png",
     "createdAt": "2026-07-12T11:54:29.656Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 86,
@@ -213,7 +248,8 @@
     "title": "眠そうな焼き餃子",
     "image": "images/86.png",
     "createdAt": "2026-07-12T11:54:28.234Z",
-    "gachaId": "izakaya"
+    "gachaId": "izakaya",
+    "styleId": "standard"
   },
   {
     "id": 83,
@@ -221,7 +257,8 @@
     "title": "踊り狂う揚げ出し豆腐",
     "image": "images/83.png",
     "createdAt": "2026-07-12T09:11:43.764Z",
-    "gachaId": "izakaya"
+    "gachaId": "izakaya",
+    "styleId": "standard"
   },
   {
     "id": 81,
@@ -229,7 +266,8 @@
     "title": "ピリついたたこわさ",
     "image": "images/81.png",
     "createdAt": "2026-07-12T09:01:30.172Z",
-    "gachaId": "izakaya"
+    "gachaId": "izakaya",
+    "styleId": "standard"
   },
   {
     "id": 80,
@@ -237,7 +275,8 @@
     "title": "腰の低いホワイトレディ",
     "image": "images/80.png",
     "createdAt": "2026-07-12T09:01:26.210Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 77,
@@ -245,7 +284,8 @@
     "title": "踊り狂う唐揚げ",
     "image": "images/77.png",
     "createdAt": "2026-07-11T16:08:27.228Z",
-    "gachaId": "izakaya"
+    "gachaId": "izakaya",
+    "styleId": "standard"
   },
   {
     "id": 76,
@@ -253,7 +293,8 @@
     "title": "反省しているテキーラサンライズ",
     "image": "images/76.png",
     "createdAt": "2026-07-11T16:08:20.886Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 73,
@@ -261,7 +302,8 @@
     "title": "冷静すぎる梅きゅう",
     "image": "images/73.png",
     "createdAt": "2026-07-11T14:27:52.124Z",
-    "gachaId": "izakaya"
+    "gachaId": "izakaya",
+    "styleId": "standard"
   },
   {
     "id": 71,
@@ -269,7 +311,8 @@
     "title": "うさんくさい板わさ",
     "image": "images/71.png",
     "createdAt": "2026-07-10T17:27:52.316Z",
-    "gachaId": "izakaya"
+    "gachaId": "izakaya",
+    "styleId": "standard"
   },
   {
     "id": 70,
@@ -277,7 +320,8 @@
     "title": "会議に強い明太子",
     "image": "images/70.png",
     "createdAt": "2026-07-10T17:27:07.758Z",
-    "gachaId": "izakaya"
+    "gachaId": "izakaya",
+    "styleId": "standard"
   },
   {
     "id": 67,
@@ -285,7 +329,8 @@
     "title": "軽やかな茶碗蒸し",
     "image": "images/67.png",
     "createdAt": "2026-07-10T17:24:49.840Z",
-    "gachaId": "izakaya"
+    "gachaId": "izakaya",
+    "styleId": "standard"
   },
   {
     "id": 65,
@@ -293,7 +338,8 @@
     "title": "ご機嫌な天ぷら盛り合わせ",
     "image": "images/65.png",
     "createdAt": "2026-07-09T16:10:36.653Z",
-    "gachaId": "izakaya"
+    "gachaId": "izakaya",
+    "styleId": "standard"
   },
   {
     "id": 63,
@@ -301,7 +347,8 @@
     "title": "不敵な軟骨唐揚げ",
     "image": "images/63.png",
     "createdAt": "2026-07-09T16:01:13.300Z",
-    "gachaId": "izakaya"
+    "gachaId": "izakaya",
+    "styleId": "standard"
   },
   {
     "id": 61,
@@ -309,7 +356,8 @@
     "title": "踊り狂うブルドッグ",
     "image": "images/61.png",
     "createdAt": "2026-07-09T14:37:09.277Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 60,
@@ -317,7 +365,8 @@
     "title": "声が大きい砂肝",
     "image": "images/60.png",
     "createdAt": "2026-07-09T14:36:59.727Z",
-    "gachaId": "izakaya"
+    "gachaId": "izakaya",
+    "styleId": "standard"
   },
   {
     "id": 57,
@@ -325,7 +374,8 @@
     "title": "伝説の焼きそば",
     "image": "images/57.png",
     "createdAt": "2026-07-09T13:46:44.066Z",
-    "gachaId": "izakaya"
+    "gachaId": "izakaya",
+    "styleId": "standard"
   },
   {
     "id": 54,
@@ -333,7 +383,8 @@
     "title": "説明が長いイカ焼き",
     "image": "images/54.png",
     "createdAt": "2026-07-09T13:21:42.617Z",
-    "gachaId": "izakaya"
+    "gachaId": "izakaya",
+    "styleId": "standard"
   },
   {
     "id": 52,
@@ -341,7 +392,8 @@
     "title": "気まずい肉じゃが",
     "image": "images/52.png",
     "createdAt": "2026-07-09T13:14:38.871Z",
-    "gachaId": "izakaya"
+    "gachaId": "izakaya",
+    "styleId": "standard"
   },
   {
     "id": 48,
@@ -349,7 +401,8 @@
     "title": "反省しているジントニック",
     "image": "images/48.png",
     "createdAt": "2026-07-08T16:15:10.992Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 47,
@@ -357,7 +410,8 @@
     "title": "目つきの鋭いネグローニ",
     "image": "images/47.png",
     "createdAt": "2026-07-08T16:14:09.247Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 43,
@@ -365,7 +419,8 @@
     "title": "眠そうなトムコリンズ",
     "image": "images/43.png",
     "createdAt": "2026-07-08T14:37:10.429Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 41,
@@ -373,7 +428,8 @@
     "title": "やたら元気なカンパリソーダ",
     "image": "images/41.png",
     "createdAt": "2026-07-08T14:34:38.309Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 39,
@@ -381,7 +437,8 @@
     "title": "気まずいマルガリータ",
     "image": "images/39.png",
     "createdAt": "2026-07-08T14:29:51.452Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 36,
@@ -389,7 +446,8 @@
     "title": "冷静すぎるコスモポリタン",
     "image": "images/36.png",
     "createdAt": "2026-07-08T14:14:41.692Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 35,
@@ -397,7 +455,8 @@
     "title": "踊り狂うレッドアイ",
     "image": "images/35.png",
     "createdAt": "2026-07-08T14:11:42.408Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 32,
@@ -405,7 +464,8 @@
     "title": "妙に詳しいウーロンハイ",
     "image": "images/32.png",
     "createdAt": "2026-07-08T13:22:27.750Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 31,
@@ -413,7 +473,8 @@
     "title": "口数の多いオールドファッションド",
     "image": "images/31.png",
     "createdAt": "2026-07-08T13:22:22.506Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 28,
@@ -421,7 +482,8 @@
     "title": "ちょっと偉そうなキールロワイヤル",
     "image": "images/28.png",
     "createdAt": "2026-07-08T12:59:25.944Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 25,
@@ -429,7 +491,8 @@
     "title": "冷静すぎるゴッドマザー",
     "image": "images/25.png",
     "createdAt": "2026-07-07T14:03:13.271Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 21,
@@ -437,7 +500,8 @@
     "title": "現場主義のピニャコラーダ",
     "image": "images/21.png",
     "createdAt": "2026-07-07T12:49:28.789Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 19,
@@ -445,7 +509,8 @@
     "title": "踊り狂うマイタイ",
     "image": "images/19.png",
     "createdAt": "2026-07-06T23:10:13.495Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 18,
@@ -453,7 +518,8 @@
     "title": "たぶん有能なファジーネーブル",
     "image": "images/18.png",
     "createdAt": "2026-07-06T16:35:39.040Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 17,
@@ -461,7 +527,8 @@
     "title": "陽気なダイキリ",
     "image": "images/17.png",
     "createdAt": "2026-07-06T16:35:23.981Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 14,
@@ -469,7 +536,8 @@
     "title": "渋いジンフィズ",
     "image": "images/14.png",
     "createdAt": "2026-07-06T15:46:23.867Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 10,
@@ -477,7 +545,8 @@
     "title": "ちょっと偉そうなベリーニ",
     "image": "images/10.png",
     "createdAt": "2026-07-06T14:37:07.036Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 7,
@@ -485,7 +554,8 @@
     "title": "無駄に熱いカルーアミルク",
     "image": "images/7.png",
     "createdAt": "2026-07-06T14:20:59.264Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 6,
@@ -493,7 +563,8 @@
     "title": "たぶん有能なゴッドファーザー",
     "image": "images/6.png",
     "createdAt": "2026-07-06T14:19:27.751Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   },
   {
     "id": 5,
@@ -501,6 +572,7 @@
     "title": "たぶん有能なハイボール",
     "image": "images/5.png",
     "createdAt": "2026-07-06T14:19:10.022Z",
-    "gachaId": "cocktail"
+    "gachaId": "cocktail",
+    "styleId": "standard"
   }
 ]
