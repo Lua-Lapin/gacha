@@ -154,3 +154,71 @@ describe('listSuccessfulGenerations', () => {
     expect(rows[0].prompt).toBe('card')
   })
 })
+
+describe('generations.style_id', () => {
+  it('stores the styleId passed to insertGeneration', () => {
+    const pid = db.insertPerson({
+      name: 'a', adjective: '怒りの', topic: 'タツノオトシゴ',
+      title: '怒りのタツノオトシゴ', color: '#000', gachaId: 'sea',
+    })
+    const gid = db.insertGeneration({
+      personId: pid, imagePath: 'images/1.png', prompt: 'p',
+      status: 'success', error: null, styleId: 'jacket',
+    })
+    const row = db.raw.prepare('SELECT style_id FROM generations WHERE id = ?').get(gid)
+    expect(row.style_id).toBe('jacket')
+  })
+
+  it('exposes styleId from listSuccessfulGenerations', () => {
+    const pid = db.insertPerson({
+      name: 'a', adjective: '怒りの', topic: 'タツノオトシゴ',
+      title: '怒りのタツノオトシゴ', color: '#000', gachaId: 'sea',
+    })
+    db.insertGeneration({
+      personId: pid, imagePath: 'images/1.png', prompt: 'p',
+      status: 'success', error: null, styleId: 'jacket',
+    })
+    expect(db.listSuccessfulGenerations()[0].styleId).toBe('jacket')
+  })
+
+  it('backfills existing rows with the default style of their gacha', () => {
+    const legacy = new Database(':memory:')
+    legacy.exec(`
+      CREATE TABLE people (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL, adjective TEXT NOT NULL, topic TEXT NOT NULL,
+        title TEXT NOT NULL, color TEXT NOT NULL,
+        gacha_id TEXT NOT NULL DEFAULT 'cocktail', created_at TEXT NOT NULL
+      );
+      CREATE TABLE generations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        person_id INTEGER NOT NULL REFERENCES people(id),
+        image_path TEXT, prompt TEXT NOT NULL, status TEXT NOT NULL, error TEXT,
+        created_at TEXT NOT NULL, published INTEGER NOT NULL DEFAULT 0
+      );
+      INSERT INTO people (name, adjective, topic, title, color, gacha_id, created_at)
+        VALUES ('う', 'ゆらゆらした', 'クラゲ', 'ゆらゆらしたクラゲ', '#000', 'sea', '2026-01-01T00:00:00Z');
+      INSERT INTO people (name, adjective, topic, title, color, gacha_id, created_at)
+        VALUES ('あ', '陽気な', 'モヒート', '陽気なモヒート', '#000', 'cocktail', '2026-01-01T00:00:00Z');
+      INSERT INTO generations (person_id, image_path, prompt, status, created_at)
+        VALUES (1, 'images/1.png', 'p', 'success', '2026-01-02T00:00:00Z');
+      INSERT INTO generations (person_id, image_path, prompt, status, created_at)
+        VALUES (2, 'images/2.png', 'p', 'success', '2026-01-03T00:00:00Z');
+    `)
+    const buf = legacy.serialize()
+    legacy.close()
+    const tmp = `/tmp/style-mig-${Date.now()}-${Math.random().toString(36).slice(2)}.db`
+    writeFileSync(tmp, buf)
+
+    const migrated = createDb(tmp)
+    const rows = migrated.raw
+      .prepare('SELECT id, style_id FROM generations ORDER BY id')
+      .all()
+    expect(rows).toEqual([
+      { id: 1, style_id: 'card' },
+      { id: 2, style_id: 'standard' },
+    ])
+    migrated.raw.close()
+    unlinkSync(tmp)
+  })
+})

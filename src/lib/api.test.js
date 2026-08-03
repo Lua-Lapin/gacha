@@ -1,5 +1,6 @@
+// @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { saveResult, fetchPeople, generate, fetchPending, publishAll } from './api.js'
+import { saveResult, fetchPeople, generate, fetchPending, publishAll, fetchStyles } from './api.js'
 
 beforeEach(() => { globalThis.fetch = vi.fn() })
 
@@ -56,5 +57,31 @@ describe('api', () => {
   it('throws on non-ok response', async () => {
     fetch.mockResolvedValue({ ok: false, json: async () => ({ error: 'boom' }) })
     await expect(fetchPeople()).rejects.toThrow('boom')
+  })
+})
+
+describe('fetchStyles', () => {
+  it('requests the styles of the given gacha', async () => {
+    const styles = [{ id: 'card', label: 'かわいいカード風' }]
+    globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => styles })
+    await expect(fetchStyles('sea')).resolves.toEqual(styles)
+    expect(globalThis.fetch).toHaveBeenCalledWith('http://localhost:3001/api/styles?gacha=sea')
+  })
+})
+
+describe('generate with styleId', () => {
+  it('appends styleId to the form data when given', async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) })
+    const file = new File(['x'], 'a.png', { type: 'image/png' })
+    await generate(1, file, 'jacket')
+    const form = globalThis.fetch.mock.calls[0][1].body
+    expect(form.get('styleId')).toBe('jacket')
+  })
+
+  it('omits styleId when not given', async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) })
+    const file = new File(['x'], 'a.png', { type: 'image/png' })
+    await generate(1, file)
+    expect(globalThis.fetch.mock.calls[0][1].body.get('styleId')).toBeNull()
   })
 })

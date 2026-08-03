@@ -8,6 +8,7 @@ const fetchPeopleMock = vi.fn().mockResolvedValue([])
 vi.mock('./lib/api.js', () => ({
   saveResult: vi.fn().mockResolvedValue({ id: 1 }),
   fetchPeople: (...args) => fetchPeopleMock(...args),
+  fetchStyles: vi.fn().mockResolvedValue([]),
   generate: vi.fn(),
   fetchPending: vi.fn().mockResolvedValue([]), publishAll: vi.fn(),
 }))

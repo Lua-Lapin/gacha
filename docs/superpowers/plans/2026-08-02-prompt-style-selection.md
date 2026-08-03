@@ -448,7 +448,9 @@ import Database from 'better-sqlite3'
 import { GACHA_STYLES, defaultStyleId } from './prompt.js'
 ```
 
-`published` カラム追加ブロックの直後に、以下を追加する:
+`people` の `gacha_id` / `topic` マイグレーションブロックの**直後**に、以下を追加する。
+バックフィルが `people.gacha_id` を参照するため、people 側のマイグレーションより前に置くと
+レガシーDBで `no such column: gacha_id` になる。
 
 ```js
   if (!genCols.some((c) => c.name === 'style_id')) {

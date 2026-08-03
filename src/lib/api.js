@@ -23,10 +23,15 @@ export async function fetchPeople(gachaId) {
   return handle(await fetch(url))
 }
 
-export async function generate(personId, file) {
+export async function fetchStyles(gachaId) {
+  return handle(await fetch(`${BASE}/api/styles?gacha=${encodeURIComponent(gachaId)}`))
+}
+
+export async function generate(personId, file, styleId) {
   const form = new FormData()
   form.append('personId', String(personId))
   form.append('avatar', file)
+  if (styleId) form.append('styleId', styleId)
   return handle(await fetch(`${BASE}/api/generate`, { method: 'POST', body: form }))
 }
 

@@ -31,3 +31,7 @@ export const IZAKAYA_TEMPLATE = `添付画像のアバターを元に、1:1のSN
 
 アイコンサイズでも、キャラクターの顔、巨大アイテム、役職名が一目で分かるようにしてください。
 かわいく、明るく、派手で、ポップで、勢いのある仕上がりにしてください。`
+
+export const IZAKAYA_STYLES = [
+  { id: 'standard', label: 'スタンダード', template: IZAKAYA_TEMPLATE },
+]
