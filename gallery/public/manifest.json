@@ -1,5 +1,59 @@
 [
   {
+    "id": 132,
+    "name": "竜胆",
+    "title": "のんきなペンギン",
+    "image": "images/132.png",
+    "createdAt": "2026-08-04T15:48:13.347Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 131,
+    "name": "さとう（竜胆）",
+    "title": "物静かなウミガメ",
+    "image": "images/131.png",
+    "createdAt": "2026-08-04T15:48:11.173Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 130,
+    "name": "ジュリ",
+    "title": "干潮のシャコ",
+    "image": "images/130.png",
+    "createdAt": "2026-08-04T15:44:53.073Z",
+    "gachaId": "sea",
+    "styleId": "card"
+  },
+  {
+    "id": 129,
+    "name": "ジュリ",
+    "title": "干潮のシャコ",
+    "image": "images/129.png",
+    "createdAt": "2026-08-04T15:44:50.848Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 128,
+    "name": "りん",
+    "title": "妙に詳しいセイウチ",
+    "image": "images/128.png",
+    "createdAt": "2026-08-04T15:44:24.034Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 127,
+    "name": "めーあ‼️",
+    "title": "底なしのヤドカリ",
+    "image": "images/127.png",
+    "createdAt": "2026-08-04T15:43:54.669Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
     "id": 126,
     "name": "カンズ",
     "title": "月夜に浮かぶチンアナゴ",
