@@ -1,5 +1,41 @@
 [
   {
+    "id": 126,
+    "name": "カンズ",
+    "title": "月夜に浮かぶチンアナゴ",
+    "image": "images/126.png",
+    "createdAt": "2026-08-04T15:29:29.212Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 125,
+    "name": "ゆん",
+    "title": "浅瀬が好きなカブトガニ",
+    "image": "images/125.png",
+    "createdAt": "2026-08-04T15:28:06.778Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 124,
+    "name": "ちづ",
+    "title": "眠そうなマグロ",
+    "image": "images/124.png",
+    "createdAt": "2026-08-04T15:27:38.610Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 123,
+    "name": "ジュリ",
+    "title": "渦を巻くウミウシ",
+    "image": "images/123.png",
+    "createdAt": "2026-08-04T15:24:03.465Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
     "id": 122,
     "name": "るん",
     "title": "群れからはぐれたタチウオ",
