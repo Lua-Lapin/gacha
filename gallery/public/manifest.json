@@ -1,5 +1,41 @@
 [
   {
+    "id": 137,
+    "name": "ピノ3",
+    "title": "夢見がちなジンベエザメ",
+    "image": "images/137.png",
+    "createdAt": "2026-08-10T14:10:21.996Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 136,
+    "name": "ピノ3",
+    "title": "物静かなシュモクザメ",
+    "image": "images/136.png",
+    "createdAt": "2026-08-10T14:10:18.616Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 135,
+    "name": "りひと",
+    "title": "陽気なマッコウクジラ",
+    "image": "images/135.png",
+    "createdAt": "2026-08-10T14:05:27.359Z",
+    "gachaId": "sea",
+    "styleId": "card"
+  },
+  {
+    "id": 134,
+    "name": "りひと",
+    "title": "珊瑚に住みつくホタルイカ",
+    "image": "images/134.png",
+    "createdAt": "2026-08-10T14:05:25.825Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
     "id": 133,
     "name": "めーあ‼️‼️",
     "title": "すぐ謝るヒラメ",
