@@ -1,5 +1,23 @@
 [
   {
+    "id": 139,
+    "name": "りり",
+    "title": "のんきなサケ",
+    "image": "images/139.png",
+    "createdAt": "2026-08-17T14:49:16.745Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 138,
+    "name": "めーあ‼️",
+    "title": "のんきなジュゴン",
+    "image": "images/138.png",
+    "createdAt": "2026-08-17T13:55:30.367Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
     "id": 137,
     "name": "ピノ3",
     "title": "夢見がちなジンベエザメ",
