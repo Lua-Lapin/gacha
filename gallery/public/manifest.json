@@ -1,5 +1,23 @@
 [
   {
+    "id": 142,
+    "name": "ゆりの",
+    "title": "まじめなザトウクジラ",
+    "image": "images/142.png",
+    "createdAt": "2026-08-18T13:10:14.021Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 141,
+    "name": "ゆりの",
+    "title": "砂に潜ったリュウグウノツカイ",
+    "image": "images/141.png",
+    "createdAt": "2026-08-18T13:09:50.997Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
     "id": 140,
     "name": "そら",
     "title": "渋いマンタ",
