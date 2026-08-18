@@ -1,5 +1,14 @@
 [
   {
+    "id": 140,
+    "name": "そら",
+    "title": "渋いマンタ",
+    "image": "images/140.png",
+    "createdAt": "2026-08-18T13:06:00.334Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
     "id": 139,
     "name": "りり",
     "title": "のんきなサケ",
