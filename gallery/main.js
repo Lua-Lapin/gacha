@@ -215,9 +215,11 @@ if (typeof document !== 'undefined') {
           const ended = endedGachas(GACHAS, new Date())
           tabsEl.innerHTML = renderTabs(tabs, active)
           styleTabsEl.innerHTML = ''
+          container.classList.add('is-prompts')
           container.innerHTML = renderPrompts(ended, currentOpenId(ended), promptStyleId)
           return
         }
+        container.classList.remove('is-prompts')
         const styleTabs = buildStyleTabs(entries, active)
         // タブが消えたのに絞り込みだけ残る状態を防ぐ
         if (!styleTabs.some((t) => t.id === activeStyle)) {
