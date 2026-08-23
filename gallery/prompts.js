@@ -29,3 +29,13 @@ export function promptsFor(gachaId) {
   if (!styles) return []
   return styles.map(({ id, label, template }) => ({ styleId: id, label, template }))
 }
+
+// 「2026年6月30日 終了」へ整形する。
+// shared/deadline.js の formatDeadline と同じ理由で、タイムゾーンをローカル環境に
+// 依存させないため文字列を直接パースする（Date を通すと閲覧者の TZ でずれる）。
+export function formatEndedOn(endsAt) {
+  const m = String(endsAt).match(/^(\d{4})-(\d{2})-(\d{2})T/)
+  if (!m) return ''
+  const [, year, month, day] = m
+  return `${year}年${Number(month)}月${Number(day)}日 終了`
+}

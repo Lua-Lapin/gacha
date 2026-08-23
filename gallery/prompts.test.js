@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { endedGachas, promptsFor } from './prompts.js'
+import { endedGachas, promptsFor, formatEndedOn } from './prompts.js'
 
 // テストは実データに依存させない。判定ロジックだけを見る。
 const GACHAS = {
@@ -55,5 +55,19 @@ describe('promptsFor', () => {
 
   it('returns an empty array for an unknown gacha id', () => {
     expect(promptsFor('nope')).toEqual([])
+  })
+})
+
+describe('formatEndedOn', () => {
+  it('formats an ISO datetime as YYYY年M月D日 終了', () => {
+    expect(formatEndedOn('2026-06-30T23:59:00+09:00')).toBe('2026年6月30日 終了')
+  })
+
+  it('does not zero-pad the month or day', () => {
+    expect(formatEndedOn('2026-07-05T09:05:00+09:00')).toBe('2026年7月5日 終了')
+  })
+
+  it('returns an empty string for an unparseable value', () => {
+    expect(formatEndedOn('not-a-date')).toBe('')
   })
 })
