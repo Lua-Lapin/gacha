@@ -1,3 +1,5 @@
+import { escapeHtml } from '../shared/escapeHtml.js'
+
 // カードごとの静的HTMLページを生成する。
 // X(Twitter) は画像ファイルの直リンクではプレビューを出さず、twitter:card /
 // og:image などのメタタグを持つHTMLページをリンクしたときだけ画像カードに展開する。
@@ -21,15 +23,6 @@ const SHARE_UPGRADE_SCRIPT = `
   });
 })();
 `
-
-function escapeHtml(s) {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-}
 
 export function cardPagePath(entry) {
   return `card/${entry.id}.html`
