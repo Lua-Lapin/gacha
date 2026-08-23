@@ -42,14 +42,22 @@ npm run server   # API（http://localhost:3001）
 判定はブラウザ側で行うため、期限が来たときに再デプロイする必要はない。
 プロンプト本文は終了前からJSバンドルに含まれるので、終了前でもDevToolsを開けば読める（許容している）。
 
-新しいガチャを追加するときは、次の4か所すべてに追記すること。どれか1つを忘れても
-エラーにはならず、静かに表示が欠けるだけなので注意する。
+新しいガチャを追加するときは、次の5か所すべてに追記すること。`STYLES_BY_GACHA`・
+`GACHA_STYLES`・`GACHAS` の欠落や不一致は `gallery/consistency.test.js` がテストで
+検出するが、それ以外（`shared/prompts/<id>.js` の追加漏れなど）は自動検出できず、
+静かに表示が欠けるだけなので注意する。特に `endsAt` がギャラリー側で本来より早い日付に
+なっていると、まだ開催中のガチャのプロンプトが公開されてしまう（`gallery/consistency.test.js`
+で検出）。
 
-1. `src/data/gachas.js` — ガチャ定義（バナー・語彙・`endsAt`）
+1. `src/data/gachas.js` — ガチャ定義（`endsAt` を含む）に加えて、
+   `src/assets/` にバナーPNG、`src/data/<id>.js` に語彙ファイルを追加する
 2. `shared/prompts/<id>.js` — プロンプト本文とスタイル定義
 3. `server/prompt.js` の `GACHA_STYLES` — サーバー側の生成に使う対応表
-4. `gallery/main.js` の `GACHAS` — ギャラリーの表示名と `endsAt`、および
-   `gallery/prompts.js` の `STYLES_BY_GACHA`
+4. `gallery/main.js` の `GACHAS` — ギャラリーの表示名と `endsAt`
+5. `gallery/prompts.js` の `STYLES_BY_GACHA` — ギャラリー側のスタイル対応表
+
+加えて、新しいガチャが `gallery/main.js` の `STYLE_LABELS` にまだ無いスタイルIDを
+導入する場合は、そこにも追記すること。
 
 ## APIキー流出の防止
 
