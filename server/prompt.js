@@ -1,7 +1,7 @@
-import { COCKTAIL_STYLES } from './prompts/cocktail.js'
-import { IZAKAYA_STYLES } from './prompts/izakaya.js'
-import { SEA_STYLES } from './prompts/sea.js'
-import { SUSHI_STYLES } from './prompts/sushi.js'
+import { COCKTAIL_STYLES } from '../shared/prompts/cocktail.js'
+import { IZAKAYA_STYLES } from '../shared/prompts/izakaya.js'
+import { SEA_STYLES } from '../shared/prompts/sea.js'
+import { SUSHI_STYLES } from '../shared/prompts/sushi.js'
 
 // ガチャID -> スタイル定義の配列。配列の先頭が既定スタイル。
 export const GACHA_STYLES = {
@@ -17,7 +17,9 @@ function stylesOf(gachaId) {
   return styles
 }
 
-// UI へ渡す一覧。プロンプト本文はサーバー外に出さない。
+// UI へ渡す一覧。本文は含めない。
+// なお、終了したガチャのプロンプト本文はギャラリー（gallery/prompts.js）で公開される。
+// 本文の実体は shared/prompts/ にあり、公開されても安全な内容だけを置く場所として扱う。
 export function listStyles(gachaId) {
   return stylesOf(gachaId).map(({ id, label }) => ({ id, label }))
 }

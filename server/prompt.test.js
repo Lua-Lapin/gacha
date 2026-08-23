@@ -35,21 +35,21 @@ describe('buildPrompt', () => {
 
 describe('SEA_STYLES', () => {
   it('lists the card style first (default) and the jacket style second', async () => {
-    const { SEA_STYLES } = await import('./prompts/sea.js')
+    const { SEA_STYLES } = await import('../shared/prompts/sea.js')
     expect(SEA_STYLES.map((s) => s.id)).toEqual(['card', 'jacket'])
     expect(SEA_STYLES[0].label).toBe('かわいいカード風')
     expect(SEA_STYLES[1].label).toBe('ジャケット風')
   })
 
   it('gives every style a template containing the 役職名 placeholder', async () => {
-    const { SEA_STYLES } = await import('./prompts/sea.js')
+    const { SEA_STYLES } = await import('../shared/prompts/sea.js')
     for (const s of SEA_STYLES) {
       expect(s.template).toContain('{役職名}')
     }
   })
 
   it('makes the jacket template an album-jacket brief, not the card one', async () => {
-    const { SEA_STYLES } = await import('./prompts/sea.js')
+    const { SEA_STYLES } = await import('../shared/prompts/sea.js')
     const jacket = SEA_STYLES.find((s) => s.id === 'jacket')
     expect(jacket.template).toContain('音楽アルバムジャケット風')
     expect(jacket.template).toContain('明朝体')
@@ -59,7 +59,7 @@ describe('SEA_STYLES', () => {
 
 describe('single-style gachas', () => {
   it('exposes one standard style for cocktail', async () => {
-    const { COCKTAIL_STYLES } = await import('./prompts/cocktail.js')
+    const { COCKTAIL_STYLES } = await import('../shared/prompts/cocktail.js')
     expect(COCKTAIL_STYLES).toHaveLength(1)
     expect(COCKTAIL_STYLES[0].id).toBe('standard')
     expect(COCKTAIL_STYLES[0].label).toBe('スタンダード')
@@ -67,7 +67,7 @@ describe('single-style gachas', () => {
   })
 
   it('exposes one standard style for izakaya', async () => {
-    const { IZAKAYA_STYLES } = await import('./prompts/izakaya.js')
+    const { IZAKAYA_STYLES } = await import('../shared/prompts/izakaya.js')
     expect(IZAKAYA_STYLES).toHaveLength(1)
     expect(IZAKAYA_STYLES[0].id).toBe('standard')
     expect(IZAKAYA_STYLES[0].template).toContain('{役職名}')
