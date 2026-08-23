@@ -1,6 +1,6 @@
 import { cardPagePath } from './cardPage.js'
 import { shareOrDownload } from './share.js'
-import { endedGachas } from './prompts.js'
+import { endedGachas, promptsFor, renderPrompts } from './prompts.js'
 
 // 本番（GitHub Pages）の絶対URL。ツイートのカードページURLとメタタグの解決に使う。
 export const BASE = 'https://lua-lapin.github.io/gacha/'
@@ -183,15 +183,41 @@ if (typeof document !== 'undefined') {
       const container = document.getElementById('gallery')
       const tabs = buildTabs(entries)
       let { gachaId: active, styleId: activeStyle } = resolveInitialTab(location.hash, entries)
+      // プロンプトタブで選択中のスタイル。ハッシュには載せない（ガチャIDの方を載せる）。
+      let promptStyleId = null
+      // コピー完了ラベルを戻すタイマー。連打時に前回分を打ち消すため保持する。
+      let copyResetTimer = null
 
       function syncHash() {
         let hash = ''
-        if (active !== 'all') hash = activeStyle === 'all' ? `#${active}` : `#${active}:${activeStyle}`
+        if (active === 'prompts') {
+          // 'all'（未選択）と 'none'（全部閉じた）はどちらもハッシュに載せない
+          const open = activeStyle && activeStyle !== 'all' && activeStyle !== 'none'
+          hash = open ? `#prompts:${activeStyle}` : '#prompts'
+        } else if (active !== 'all') {
+          hash = activeStyle === 'all' ? `#${active}` : `#${active}:${activeStyle}`
+        }
         // 履歴を汚さずリロード・共有で復元できるようにする
         history.replaceState(null, '', hash || location.pathname)
       }
 
+      // 実際に開いているセクションのID。activeStyle は 'all'（未選択）や
+      // 'none'（明示的に閉じた）も取るので、表示上どれが開いているかはここで決める。
+      function currentOpenId(ended) {
+        if (ended.some((g) => g.id === activeStyle)) return activeStyle
+        return activeStyle === 'none' ? null : ended[0]?.id
+      }
+
       function draw() {
+        // プロンプトタブでは activeStyle を「開いているガチャID」として使うので、
+        // 下のスタイルタブ用リセットを通さない。
+        if (active === 'prompts') {
+          const ended = endedGachas(GACHAS, new Date())
+          tabsEl.innerHTML = renderTabs(tabs, active)
+          styleTabsEl.innerHTML = ''
+          container.innerHTML = renderPrompts(ended, currentOpenId(ended), promptStyleId)
+          return
+        }
         const styleTabs = buildStyleTabs(entries, active)
         // タブが消えたのに絞り込みだけ残る状態を防ぐ
         if (!styleTabs.some((t) => t.id === activeStyle)) {
@@ -212,6 +238,7 @@ if (typeof document !== 'undefined') {
         if (!btn) return
         active = btn.dataset.gacha
         activeStyle = 'all'
+        promptStyleId = null
         syncHash()
         draw()
       })
@@ -222,6 +249,51 @@ if (typeof document !== 'undefined') {
         activeStyle = btn.dataset.style
         syncHash()
         draw()
+      })
+
+      // プロンプトタブの操作。#gallery は毎回 innerHTML を差し替えるので、
+      // 個別要素ではなくコンテナに委譲する。
+      container.addEventListener('click', async (e) => {
+        if (active !== 'prompts') return
+
+        const head = e.target.closest('.prompt-head')
+        if (head) {
+          const id = head.dataset.promptGacha
+          // 見た目上開いているものをもう一度押したら閉じる。既定で開いている
+          // （activeStyle が 'all'）場合も1クリックで閉じられるようにする。
+          // なお 'all'（未選択）と 'none'（全部閉じた）は activeStyle の予約語なので、
+          // ガチャIDにこの2つを使ってはいけない（開閉できなくなる）。
+          const open = currentOpenId(endedGachas(GACHAS, new Date()))
+          activeStyle = open === id ? 'none' : id
+          promptStyleId = null
+          syncHash()
+          draw()
+          return
+        }
+
+        const styleBtn = e.target.closest('[data-prompt-style]')
+        if (styleBtn) {
+          promptStyleId = styleBtn.dataset.promptStyle
+          draw()
+          return
+        }
+
+        const copyBtn = e.target.closest('.prompt-copy')
+        if (copyBtn) {
+          const prompt = promptsFor(copyBtn.dataset.copyGacha)
+            .find((p) => p.styleId === copyBtn.dataset.copyStyle)
+          if (!prompt || !navigator.clipboard) return
+          try {
+            await navigator.clipboard.writeText(prompt.template)
+            // 連打しても元に戻らなくならないよう、前回のタイマーを消してから
+            // 固定のラベルへ戻す（textContent から復元すると入れ子で壊れる）。
+            clearTimeout(copyResetTimer)
+            copyBtn.textContent = 'コピーしました ✓'
+            copyResetTimer = setTimeout(() => { copyBtn.textContent = '📋 コピー' }, 2000)
+          } catch {
+            // 権限拒否など。<pre> は選択可能なので手動コピーに落ちる。
+          }
+        }
       })
 
       draw()
