@@ -36,7 +36,8 @@ const STYLE_LABELS = {
 }
 
 // now はテストから差し替えられるようにする。終了ガチャが1件も無ければ
-// プロンプトタブは出さない（件数0のガチャタブを出さないのと同じ考え方）。
+// プロンプトタブは出さない。なお、この判定は entries を見ない。プロンプトは
+// 画像が1枚も無いガチャにも存在するので、ギャラリーが空でもタブは出る。
 export function buildTabs(entries, now = new Date()) {
   const counts = new Map()
   for (const e of entries) {
@@ -88,12 +89,21 @@ export function filterByStyle(entries, styleId) {
   return styleId === 'all' ? entries : entries.filter((e) => e.styleId === styleId)
 }
 
-// hash は '#sea'（ガチャのみ）または '#sea:jacket'（ガチャ＋スタイル）。
+// hash は '#sea'（ガチャのみ）、'#sea:jacket'（ガチャ＋スタイル）、
+// '#prompts'、'#prompts:cocktail'（プロンプトタブ＋開いているガチャ）。
 // 実体の無いIDは 'all' に落とす。
-export function resolveInitialTab(hash, entries) {
+export function resolveInitialTab(hash, entries, now = new Date()) {
   const raw = (hash || '').replace(/^#/, '')
   const [gachaPart, stylePart] = raw.split(':')
   if (!gachaPart || gachaPart === 'all') return { gachaId: 'all', styleId: 'all' }
+  if (gachaPart === 'prompts') {
+    const ended = endedGachas(GACHAS, now)
+    // 終了ガチャが無いときはタブ自体が存在しないので 'all' に落とす
+    if (!ended.length) return { gachaId: 'all', styleId: 'all' }
+    // プロンプトタブでは styleId が「開いているガチャID」を表す
+    const openId = ended.some((g) => g.id === stylePart) ? stylePart : 'all'
+    return { gachaId: 'prompts', styleId: openId }
+  }
   if (!entries.some((e) => e.gachaId === gachaPart)) return { gachaId: 'all', styleId: 'all' }
   const styleId = stylePart
     && entries.some((e) => e.gachaId === gachaPart && e.styleId === stylePart)

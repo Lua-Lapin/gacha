@@ -144,6 +144,26 @@ describe('resolveInitialTab', () => {
   it('falls back to all styles for a style with no entries in that gacha', () => {
     expect(resolveInitialTab('#sea:poster', SEA_SAMPLE)).toEqual({ gachaId: 'sea', styleId: 'all' })
   })
+
+  it('accepts the prompts tab', () => {
+    expect(resolveInitialTab('#prompts', [], new Date('2026-12-01T00:00:00+09:00')))
+      .toEqual({ gachaId: 'prompts', styleId: 'all' })
+  })
+
+  it('accepts an ended gacha id as the open section of the prompts tab', () => {
+    expect(resolveInitialTab('#prompts:cocktail', [], new Date('2026-12-01T00:00:00+09:00')))
+      .toEqual({ gachaId: 'prompts', styleId: 'cocktail' })
+  })
+
+  it('drops a not-yet-ended gacha id from the prompts hash', () => {
+    expect(resolveInitialTab('#prompts:sushi', [], new Date('2026-08-01T00:00:00+09:00')))
+      .toEqual({ gachaId: 'prompts', styleId: 'all' })
+  })
+
+  it('falls back to all when nothing has ended yet', () => {
+    expect(resolveInitialTab('#prompts', [], new Date('2026-01-01T00:00:00+09:00')))
+      .toEqual({ gachaId: 'all', styleId: 'all' })
+  })
 })
 
 describe('renderTabs', () => {
