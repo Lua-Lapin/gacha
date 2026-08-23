@@ -80,6 +80,13 @@ describe('buildTabs', () => {
     const tabs = buildTabs([{ id: 1, name: 'n', title: 't', image: 'i', createdAt: '', gachaId: 'sea' }])
     expect(tabs[1]).toEqual({ id: 'sea', label: '🐙 海の生き物', count: 1 })
   })
+
+  it('labels the sushi gacha', () => {
+    const tabs = buildTabs([
+      { id: 1, gachaId: 'sushi', title: 'a', name: 'b', image: 'images/1.png' },
+    ])
+    expect(tabs.map((t) => t.label)).toContain('🍣 寿司')
+  })
 })
 
 describe('filterByGacha', () => {

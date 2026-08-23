@@ -16,15 +16,18 @@ export function tweetHref(entry, base = BASE) {
   return `https://twitter.com/intent/tweet?${params.toString()}`
 }
 
-// ガチャ種別の表示名。ここに無い gachaId は id をそのままラベルにする。
+// ガチャの表示名と終了日時。
 // （src/data/gachas.js は banner 画像を import する React 側の資産なので参照しない）
-const GACHA_LABELS = {
-  cocktail: '🍸 カクテル',
-  izakaya: '🍶 居酒屋',
-  sea: '🐙 海の生き物',
+// endsAt は src/data/gachas.js と同じ値を持つ。新しいガチャを足したらここにも追記する。
+// キーの順序がタブの表示順になる。
+export const GACHAS = {
+  cocktail: { label: '🍸 カクテル', endsAt: '2026-06-30T23:59:00+09:00' },
+  izakaya: { label: '🍶 居酒屋', endsAt: '2026-07-31T23:59:00+09:00' },
+  sea: { label: '🐙 海の生き物', endsAt: '2026-08-31T23:59:00+09:00' },
+  sushi: { label: '🍣 寿司', endsAt: '2026-09-30T23:59:00+09:00' },
 }
 
-// スタイルの表示名。GACHA_LABELS と同じ理由で、React 側の資産は参照せずここに持つ。
+// スタイルの表示名。GACHAS と同じ理由で、React 側の資産は参照せずここに持つ。
 const STYLE_LABELS = {
   standard: 'スタンダード',
   card: 'かわいいカード風',
@@ -37,13 +40,13 @@ export function buildTabs(entries) {
     counts.set(e.gachaId, (counts.get(e.gachaId) || 0) + 1)
   }
   // 既知のガチャを定義順に並べ、未知のものは manifest の登場順で後ろに続ける
-  const known = Object.keys(GACHA_LABELS).filter((id) => counts.has(id))
-  const unknown = [...counts.keys()].filter((id) => id && !(id in GACHA_LABELS))
+  const known = Object.keys(GACHAS).filter((id) => counts.has(id))
+  const unknown = [...counts.keys()].filter((id) => id && !(id in GACHAS))
   return [
     { id: 'all', label: 'すべて', count: entries.length },
     ...[...known, ...unknown].map((id) => ({
       id,
-      label: GACHA_LABELS[id] || id,
+      label: GACHAS[id]?.label || id,
       count: counts.get(id),
     })),
   ]
