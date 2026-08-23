@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { endedGachas } from './prompts.js'
+import { endedGachas, promptsFor } from './prompts.js'
 
 // テストは実データに依存させない。判定ロジックだけを見る。
 const GACHAS = {
@@ -31,5 +31,29 @@ describe('endedGachas', () => {
   it('carries the label and endsAt through', () => {
     const [first] = endedGachas(GACHAS, new Date('2026-07-01T00:00:00+09:00'))
     expect(first).toEqual({ id: 'a', label: '🍸 A', endsAt: '2026-06-30T23:59:00+09:00' })
+  })
+})
+
+describe('promptsFor', () => {
+  it('returns both styles for the sea gacha', () => {
+    const prompts = promptsFor('sea')
+    expect(prompts.map((p) => p.styleId)).toEqual(['card', 'jacket'])
+    expect(prompts.map((p) => p.label)).toEqual(['かわいいカード風', 'ジャケット風'])
+  })
+
+  it('returns the single style for one-style gachas', () => {
+    expect(promptsFor('cocktail').map((p) => p.styleId)).toEqual(['standard'])
+    expect(promptsFor('izakaya').map((p) => p.styleId)).toEqual(['standard'])
+    expect(promptsFor('sushi').map((p) => p.styleId)).toEqual(['real'])
+  })
+
+  it('carries the full template text', () => {
+    const [card] = promptsFor('sea')
+    expect(card.template).toContain('{役職名}')
+    expect(card.template.length).toBeGreaterThan(1000)
+  })
+
+  it('returns an empty array for an unknown gacha id', () => {
+    expect(promptsFor('nope')).toEqual([])
   })
 })
