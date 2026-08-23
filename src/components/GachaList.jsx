@@ -1,5 +1,5 @@
 import './GachaList.css'
-import { formatDeadline } from '../lib/deadline.js'
+import { formatDeadline } from '../../shared/deadline.js'
 
 // ガチャ一覧（入口画面）。バナーを縦に並べ、選んだガチャの id を onSelect で返す。
 export default function GachaList({ gachas, onSelect }) {

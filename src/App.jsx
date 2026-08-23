@@ -13,7 +13,7 @@ import { gachas, getGachaById } from './data/gachas.js'
 import catImage from './assets/gacha-cat.png'
 import { drawTitle, pickCapsuleColor } from './lib/draw.js'
 import { saveResult, fetchPeople, fetchStyles, generate, fetchPending, publishAll } from './lib/api.js'
-import { isActive } from './lib/deadline.js'
+import { isActive } from '../shared/deadline.js'
 import { galleryUrl } from './lib/galleryUrl.js'
 
 // phase: 'idle' | 'revealing' | 'revealed'
