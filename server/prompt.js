@@ -1,12 +1,14 @@
 import { COCKTAIL_STYLES } from './prompts/cocktail.js'
 import { IZAKAYA_STYLES } from './prompts/izakaya.js'
 import { SEA_STYLES } from './prompts/sea.js'
+import { SUSHI_STYLES } from './prompts/sushi.js'
 
 // ガチャID -> スタイル定義の配列。配列の先頭が既定スタイル。
 export const GACHA_STYLES = {
   cocktail: COCKTAIL_STYLES,
   izakaya: IZAKAYA_STYLES,
   sea: SEA_STYLES,
+  sushi: SUSHI_STYLES,
 }
 
 function stylesOf(gachaId) {
