@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'gallery/**'
+      - 'shared/**'
       - 'scripts/gen-card-pages.js'
       - '.github/workflows/deploy-gallery.yml'
   workflow_dispatch:
