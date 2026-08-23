@@ -1,5 +1,6 @@
 import { cardPagePath } from './cardPage.js'
 import { shareOrDownload } from './share.js'
+import { endedGachas } from './prompts.js'
 
 // 本番（GitHub Pages）の絶対URL。ツイートのカードページURLとメタタグの解決に使う。
 export const BASE = 'https://lua-lapin.github.io/gacha/'
@@ -34,7 +35,9 @@ const STYLE_LABELS = {
   jacket: 'ジャケット風',
 }
 
-export function buildTabs(entries) {
+// now はテストから差し替えられるようにする。終了ガチャが1件も無ければ
+// プロンプトタブは出さない（件数0のガチャタブを出さないのと同じ考え方）。
+export function buildTabs(entries, now = new Date()) {
   const counts = new Map()
   for (const e of entries) {
     counts.set(e.gachaId, (counts.get(e.gachaId) || 0) + 1)
@@ -42,6 +45,7 @@ export function buildTabs(entries) {
   // 既知のガチャを定義順に並べ、未知のものは manifest の登場順で後ろに続ける
   const known = Object.keys(GACHAS).filter((id) => counts.has(id))
   const unknown = [...counts.keys()].filter((id) => id && !(id in GACHAS))
+  const ended = endedGachas(GACHAS, now)
   return [
     { id: 'all', label: 'すべて', count: entries.length },
     ...[...known, ...unknown].map((id) => ({
@@ -49,6 +53,7 @@ export function buildTabs(entries) {
       label: GACHAS[id]?.label || id,
       count: counts.get(id),
     })),
+    ...(ended.length ? [{ id: 'prompts', label: '📜 プロンプト', count: ended.length }] : []),
   ]
 }
 

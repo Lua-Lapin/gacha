@@ -55,7 +55,9 @@ const SAMPLE = [
 
 describe('buildTabs', () => {
   it('puts "all" first with the total count, then each gacha with its count', () => {
-    expect(buildTabs(SAMPLE)).toEqual([
+    // 終了ガチャが1件も無い時点に固定する。ここで見たいのはガチャタブの構築だけで、
+    // プロンプトタブの有無は別のテストで見る。
+    expect(buildTabs(SAMPLE, new Date('2026-06-01T00:00:00+09:00'))).toEqual([
       { id: 'all', label: 'すべて', count: 3 },
       { id: 'cocktail', label: '🍸 カクテル', count: 2 },
       { id: 'izakaya', label: '🍶 居酒屋', count: 1 },
@@ -63,7 +65,9 @@ describe('buildTabs', () => {
   })
 
   it('omits gacha tabs with no entries', () => {
-    const tabs = buildTabs([SAMPLE[0]])
+    // 終了ガチャが1件も無い時点に固定する。ここで見たいのはガチャタブの構築だけで、
+    // プロンプトタブの有無は別のテストで見る。
+    const tabs = buildTabs([SAMPLE[0]], new Date('2026-06-01T00:00:00+09:00'))
     expect(tabs.map((t) => t.id)).toEqual(['all', 'cocktail'])
   })
 
@@ -73,7 +77,9 @@ describe('buildTabs', () => {
   })
 
   it('returns only the all tab for no entries', () => {
-    expect(buildTabs([])).toEqual([{ id: 'all', label: 'すべて', count: 0 }])
+    // 終了ガチャが1件も無い時点に固定する。ここで見たいのはガチャタブの構築だけで、
+    // プロンプトタブの有無は別のテストで見る。
+    expect(buildTabs([], new Date('2026-06-01T00:00:00+09:00'))).toEqual([{ id: 'all', label: 'すべて', count: 0 }])
   })
 
   it('labels the sea gacha', () => {
@@ -86,6 +92,25 @@ describe('buildTabs', () => {
       { id: 1, gachaId: 'sushi', title: 'a', name: 'b', image: 'images/1.png' },
     ])
     expect(tabs.map((t) => t.label)).toContain('🍣 寿司')
+  })
+
+  it('appends a prompts tab when at least one gacha has ended', () => {
+    const entries = [{ id: 1, gachaId: 'sea', title: 'a', name: 'b', image: 'images/1.png' }]
+    const tabs = buildTabs(entries, new Date('2026-12-01T00:00:00+09:00'))
+    expect(tabs[tabs.length - 1]).toMatchObject({ id: 'prompts', label: '📜 プロンプト' })
+  })
+
+  it('omits the prompts tab when no gacha has ended', () => {
+    const entries = [{ id: 1, gachaId: 'sea', title: 'a', name: 'b', image: 'images/1.png' }]
+    const tabs = buildTabs(entries, new Date('2026-01-01T00:00:00+09:00'))
+    expect(tabs.some((t) => t.id === 'prompts')).toBe(false)
+  })
+
+  it('gives the prompts tab the count of ended gachas', () => {
+    const entries = []
+    const tabs = buildTabs(entries, new Date('2026-08-01T00:00:00+09:00'))
+    // cocktail(6/30) と izakaya(7/31) の 2 件が終了済み
+    expect(tabs.find((t) => t.id === 'prompts').count).toBe(2)
   })
 })
 
