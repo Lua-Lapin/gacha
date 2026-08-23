@@ -16,7 +16,9 @@ export function endedGachas(gachas, now = new Date()) {
 
 // ガチャID -> スタイル定義。server/prompt.js の GACHA_STYLES と同じ内容を、
 // サーバーを経由せず静的に参照するための対応表。
-const STYLES_BY_GACHA = {
+// export しているのは gallery/consistency.test.js から突き合わせるため。
+// アプリ内では引き続き promptsFor を使うこと。
+export const STYLES_BY_GACHA = {
   cocktail: COCKTAIL_STYLES,
   izakaya: IZAKAYA_STYLES,
   sea: SEA_STYLES,
