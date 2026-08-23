@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { endedGachas, promptsFor, formatEndedOn } from './prompts.js'
+import { endedGachas, promptsFor, formatEndedOn, renderPrompts } from './prompts.js'
 
 // テストは実データに依存させない。判定ロジックだけを見る。
 const GACHAS = {
@@ -69,5 +69,68 @@ describe('formatEndedOn', () => {
 
   it('returns an empty string for an unparseable value', () => {
     expect(formatEndedOn('not-a-date')).toBe('')
+  })
+})
+
+describe('renderPrompts', () => {
+  const ended = [
+    { id: 'sea', label: '🐙 海の生き物', endsAt: '2026-08-31T23:59:00+09:00' },
+    { id: 'cocktail', label: '🍸 カクテル', endsAt: '2026-06-30T23:59:00+09:00' },
+  ]
+
+  it('always shows the placeholder notice', () => {
+    const html = renderPrompts(ended, 'sea', 'card')
+    expect(html).toContain('自分の役職名に置き換えて')
+    expect(html).toContain('{役職名}')
+    expect(html).toContain('{カクテル名}')
+  })
+
+  it('renders a header per ended gacha with its ended date', () => {
+    const html = renderPrompts(ended, 'sea', 'card')
+    expect(html).toContain('🐙 海の生き物')
+    expect(html).toContain('🍸 カクテル')
+    expect(html).toContain('2026年6月30日 終了')
+  })
+
+  it('renders the full template text of the open gacha and style', () => {
+    const html = renderPrompts(ended, 'sea', 'card')
+    expect(html).toContain('セミデフォルメ')
+    expect(html).toContain('{役職名}')
+  })
+
+  it('does not render the body of a closed gacha', () => {
+    const html = renderPrompts(ended, 'sea', 'card')
+    // カクテルは閉じているので本文は出ない
+    expect(html).not.toContain('カクテルアイコン風イラスト')
+  })
+
+  it('renders style sub-tabs only when the gacha has more than one style', () => {
+    expect(renderPrompts(ended, 'sea', 'card')).toContain('data-prompt-style="jacket"')
+    expect(renderPrompts(ended, 'cocktail', 'standard')).not.toContain('data-prompt-style=')
+  })
+
+  it('falls back to the first style when styleId is unknown', () => {
+    const html = renderPrompts(ended, 'sea', 'nope')
+    expect(html).toContain('セミデフォルメ')
+  })
+
+  it('escapes html-significant characters in the template', () => {
+    const html = renderPrompts(
+      [{ id: 'x', label: 'X', endsAt: '2026-01-01T00:00:00+09:00' }],
+      'x', 'y',
+      () => [{ styleId: 'y', label: 'Y', template: '<script>alert(1)</script>' }],
+    )
+    expect(html).not.toContain('<script>alert(1)</script>')
+    expect(html).toContain('&lt;script&gt;')
+  })
+
+  it('renders a copy button carrying the open gacha and style', () => {
+    const html = renderPrompts(ended, 'sea', 'jacket')
+    expect(html).toContain('data-copy-gacha="sea"')
+    expect(html).toContain('data-copy-style="jacket"')
+  })
+
+  it('shows an empty message when nothing has ended', () => {
+    expect(renderPrompts([], null, null)).toContain('公開中のプロンプトはありません')
   })
 })

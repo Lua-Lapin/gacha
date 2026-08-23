@@ -1,4 +1,5 @@
 import { isActive } from '../shared/deadline.js'
+import { escapeHtml } from '../shared/escapeHtml.js'
 import { COCKTAIL_STYLES } from '../shared/prompts/cocktail.js'
 import { IZAKAYA_STYLES } from '../shared/prompts/izakaya.js'
 import { SEA_STYLES } from '../shared/prompts/sea.js'
@@ -38,4 +39,67 @@ export function formatEndedOn(endsAt) {
   if (!m) return ''
   const [, year, month, day] = m
   return `${year}年${Number(month)}月${Number(day)}日 終了`
+}
+
+const PLACEHOLDER_NOTICE =
+  'プロンプト中の <code>{役職名}</code> / <code>{カクテル名}</code> は、'
+  + '自分の役職名に置き換えて使ってください。'
+
+// アコーディオン1つ分。open のときだけ本文とスタイルタブを描く。
+function renderSection(gacha, isOpen, styleId, lookup) {
+  const head = `
+    <button class="prompt-head" type="button" data-prompt-gacha="${escapeHtml(gacha.id)}"
+      aria-expanded="${isOpen}">
+      <span class="prompt-head__text">
+        <span class="prompt-head__title">${escapeHtml(gacha.label)}</span>
+        <span class="prompt-head__date">${escapeHtml(formatEndedOn(gacha.endsAt))}</span>
+      </span>
+      <span class="prompt-head__chev" aria-hidden="true">${isOpen ? '▴' : '▾'}</span>
+    </button>
+  `
+  if (!isOpen) return `<section class="prompt-section">${head}</section>`
+
+  const prompts = lookup(gacha.id)
+  if (!prompts.length) {
+    return `<section class="prompt-section is-open">${head}
+      <p class="empty">プロンプトが見つかりません</p></section>`
+  }
+  // 未知のスタイルIDは先頭へ落とす。ハッシュ経由で古いIDが来ても壊さない。
+  const current = prompts.find((p) => p.styleId === styleId) || prompts[0]
+
+  // スタイルが1つしか無いガチャではタブを出さない（buildStyleTabs と同じ判断）。
+  const tabs = prompts.length < 2 ? '' : `
+    <div class="prompt-styles" role="tablist" aria-label="スタイル">
+      ${prompts.map((p) => `
+        <button class="tab tab--style${p.styleId === current.styleId ? ' is-active' : ''}"
+          type="button" role="tab" aria-selected="${p.styleId === current.styleId}"
+          data-prompt-style="${escapeHtml(p.styleId)}">${escapeHtml(p.label)}</button>
+      `).join('')}
+    </div>
+  `
+
+  return `
+    <section class="prompt-section is-open">
+      ${head}
+      ${tabs}
+      <div class="prompt-body">
+        <button class="prompt-copy" type="button"
+          data-copy-gacha="${escapeHtml(gacha.id)}"
+          data-copy-style="${escapeHtml(current.styleId)}">📋 コピー</button>
+        <pre class="prompt-text">${escapeHtml(current.template)}</pre>
+      </div>
+    </section>
+  `
+}
+
+// ended: endedGachas() の結果 / openId: 開いているガチャID / styleId: 選択中スタイル
+// lookup はテストから差し替えるための注入点。既定は promptsFor。
+export function renderPrompts(ended, openId, styleId, lookup = promptsFor) {
+  if (!ended.length) {
+    return '<p class="empty">公開中のプロンプトはありません</p>'
+  }
+  return `
+    <p class="prompt-notice">⚠️ ${PLACEHOLDER_NOTICE}</p>
+    ${ended.map((g) => renderSection(g, g.id === openId, styleId, lookup)).join('')}
+  `
 }
