@@ -1,5 +1,14 @@
 [
   {
+    "id": 146,
+    "name": "りり",
+    "title": "海底で拾ったタコ",
+    "image": "images/146.png",
+    "createdAt": "2026-08-23T15:22:50.646Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
     "id": 145,
     "name": "りん",
     "title": "珊瑚に住みつくエビ",
