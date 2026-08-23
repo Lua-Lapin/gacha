@@ -1,5 +1,32 @@
 [
   {
+    "id": 149,
+    "name": "めーあ",
+    "title": "結婚願望強いウニ",
+    "image": "images/149.png",
+    "createdAt": "2026-08-23T15:35:51.525Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 148,
+    "name": "リリ",
+    "title": "風格のあるフグ",
+    "image": "images/148.png",
+    "createdAt": "2026-08-23T15:35:31.076Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 147,
+    "name": "カンズ",
+    "title": "ふてぶてしいシャチ",
+    "image": "images/147.png",
+    "createdAt": "2026-08-23T15:29:18.092Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
     "id": 146,
     "name": "りり",
     "title": "海底で拾ったタコ",
