@@ -1,5 +1,14 @@
 [
   {
+    "id": 154,
+    "name": "リリ",
+    "title": "サボるヒトデ",
+    "image": "images/154.png",
+    "createdAt": "2026-08-25T15:35:43.388Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
     "id": 153,
     "name": "リリ",
     "title": "チルいカワウソ",
