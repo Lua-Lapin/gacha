@@ -1,5 +1,23 @@
 [
   {
+    "id": 156,
+    "name": "リリ",
+    "title": "煽るガキ系シロイルカ",
+    "image": "images/156.png",
+    "createdAt": "2026-08-25T15:52:04.556Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 155,
+    "name": "竜胆",
+    "title": "浮上しないウミウシ",
+    "image": "images/155.png",
+    "createdAt": "2026-08-25T15:50:19.115Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
     "id": 154,
     "name": "リリ",
     "title": "サボるヒトデ",
