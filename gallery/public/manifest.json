@@ -1,5 +1,14 @@
 [
   {
+    "id": 157,
+    "name": "鈴音",
+    "title": "干潮のダンゴウオ",
+    "image": "images/157.png",
+    "createdAt": "2026-08-25T15:56:48.358Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
     "id": 156,
     "name": "リリ",
     "title": "煽るガキ系シロイルカ",
