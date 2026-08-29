@@ -1,5 +1,23 @@
 [
   {
+    "id": 159,
+    "name": "リリ",
+    "title": "腹黒なシャチ",
+    "image": "images/159.png",
+    "createdAt": "2026-08-29T14:51:16.790Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 158,
+    "name": "リリ",
+    "title": "ぶりっ子なアシカ",
+    "image": "images/158.png",
+    "createdAt": "2026-08-29T14:51:10.996Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
     "id": 157,
     "name": "鈴音",
     "title": "干潮のダンゴウオ",
