@@ -1,5 +1,23 @@
 [
   {
+    "id": 161,
+    "name": "りん",
+    "title": "サックス吹いてるクラゲ",
+    "image": "images/161.png",
+    "createdAt": "2026-08-29T15:03:29.222Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 160,
+    "name": "りん",
+    "title": "サックス吹いてるクラゲ",
+    "image": "images/160.png",
+    "createdAt": "2026-08-29T15:03:21.620Z",
+    "gachaId": "sea",
+    "styleId": "card"
+  },
+  {
     "id": 159,
     "name": "リリ",
     "title": "腹黒なシャチ",
