@@ -11,6 +11,16 @@ export const GACHA_STYLES = {
   sushi: SUSHI_STYLES,
 }
 
+// ガチャID -> 画像サイズ。未指定は正方形。
+// sushi は雑誌表紙レイアウトのため縦長で生成する。
+const GACHA_SIZES = {
+  sushi: '1024x1536',
+}
+
+export function imageSize(gachaId) {
+  return GACHA_SIZES[gachaId] || '1024x1024'
+}
+
 function stylesOf(gachaId) {
   const styles = GACHA_STYLES[gachaId]
   if (!styles) throw new Error(`unknown gacha: ${gachaId}`)

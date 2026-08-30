@@ -2,7 +2,7 @@ import express from 'express'
 import multer from 'multer'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { buildPrompt, listStyles, defaultStyleId } from './prompt.js'
+import { buildPrompt, listStyles, defaultStyleId, imageSize } from './prompt.js'
 import { buildManifest } from './manifest.js'
 
 const upload = multer({ storage: multer.memoryStorage() })
@@ -80,7 +80,7 @@ export function createApp({ db, generateImage, writeGenerationFiles, publishPend
         prompt,
         avatarBuffer: req.file.buffer,
         avatarFilename: req.file.originalname || 'avatar.png',
-        size: '1024x1024',
+        size: imageSize(person.gacha_id),
         quality: 'medium',
       })
       res.json(recordGeneration({ personId, imageBuffer, prompt, styleId }))

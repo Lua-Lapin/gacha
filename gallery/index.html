@@ -125,8 +125,9 @@
         font-size: 0.8rem; line-height: 1.75; color: var(--gacha-ink);
       }
 
-      /* 画像は全て 1024x1024。読み込み前もレイアウトを固定して CLS を防ぐ */
-      .card img { aspect-ratio: 1; object-fit: cover; }
+      /* ガチャにより正方形と縦長が混在する。読み込み前もレイアウトを固定して CLS を防ぎ、
+         縦長画像は切り取らず余白を残して全体を見せる */
+      .card img { aspect-ratio: 1; object-fit: contain; background: #f2efe6; }
 
       @media (max-width: 600px) {
         body { padding: 1.5rem 0.75rem 3rem; }
