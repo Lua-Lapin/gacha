@@ -119,6 +119,18 @@ describe('役職(topic)の重複排除', () => {
     expect(screen.getByText('役職はすべて割り当て済みです')).toBeInTheDocument()
   })
 
+  it('topic リスト外の値が使用済みに混ざっていてもコンプ扱いにしない', async () => {
+    // DB には topic リストに無い値（手入力の取り違えなど）が入りうる。
+    // 件数だけ数えると未割り当ての topic が残っていても打ち止めになる。
+    const used = seaTopics.slice(0, seaTopics.length - 2).concat(['カワウソ', 'アシカ'])
+    fetchPeopleMock.mockResolvedValueOnce(used.map((t) => ({ topic: t })))
+    render(<App />)
+    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
+    await act(async () => {})
+    expect(screen.getByLabelText('ガチャを回す')).not.toBeDisabled()
+    expect(screen.queryByText('役職はすべて割り当て済みです')).not.toBeInTheDocument()
+  })
+
   it('保存すると、同一セッション内でその topic が次の抽選から除外される', async () => {
     drawTitle.mockReturnValueOnce({
       adjective: 'ゆらゆらした', topic: 'クラゲ', title: 'ゆらゆらしたクラゲ',

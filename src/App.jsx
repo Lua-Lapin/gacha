@@ -30,8 +30,13 @@ export default function App() {
   const topicsRequestId = useRef(0)
 
   const selectedGachaObj = getGachaById(selectedGacha)
-  const totalTopics = selectedGachaObj?.words.topics.length ?? 0
-  const isExhausted = topicsStatus === 'ready' && usedTopics.length >= totalTopics
+  // 件数の比較ではなく集合で判定する。usedTopics には topic リストに無い値
+  // （取り違えた手入力など）が混ざりうるので、数だけ数えると未割り当ての
+  // topic が残っていても打ち止めになる。drawTitle の除外条件と揃える。
+  const usedTopicSet = new Set(usedTopics)
+  const isExhausted =
+    topicsStatus === 'ready' &&
+    (selectedGachaObj?.words.topics ?? []).every((t) => usedTopicSet.has(t))
 
   // 演出中（暗転オーバーレイ表示中）は背面ページのスクロールを止める。
   useEffect(() => {
@@ -97,7 +102,7 @@ export default function App() {
       color: color ?? pickCapsuleColor(),
       gachaId: selectedGacha,
     })
-    setUsedTopics((prev) => [...prev, topic])
+    setUsedTopics((prev) => (prev.includes(topic) ? prev : [...prev, topic]))
     return saved
   }
 
