@@ -54,13 +54,13 @@ const SAMPLE = [
 ]
 
 describe('buildTabs', () => {
-  it('puts "all" first with the total count, then each gacha with its count', () => {
+  it('puts "all" first with the total count, then each gacha newest-first with its count', () => {
     // 終了ガチャが1件も無い時点に固定する。ここで見たいのはガチャタブの構築だけで、
     // プロンプトタブの有無は別のテストで見る。
     expect(buildTabs(SAMPLE, new Date('2026-06-01T00:00:00+09:00'))).toEqual([
       { id: 'all', label: 'すべて', count: 3 },
-      { id: 'cocktail', label: '🍸 カクテル', count: 2 },
       { id: 'izakaya', label: '🍶 居酒屋', count: 1 },
+      { id: 'cocktail', label: '🍸 カクテル', count: 2 },
     ])
   })
 
@@ -72,7 +72,8 @@ describe('buildTabs', () => {
   })
 
   it('falls back to the raw gachaId for unknown gachas', () => {
-    const tabs = buildTabs([{ id: 9, name: 'n', title: 't', image: 'i', createdAt: '', gachaId: 'ramen' }])
+    const tabs = buildTabs([{ id: 9, name: 'n', title: 't', image: 'i', createdAt: '', gachaId: 'ramen' }],
+      new Date('2026-06-01T00:00:00+09:00'))
     expect(tabs[1]).toEqual({ id: 'ramen', label: 'ramen', count: 1 })
   })
 
@@ -83,7 +84,8 @@ describe('buildTabs', () => {
   })
 
   it('labels the sea gacha', () => {
-    const tabs = buildTabs([{ id: 1, name: 'n', title: 't', image: 'i', createdAt: '', gachaId: 'sea' }])
+    const tabs = buildTabs([{ id: 1, name: 'n', title: 't', image: 'i', createdAt: '', gachaId: 'sea' }],
+      new Date('2026-06-01T00:00:00+09:00'))
     expect(tabs[1]).toEqual({ id: 'sea', label: '🐙 海の生き物', count: 1 })
   })
 
@@ -94,10 +96,10 @@ describe('buildTabs', () => {
     expect(tabs.map((t) => t.label)).toContain('🍣 寿司')
   })
 
-  it('appends a prompts tab when at least one gacha has ended', () => {
+  it('puts the prompts tab right after "all" when at least one gacha has ended', () => {
     const entries = [{ id: 1, gachaId: 'sea', title: 'a', name: 'b', image: 'images/1.png' }]
     const tabs = buildTabs(entries, new Date('2026-12-01T00:00:00+09:00'))
-    expect(tabs[tabs.length - 1]).toMatchObject({ id: 'prompts', label: '📜 プロンプト' })
+    expect(tabs[1]).toMatchObject({ id: 'prompts', label: '📜 プロンプト' })
   })
 
   it('omits the prompts tab when no gacha has ended', () => {

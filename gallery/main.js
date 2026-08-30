@@ -20,12 +20,12 @@ export function tweetHref(entry, base = BASE) {
 // ガチャの表示名と終了日時。
 // （src/data/gachas.js は banner 画像を import する React 側の資産なので参照しない）
 // endsAt は src/data/gachas.js と同じ値を持つ。新しいガチャを足したらここにも追記する。
-// キーの順序がタブの表示順になる。
+// キーの順序がタブの表示順になる。新しい（締切が後の）ガチャほど左。
 export const GACHAS = {
-  cocktail: { label: '🍸 カクテル', endsAt: '2026-06-30T23:59:00+09:00' },
-  izakaya: { label: '🍶 居酒屋', endsAt: '2026-07-31T23:59:00+09:00' },
-  sea: { label: '🐙 海の生き物', endsAt: '2026-08-31T23:59:00+09:00' },
   sushi: { label: '🍣 寿司', endsAt: '2026-09-30T23:59:00+09:00' },
+  sea: { label: '🐙 海の生き物', endsAt: '2026-08-31T23:59:00+09:00' },
+  izakaya: { label: '🍶 居酒屋', endsAt: '2026-07-31T23:59:00+09:00' },
+  cocktail: { label: '🍸 カクテル', endsAt: '2026-06-30T23:59:00+09:00' },
 }
 
 // スタイルの表示名。GACHAS と同じ理由で、React 側の資産は参照せずここに持つ。
@@ -47,14 +47,15 @@ export function buildTabs(entries, now = new Date()) {
   const known = Object.keys(GACHAS).filter((id) => counts.has(id))
   const unknown = [...counts.keys()].filter((id) => id && !(id in GACHAS))
   const ended = endedGachas(GACHAS, now)
+  // プロンプトはガチャ横断の入口なので「すべて」の次（ガチャタブより左）に置く。
   return [
     { id: 'all', label: 'すべて', count: entries.length },
+    ...(ended.length ? [{ id: 'prompts', label: '📜 プロンプト', count: ended.length }] : []),
     ...[...known, ...unknown].map((id) => ({
       id,
       label: GACHAS[id]?.label || id,
       count: counts.get(id),
     })),
-    ...(ended.length ? [{ id: 'prompts', label: '📜 プロンプト', count: ended.length }] : []),
   ]
 }
 
