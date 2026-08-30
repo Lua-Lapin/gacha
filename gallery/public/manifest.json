@@ -1,5 +1,77 @@
 [
   {
+    "id": 169,
+    "name": "Y",
+    "title": "隠れられないカクレクマノミ",
+    "image": "images/169.png",
+    "createdAt": "2026-08-30T08:57:31.226Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 168,
+    "name": "Y",
+    "title": "隠れられないカクレクマノミ",
+    "image": "images/168.png",
+    "createdAt": "2026-08-30T08:57:27.471Z",
+    "gachaId": "sea",
+    "styleId": "card"
+  },
+  {
+    "id": 167,
+    "name": "Y",
+    "title": "いかり肩ちっくなマンボウ",
+    "image": "images/167.png",
+    "createdAt": "2026-08-30T08:55:16.416Z",
+    "gachaId": "sea",
+    "styleId": "card"
+  },
+  {
+    "id": 166,
+    "name": "Y",
+    "title": "いかり肩ちっくなマンボウ",
+    "image": "images/166.png",
+    "createdAt": "2026-08-30T08:55:13.385Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 165,
+    "name": "Y",
+    "title": "やかましいイカ",
+    "image": "images/165.png",
+    "createdAt": "2026-08-30T08:43:39.253Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 164,
+    "name": "Y",
+    "title": "風格のあるタイ",
+    "image": "images/164.png",
+    "createdAt": "2026-08-30T08:43:37.841Z",
+    "gachaId": "sea",
+    "styleId": "jacket"
+  },
+  {
+    "id": 163,
+    "name": "Y",
+    "title": "やかましいイカ",
+    "image": "images/163.png",
+    "createdAt": "2026-08-30T08:43:31.338Z",
+    "gachaId": "sea",
+    "styleId": "card"
+  },
+  {
+    "id": 162,
+    "name": "Y",
+    "title": "風格のあるタイ",
+    "image": "images/162.png",
+    "createdAt": "2026-08-30T08:43:24.570Z",
+    "gachaId": "sea",
+    "styleId": "card"
+  },
+  {
     "id": 161,
     "name": "りん",
     "title": "サックス吹いてるクラゲ",
