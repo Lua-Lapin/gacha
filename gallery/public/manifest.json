@@ -1,5 +1,23 @@
 [
   {
+    "id": 188,
+    "name": "竜胆",
+    "title": "顔面国宝なたこ",
+    "image": "images/188.png",
+    "createdAt": "2026-08-31T15:21:02.632Z",
+    "gachaId": "sushi",
+    "styleId": "real"
+  },
+  {
+    "id": 186,
+    "name": "シエル",
+    "title": "踊り狂うくら寿司",
+    "image": "images/186.png",
+    "createdAt": "2026-08-31T15:18:48.041Z",
+    "gachaId": "sushi",
+    "styleId": "real"
+  },
+  {
     "id": 184,
     "name": "ジュリ",
     "title": "すぐ謝る唐揚げ",
