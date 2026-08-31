@@ -1,5 +1,23 @@
 [
   {
+    "id": 184,
+    "name": "ジュリ",
+    "title": "すぐ謝る唐揚げ",
+    "image": "images/184.png",
+    "createdAt": "2026-08-31T15:11:56.343Z",
+    "gachaId": "sushi",
+    "styleId": "real"
+  },
+  {
+    "id": 183,
+    "name": "リリ",
+    "title": "死にかけビッくらポン",
+    "image": "images/183.png",
+    "createdAt": "2026-08-31T15:04:59.277Z",
+    "gachaId": "sushi",
+    "styleId": "real"
+  },
+  {
     "id": 182,
     "name": "るん",
     "title": "優秀な明太マヨ軍艦",
