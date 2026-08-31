@@ -1,5 +1,23 @@
 [
   {
+    "id": 190,
+    "name": "めーあ",
+    "title": "役に立たない稲荷",
+    "image": "images/190.png",
+    "createdAt": "2026-08-31T15:33:23.635Z",
+    "gachaId": "sushi",
+    "styleId": "real"
+  },
+  {
+    "id": 189,
+    "name": "ちづ",
+    "title": "酔っ払いの穴子",
+    "image": "images/189.png",
+    "createdAt": "2026-08-31T15:30:28.667Z",
+    "gachaId": "sushi",
+    "styleId": "real"
+  },
+  {
     "id": 188,
     "name": "竜胆",
     "title": "顔面国宝なたこ",
