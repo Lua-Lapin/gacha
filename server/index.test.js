@@ -371,6 +371,15 @@ describe('POST /api/avatars', () => {
     expect(res.body.error).toMatch(/unsupported/)
     expect(db.listAvatars()).toHaveLength(0)
   })
+
+  it('rolls back the row when the file write fails', async () => {
+    saveAvatarFile.mockImplementation(() => { throw new Error('disk full') })
+    const res = await request(app)
+      .post('/api/avatars').field('name', '田中')
+      .attach('avatar', Buffer.from('i'), { filename: 'a.png', contentType: 'image/png' })
+    expect(res.status).toBe(500)
+    expect(db.listAvatars()).toHaveLength(0)
+  })
 })
 
 describe('DELETE /api/avatars/:id', () => {
@@ -443,5 +452,32 @@ describe('POST /api/generate with avatarId', () => {
       .field('avatarId', String(avatarId))
     expect(res.status).toBe(404)
     expect(generateImage).not.toHaveBeenCalled()
+  })
+
+  it('returns 404 for a non-numeric avatarId even with a directly attached file', async () => {
+    const personId = addPerson()
+    const res = await request(app)
+      .post('/api/generate')
+      .field('personId', String(personId))
+      .field('avatarId', 'abc')
+      .attach('avatar', Buffer.from('direct'), { filename: 'b.png', contentType: 'image/png' })
+    expect(res.status).toBe(404)
+    expect(generateImage).not.toHaveBeenCalled()
+  })
+
+  it('prefers the stored avatar over a directly attached file when both are sent', async () => {
+    const personId = addPerson()
+    const created = await request(app)
+      .post('/api/avatars').field('name', 'あや')
+      .attach('avatar', Buffer.from('stored'), { filename: 'a.png', contentType: 'image/png' })
+    const res = await request(app)
+      .post('/api/generate')
+      .field('personId', String(personId))
+      .field('avatarId', String(created.body.id))
+      .attach('avatar', Buffer.from('direct'), { filename: 'b.png', contentType: 'image/png' })
+    expect(res.status).toBe(200)
+    expect(generateImage).toHaveBeenCalledWith(
+      expect.objectContaining({ avatarBuffer: Buffer.from('stored') })
+    )
   })
 })

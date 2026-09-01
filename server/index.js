@@ -14,9 +14,6 @@ export function createApp({
   const app = express()
   app.use(express.json())
 
-  // 保存済みアバター画像の配信。uploadsDir が未指定のテストでは張らない。
-  if (uploadsDir) app.use('/uploads', express.static(uploadsDir))
-
   // 開発時はフロント(vite)とAPIがクロスオリジンになるため最小限のCORSを許可する
   app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*')
@@ -25,6 +22,9 @@ export function createApp({
     if (req.method === 'OPTIONS') return res.sendStatus(204)
     next()
   })
+
+  // 保存済みアバター画像の配信。CORSヘッダーが付くよう上のミドルウェアより後段に置く。
+  app.use('/uploads', express.static(uploadsDir))
 
   // 生成物をDBに記録し、ギャラリーへローカル書き出しする（git は publish 時にまとめて実行）。
   function recordGeneration({ personId, imageBuffer, prompt, styleId }) {
@@ -63,7 +63,13 @@ export function createApp({
     const id = db.insertAvatar({ name, filePath: '', mime: req.file.mimetype })
     const filePath = `${id}.${ext}`
     db.setAvatarPath(id, filePath)
-    saveAvatarFile({ uploadsDir, filePath, buffer: req.file.buffer })
+    try {
+      saveAvatarFile({ uploadsDir, filePath, buffer: req.file.buffer })
+    } catch (err) {
+      // 書き込めなかった行を残すと、一覧に壊れたサムネが永久に居座る。
+      db.deleteAvatar(id)
+      return res.status(500).json({ error: String(err.message || err) })
+    }
     res.status(201).json(toAvatarResponse(db.getAvatar(id)))
   })
 
@@ -107,13 +113,20 @@ export function createApp({
   app.post('/api/generate', upload.single('avatar'), async (req, res) => {
     const personId = Number(req.body.personId)
     if (!personId) return res.status(400).json({ error: 'personId required' })
+
+    const person = db.getPerson(personId)
+    if (!person) return res.status(404).json({ error: 'person not found' })
+
     // 画像の出どころは2通り: 保存済み avatar の id か、その場のファイル直送。
-    // 両方来たら avatarId を優先する。
+    // avatarId が送られてきたらそれを最優先とし、不正な値でも直送ファイルへは
+    // フォールバックしない（黙って別の画像を使ってしまうのを防ぐ）。
     let avatarBuffer
     let avatarFilename
-    const avatarId = Number(req.body.avatarId)
-    if (avatarId) {
-      const row = db.getAvatar(avatarId)
+    const rawAvatarId = req.body.avatarId
+    const hasAvatarId = rawAvatarId != null && String(rawAvatarId).trim() !== ''
+    const avatarId = Number(rawAvatarId)
+    if (hasAvatarId) {
+      const row = Number.isInteger(avatarId) && avatarId > 0 ? db.getAvatar(avatarId) : undefined
       if (!row) return res.status(404).json({ error: 'avatar not found' })
       try {
         avatarBuffer = readAvatarFile({ uploadsDir, filePath: row.filePath })
@@ -127,9 +140,6 @@ export function createApp({
     } else {
       return res.status(400).json({ error: 'avatar required' })
     }
-
-    const person = db.getPerson(personId)
-    if (!person) return res.status(404).json({ error: 'person not found' })
 
     // プロンプト構築は生成前に済ませる。未知のスタイルIDはここで 400 になり、
     // 画像生成もDB記録も一切行わない。
