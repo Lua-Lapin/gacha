@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS avatars (
 - `generations` からも参照しない。avatar 行を消しても過去の生成物は壊れない。
 
 実ファイルの置き場は `data/uploads/`。`data/` は既に実データ（sqlite）の置き場であり、
-公開物である `gallery/public` とは混ぜない。ディレクトリはサーバ起動時に無ければ作る。
+公開物である `gallery/public` とは混ぜない。ディレクトリはサーバ起動時に無ければ作る。`.gitignore` に `data/uploads/` を追加する（現状は `data/*.db` 系のみ無視しているため）。
 
 ### db API 追加
 
