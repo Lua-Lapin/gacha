@@ -8,12 +8,16 @@ import GeneratePage from './GeneratePage.jsx'
 afterEach(cleanup)
 
 const people = [{ id: 1, name: 'あや', title: '陽気なモヒート', gacha_id: 'cocktail' }]
+const avatars = [{ id: 7, name: 'あや', url: '/uploads/7.png', createdAt: '2026-08-01' }]
 
 function renderPage(overrides = {}) {
   const props = {
     loadPeople: vi.fn().mockResolvedValue(people),
     loadPending: vi.fn().mockResolvedValue([]),
     loadStyles: vi.fn().mockResolvedValue([{ id: 'standard', label: 'スタンダード' }]),
+    loadAvatars: vi.fn().mockResolvedValue(avatars),
+    onUploadAvatar: vi.fn().mockResolvedValue({ id: 8, name: '新規', url: '/uploads/8.png' }),
+    onDeleteAvatar: vi.fn().mockResolvedValue(undefined),
     onGenerate: vi.fn().mockResolvedValue({ imagePath: 'images/1.png' }),
     onPublish: vi.fn().mockResolvedValue({ committed: [1] }),
     ...overrides,
@@ -22,12 +26,10 @@ function renderPage(overrides = {}) {
   return props
 }
 
-async function selectAndUpload() {
+async function selectPersonAndAvatar() {
   await screen.findByText(/陽気なモヒート/)
   await userEvent.selectOptions(screen.getByLabelText('人を選択'), '1')
-  const file = new File(['x'], 'avatar.png', { type: 'image/png' })
-  await userEvent.upload(screen.getByLabelText('アバター画像'), file)
-  return file
+  await userEvent.click(await screen.findByRole('button', { name: /あやの画像を選択/ }))
 }
 
 describe('GeneratePage', () => {
@@ -36,12 +38,12 @@ describe('GeneratePage', () => {
     expect(await screen.findByText(/陽気なモヒート/)).toBeTruthy()
   })
 
-  it('calls onGenerate with selected personId, file and styleId', async () => {
+  it('calls onGenerate with selected personId, avatar source and styleId', async () => {
     const props = renderPage()
-    const file = await selectAndUpload()
+    await selectPersonAndAvatar()
     await userEvent.click(screen.getByRole('button', { name: '生成' }))
     await waitFor(() => {
-      expect(props.onGenerate).toHaveBeenCalledWith(1, file, 'standard')
+      expect(props.onGenerate).toHaveBeenCalledWith(1, { avatarId: 7 }, 'standard')
     })
   })
 
@@ -49,7 +51,7 @@ describe('GeneratePage', () => {
     let resolve
     const onGenerate = vi.fn(() => new Promise((r) => { resolve = r }))
     renderPage({ onGenerate })
-    await selectAndUpload()
+    await selectPersonAndAvatar()
     await userEvent.click(screen.getByRole('button', { name: '生成' }))
     expect(await screen.findByText(/生成中…/)).toBeTruthy()
     expect(screen.getByRole('button', { name: '生成' })).not.toBeDisabled()
@@ -61,7 +63,7 @@ describe('GeneratePage', () => {
       .mockResolvedValueOnce([])
       .mockResolvedValue([{ id: 1, imagePath: 'images/1.png', name: 'あや', title: '陽気なモヒート' }])
     renderPage({ loadPending })
-    await selectAndUpload()
+    await selectPersonAndAvatar()
     await userEvent.click(screen.getByRole('button', { name: '生成' }))
     await waitFor(() => expect(screen.getByText(/images\/1\.png/)).toBeTruthy())
   })
@@ -81,13 +83,12 @@ const seaStyles = [
   { id: 'jacket', label: 'ジャケット風' },
 ]
 
-async function selectSeaPersonAndUpload() {
+async function selectSeaPersonAndAvatar() {
   await screen.findByText(/怒りのタツノオトシゴ/)
   await userEvent.selectOptions(screen.getByLabelText('人を選択'), '2')
   const select = await screen.findByLabelText('スタイル')
-  const file = new File(['x'], 'avatar.png', { type: 'image/png' })
-  await userEvent.upload(screen.getByLabelText('アバター画像'), file)
-  return { select, file }
+  await userEvent.click(await screen.findByRole('button', { name: /あやの画像を選択/ }))
+  return { select }
 }
 
 describe('style selection', () => {
@@ -103,7 +104,7 @@ describe('style selection', () => {
       loadPeople: vi.fn().mockResolvedValue(seaPeople),
       loadStyles: vi.fn().mockResolvedValue(seaStyles),
     })
-    const { select } = await selectSeaPersonAndUpload()
+    const { select } = await selectSeaPersonAndAvatar()
     expect(select.value).toBe('card')
     expect(screen.getByRole('option', { name: 'ジャケット風' })).toBeTruthy()
   })
@@ -113,10 +114,10 @@ describe('style selection', () => {
       loadPeople: vi.fn().mockResolvedValue(seaPeople),
       loadStyles: vi.fn().mockResolvedValue(seaStyles),
     })
-    const { select, file } = await selectSeaPersonAndUpload()
+    const { select } = await selectSeaPersonAndAvatar()
     await userEvent.selectOptions(select, 'jacket')
     await userEvent.click(screen.getByRole('button', { name: '生成' }))
-    expect(props.onGenerate).toHaveBeenCalledWith(2, file, 'jacket')
+    expect(props.onGenerate).toHaveBeenCalledWith(2, { avatarId: 7 }, 'jacket')
   })
 
   it('shows the style label in the job row', async () => {
@@ -124,7 +125,7 @@ describe('style selection', () => {
       loadPeople: vi.fn().mockResolvedValue(seaPeople),
       loadStyles: vi.fn().mockResolvedValue(seaStyles),
     })
-    const { select } = await selectSeaPersonAndUpload()
+    const { select } = await selectSeaPersonAndAvatar()
     await userEvent.selectOptions(select, 'jacket')
     await userEvent.click(screen.getByRole('button', { name: '生成' }))
     // `<option>` も同じラベル文字列を持つため、ジョブ行だけに一致する形で照合する
@@ -136,7 +137,7 @@ describe('style selection', () => {
       loadPeople: vi.fn().mockResolvedValue(seaPeople),
       loadStyles: vi.fn().mockResolvedValue(seaStyles),
     })
-    const { select } = await selectSeaPersonAndUpload()
+    const { select } = await selectSeaPersonAndAvatar()
     await userEvent.selectOptions(select, 'jacket')
     await userEvent.click(screen.getByRole('button', { name: '生成' }))
     await screen.findByText(/完了（未公開）/)
@@ -155,7 +156,7 @@ describe('style selection', () => {
       loadStyles,
     })
     // 先に sea の人物を選び、スタイルを解決させておく
-    const { file } = await selectSeaPersonAndUpload()
+    await selectSeaPersonAndAvatar()
     expect(screen.getByLabelText('スタイル').value).toBe('card')
 
     // 別ガチャの人物へ切り替え。cocktail のスタイルは未解決のまま。
@@ -167,7 +168,7 @@ describe('style selection', () => {
     resolveCocktail([{ id: 'standard', label: 'スタンダード' }])
     await waitFor(() => expect(screen.getByRole('button', { name: '生成' })).not.toBeDisabled())
     await userEvent.click(screen.getByRole('button', { name: '生成' }))
-    await waitFor(() => expect(props.onGenerate).toHaveBeenCalledWith(1, file, 'standard'))
+    await waitFor(() => expect(props.onGenerate).toHaveBeenCalledWith(1, { avatarId: 7 }, 'standard'))
   })
 
   it('shows an error and keeps 生成 disabled when loadStyles fails', async () => {
@@ -192,5 +193,44 @@ describe('style selection', () => {
     await screen.findByLabelText('スタイル')
     await userEvent.selectOptions(screen.getByLabelText('人を選択'), '3')
     await waitFor(() => expect(loadStyles).toHaveBeenCalledTimes(1))
+  })
+})
+
+describe('GeneratePage embedded mode', () => {
+  it('loads only the given gacha people when gachaId is set', async () => {
+    const props = renderPage({ gachaId: 'sea' })
+    await waitFor(() => expect(props.loadPeople).toHaveBeenCalledWith('sea'))
+  })
+
+  it('preselects the person given by selectedPersonId', async () => {
+    renderPage({ selectedPersonId: 1 })
+    await waitFor(() => {
+      expect(screen.getByLabelText('人を選択')).toHaveValue('1')
+    })
+  })
+
+  it('keeps the generate button disabled until an avatar is chosen', async () => {
+    renderPage({ selectedPersonId: 1 })
+    await screen.findByText(/陽気なモヒート/)
+    expect(screen.getByRole('button', { name: '生成' })).toBeDisabled()
+    await userEvent.click(await screen.findByRole('button', { name: /あやの画像を選択/ }))
+    await waitFor(() => expect(screen.getByRole('button', { name: '生成' })).toBeEnabled())
+  })
+
+  it('adds an uploaded avatar to the list and selects it', async () => {
+    renderPage({ selectedPersonId: 1 })
+    const file = new File(['x'], 'a.png', { type: 'image/png' })
+    await userEvent.upload(screen.getByLabelText('新しい画像'), file)
+    await userEvent.click(screen.getByRole('button', { name: 'アップロード' }))
+    const added = await screen.findByRole('button', { name: /新規の画像を選択/ })
+    expect(added).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('removes a deleted avatar from the list', async () => {
+    renderPage()
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+    await userEvent.click(await screen.findByRole('button', { name: /あやの画像を削除/ }))
+    await waitFor(() => expect(screen.queryByTestId('avatar-option')).toBeNull())
+    window.confirm.mockRestore()
   })
 })

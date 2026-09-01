@@ -2,12 +2,19 @@ import { useEffect, useState, useRef } from 'react'
 import Button from './ui/Button.jsx'
 import Card from './ui/Card.jsx'
 import Field from './ui/Field.jsx'
+import AvatarPicker from './AvatarPicker.jsx'
 import './GeneratePage.css'
 
-export default function GeneratePage({ loadPeople, loadPending, loadStyles, onGenerate, onPublish }) {
+export default function GeneratePage({
+  loadPeople, loadPending, loadStyles, loadAvatars,
+  onGenerate, onPublish, onUploadAvatar, onDeleteAvatar,
+  gachaId: fixedGachaId, selectedPersonId,
+}) {
   const [people, setPeople] = useState([])
   const [personId, setPersonId] = useState('')
-  const [file, setFile] = useState(null)
+  const [avatars, setAvatars] = useState([])
+  const [avatarId, setAvatarId] = useState(null)
+  const [avatarsError, setAvatarsError] = useState('')
   // 取得済みスタイルはどのガチャのものかを一緒に持つ。選択中ガチャと食い違う間は「未ロード」扱い。
   const [loadedStyles, setLoadedStyles] = useState({ gachaId: '', list: [] })
   const [styleId, setStyleId] = useState('')
@@ -19,14 +26,27 @@ export default function GeneratePage({ loadPeople, loadPending, loadStyles, onGe
   const nextJobId = useRef(1)
 
   const selectedPerson = people.find((p) => String(p.id) === String(personId))
-  const gachaId = selectedPerson?.gacha_id || ''
+  const gachaId = selectedPerson?.gacha_id || fixedGachaId || ''
 
   const stylesLoaded = loadedStyles.gachaId === gachaId
   const styles = stylesLoaded ? loadedStyles.list : []
   // 古いガチャの styleId が残っていても採用しない
   const activeStyleId = styles.some((s) => s.id === styleId) ? styleId : (styles[0]?.id || '')
 
-  useEffect(() => { loadPeople().then(setPeople) }, [loadPeople])
+  useEffect(() => {
+    loadPeople(fixedGachaId).then(setPeople)
+  }, [loadPeople, fixedGachaId])
+
+  useEffect(() => {
+    loadAvatars()
+      .then((list) => { setAvatarsError(''); setAvatars(list) })
+      .catch((e) => setAvatarsError(String(e.message || e)))
+  }, [loadAvatars])
+
+  // 外から人物を指定されたら追従する。その後ユーザーがセレクトを操作すれば上書きされる。
+  useEffect(() => {
+    if (selectedPersonId != null) setPersonId(String(selectedPersonId))
+  }, [selectedPersonId])
   useEffect(() => { loadPending().then(setPending) }, [loadPending])
 
   // ガチャが変わったときだけ取り直す。同じガチャの別人物では再取得しない。
@@ -50,15 +70,27 @@ export default function GeneratePage({ loadPeople, loadPending, loadStyles, onGe
     loadPending().then(setPending)
   }
 
+  async function handleUploadAvatar(file, name) {
+    const created = await onUploadAvatar(file, name)
+    setAvatars((prev) => [created, ...prev])
+    setAvatarId(created.id)
+  }
+
+  async function handleDeleteAvatar(id) {
+    await onDeleteAvatar(id)
+    setAvatars((prev) => prev.filter((a) => a.id !== id))
+    setAvatarId((prev) => (prev === id ? null : prev))
+  }
+
   function handleGenerate() {
-    if (!personId || !file || !stylesLoaded) return
+    if (!personId || !avatarId || !stylesLoaded) return
     const id = nextJobId.current++
     const style = styles.find((s) => s.id === activeStyleId)
     const who = selectedPerson ? `${selectedPerson.name}（${selectedPerson.title}）` : `#${personId}`
     // 同じ人物を複数スタイルで回すため、スタイル名までラベルに出す
     const label = styles.length > 1 && style ? `${who} — ${style.label}` : who
     setJobs((prev) => [{ id, label, status: 'running', error: '' }, ...prev])
-    onGenerate(Number(personId), file, activeStyleId || undefined)
+    onGenerate(Number(personId), { avatarId }, activeStyleId || undefined)
       .then(() => {
         setJobs((prev) => prev.map((j) => (j.id === id ? { ...j, status: 'done' } : j)))
         refreshPending()
@@ -116,17 +148,17 @@ export default function GeneratePage({ loadPeople, loadPending, loadStyles, onGe
         </Field>
       )}
 
-      <Field label="アバター画像" htmlFor="avatar-input">
-        <input
-          id="avatar-input"
-          className="gacha-file"
-          type="file"
-          accept="image/*"
-          onChange={(e) => setFile(e.target.files[0] || null)}
-        />
-      </Field>
+      <AvatarPicker
+        avatars={avatars}
+        value={avatarId}
+        onChange={setAvatarId}
+        onUpload={handleUploadAvatar}
+        onDelete={handleDeleteAvatar}
+        suggestName={selectedPerson?.name || ''}
+        error={avatarsError}
+      />
 
-      <Button onClick={handleGenerate} disabled={!personId || !file || !stylesLoaded}>
+      <Button onClick={handleGenerate} disabled={!personId || !avatarId || !stylesLoaded}>
         生成
       </Button>
 
