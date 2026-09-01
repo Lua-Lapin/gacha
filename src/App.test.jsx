@@ -261,4 +261,21 @@ describe('ガチャ画面の生成パネル', () => {
     await act(async () => {})
     expect(fetchPeopleMock).toHaveBeenCalledWith('sea')
   })
+
+  it('保存した人物が生成パネルで自動選択される', async () => {
+    saveResult.mockResolvedValueOnce({ id: 42 })
+    fetchPeopleMock.mockResolvedValue([
+      { id: 42, name: 'あや', title: '陽気なイルカ', gacha_id: 'sea' },
+    ])
+    render(<App />)
+    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
+    await act(async () => {})
+    fireEvent.click(screen.getByLabelText('ガチャを回す'))
+    act(() => { vi.advanceTimersByTime(REVEAL_MS) })
+    fireEvent.change(screen.getByLabelText('名前'), { target: { value: 'あや' } })
+    fireEvent.click(screen.getByRole('button', { name: '保存' }))
+    await act(async () => {})
+    await act(async () => {})
+    expect(screen.getByLabelText('人を選択')).toHaveValue('42')
+  })
 })

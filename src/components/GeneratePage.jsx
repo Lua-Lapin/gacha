@@ -44,9 +44,12 @@ export default function GeneratePage({
   }, [loadAvatars])
 
   // 外から人物を指定されたら追従する。その後ユーザーがセレクトを操作すれば上書きされる。
-  useEffect(() => {
-    if (selectedPersonId != null) setPersonId(String(selectedPersonId))
-  }, [selectedPersonId])
+  // effect ではなくレンダー中に調整する（React 推奨の prop 変化への追従パターン）。
+  const [syncedPersonId, setSyncedPersonId] = useState(null)
+  if (selectedPersonId != null && selectedPersonId !== syncedPersonId) {
+    setSyncedPersonId(selectedPersonId)
+    setPersonId(String(selectedPersonId))
+  }
   useEffect(() => { loadPending().then(setPending) }, [loadPending])
 
   // ガチャが変わったときだけ取り直す。同じガチャの別人物では再取得しない。
