@@ -6,3 +6,4 @@ server/.env
 data/*.db
 data/*.db.backup-*
 *.sqlite
+data/uploads/
