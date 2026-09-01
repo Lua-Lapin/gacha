@@ -1,6 +1,6 @@
 import express from 'express'
 import multer from 'multer'
-import { existsSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync, unlinkSync } from 'node:fs'
 import { join } from 'node:path'
 import { buildPrompt, listStyles, defaultStyleId, imageSize } from './prompt.js'
 import { buildManifest } from './manifest.js'
@@ -198,16 +198,27 @@ export function createApp({
   return app
 }
 
+// 実ディスクへのアバター入出力。テストではモックに差し替えられる。
+function realSaveAvatarFile({ uploadsDir, filePath, buffer }) {
+  writeFileSync(join(uploadsDir, filePath), buffer)
+}
+function realReadAvatarFile({ uploadsDir, filePath }) {
+  return readFileSync(join(uploadsDir, filePath))
+}
+function realDeleteAvatarFile({ uploadsDir, filePath }) {
+  unlinkSync(join(uploadsDir, filePath))
+}
+
 import dotenv from 'dotenv'
 import { fileURLToPath } from 'node:url'
 dotenv.config({ path: fileURLToPath(new URL('.env', import.meta.url)) })
 import { createDb } from './db.js'
 import { createClient, generateImage as realGenerate } from './imagegen.js'
 import { writeGenerationFiles as realWrite, publishPending as realPublish } from './publish.js'
-import { mkdirSync } from 'node:fs'
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   mkdirSync('data', { recursive: true })
+  mkdirSync('data/uploads', { recursive: true })
   const db = createDb('data/gacha.db')
   // OpenAIクライアントは画像生成が呼ばれた時に初めて作る。
   // これにより APIキーが無くても保存/カード登録のエンドポイントは起動できる。
@@ -218,6 +229,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     writeGenerationFiles: realWrite,
     publishPending: realPublish,
     galleryDir: 'gallery/public',
+    uploadsDir: 'data/uploads',
+    saveAvatarFile: realSaveAvatarFile,
+    readAvatarFile: realReadAvatarFile,
+    deleteAvatarFile: realDeleteAvatarFile,
   })
   app.listen(3001, () => console.log('API on http://localhost:3001'))
 }
