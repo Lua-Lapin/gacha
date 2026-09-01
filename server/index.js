@@ -107,7 +107,26 @@ export function createApp({
   app.post('/api/generate', upload.single('avatar'), async (req, res) => {
     const personId = Number(req.body.personId)
     if (!personId) return res.status(400).json({ error: 'personId required' })
-    if (!req.file) return res.status(400).json({ error: 'avatar required' })
+    // 画像の出どころは2通り: 保存済み avatar の id か、その場のファイル直送。
+    // 両方来たら avatarId を優先する。
+    let avatarBuffer
+    let avatarFilename
+    const avatarId = Number(req.body.avatarId)
+    if (avatarId) {
+      const row = db.getAvatar(avatarId)
+      if (!row) return res.status(404).json({ error: 'avatar not found' })
+      try {
+        avatarBuffer = readAvatarFile({ uploadsDir, filePath: row.filePath })
+      } catch {
+        return res.status(404).json({ error: 'avatar file missing' })
+      }
+      avatarFilename = row.filePath
+    } else if (req.file) {
+      avatarBuffer = req.file.buffer
+      avatarFilename = req.file.originalname || 'avatar.png'
+    } else {
+      return res.status(400).json({ error: 'avatar required' })
+    }
 
     const person = db.getPerson(personId)
     if (!person) return res.status(404).json({ error: 'person not found' })
@@ -126,8 +145,8 @@ export function createApp({
     try {
       const imageBuffer = await generateImage({
         prompt,
-        avatarBuffer: req.file.buffer,
-        avatarFilename: req.file.originalname || 'avatar.png',
+        avatarBuffer,
+        avatarFilename,
         size: imageSize(person.gacha_id),
         quality: 'medium',
       })

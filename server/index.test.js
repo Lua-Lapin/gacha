@@ -399,3 +399,49 @@ describe('DELETE /api/avatars/:id', () => {
     expect(db.listAvatars()).toHaveLength(0)
   })
 })
+
+describe('POST /api/generate with avatarId', () => {
+  function addPerson() {
+    return db.insertPerson({
+      name: 'あや', adjective: '陽気な', topic: 'モヒート',
+      title: '陽気なモヒート', color: '#000', gachaId: 'cocktail',
+    })
+  }
+
+  it('generates from a stored avatar', async () => {
+    const personId = addPerson()
+    const created = await request(app)
+      .post('/api/avatars').field('name', 'あや')
+      .attach('avatar', Buffer.from('stored'), { filename: 'a.png', contentType: 'image/png' })
+    const res = await request(app)
+      .post('/api/generate')
+      .field('personId', String(personId))
+      .field('avatarId', String(created.body.id))
+    expect(res.status).toBe(200)
+    expect(generateImage).toHaveBeenCalledWith(
+      expect.objectContaining({ avatarBuffer: Buffer.from('stored') })
+    )
+  })
+
+  it('returns 404 for an unknown avatarId without generating', async () => {
+    const personId = addPerson()
+    const res = await request(app)
+      .post('/api/generate')
+      .field('personId', String(personId))
+      .field('avatarId', '9999')
+    expect(res.status).toBe(404)
+    expect(generateImage).not.toHaveBeenCalled()
+    expect(db.listSuccessfulGenerations()).toHaveLength(0)
+  })
+
+  it('returns 404 when the stored file is missing', async () => {
+    const personId = addPerson()
+    const avatarId = db.insertAvatar({ name: 'あや', filePath: 'gone.png', mime: 'image/png' })
+    const res = await request(app)
+      .post('/api/generate')
+      .field('personId', String(personId))
+      .field('avatarId', String(avatarId))
+    expect(res.status).toBe(404)
+    expect(generateImage).not.toHaveBeenCalled()
+  })
+})
