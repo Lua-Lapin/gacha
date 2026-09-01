@@ -11,6 +11,10 @@ vi.mock('./lib/api.js', () => ({
   fetchStyles: vi.fn().mockResolvedValue([]),
   generate: vi.fn(),
   fetchPending: vi.fn().mockResolvedValue([]), publishAll: vi.fn(),
+  fetchAvatars: vi.fn().mockResolvedValue([]),
+  uploadAvatar: vi.fn(),
+  deleteAvatar: vi.fn(),
+  assetUrl: (p) => p,
 }))
 
 vi.mock('./lib/draw.js', async (importOriginal) => {
@@ -28,7 +32,7 @@ const seaTopics = getGachaById('sea').words.topics
 
 afterEach(cleanup)
 afterEach(() => {
-  fetchPeopleMock.mockClear()
+  fetchPeopleMock.mockReset()
   fetchPeopleMock.mockResolvedValue([])
   drawTitle.mockClear()
   saveResult.mockClear()
@@ -156,8 +160,11 @@ describe('役職(topic)の重複排除', () => {
     // カクテル・海の両方が公開中の時刻に固定して、ガチャを切り替えられるようにする。
     vi.setSystemTime(new Date('2026-06-15T12:00:00+09:00'))
     let resolveCocktail
-    fetchPeopleMock.mockReturnValueOnce(new Promise((resolve) => { resolveCocktail = resolve }))
-    fetchPeopleMock.mockResolvedValueOnce([{ topic: 'クラゲ' }])
+    // 生成パネルも同じ fetchPeople を呼ぶため、呼び出し順ではなくガチャ id で出し分ける。
+    const cocktailPeople = new Promise((resolve) => { resolveCocktail = resolve })
+    fetchPeopleMock.mockImplementation((id) =>
+      id === 'cocktail' ? cocktailPeople : Promise.resolve([{ id: 1, topic: 'クラゲ' }]),
+    )
     render(<App />)
     fireEvent.click(screen.getByText('カクテル役職ガチャ'))
     await act(async () => {})
@@ -165,7 +172,7 @@ describe('役職(topic)の重複排除', () => {
     fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
     await act(async () => {})
     // カクテルの取得がここでやっと返ってくる。海の usedTopics を汚してはいけない。
-    resolveCocktail([{ topic: 'マティーニ' }])
+    resolveCocktail([{ id: 2, topic: 'マティーニ' }])
     await act(async () => {})
     fireEvent.click(screen.getByLabelText('ガチャを回す'))
     expect(drawTitle.mock.calls[0][1]).toEqual(['クラゲ'])
@@ -237,5 +244,21 @@ describe('役職の指定作成', () => {
     fireEvent.click(screen.getByLabelText('ガチャを回す'))
     const excluded = drawTitle.mock.calls[0][1]
     expect(excluded).toEqual(expect.arrayContaining(['メンダコ', 'クラゲ']))
+  })
+})
+
+describe('ガチャ画面の生成パネル', () => {
+  it('ガチャ画面に生成パネルが出る', async () => {
+    render(<App />)
+    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
+    await act(async () => {})
+    expect(screen.getByText(/役職アバター生成/)).toBeInTheDocument()
+  })
+
+  it('そのガチャの人物だけを読み込む', async () => {
+    render(<App />)
+    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
+    await act(async () => {})
+    expect(fetchPeopleMock).toHaveBeenCalledWith('sea')
   })
 })

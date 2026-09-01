@@ -12,7 +12,7 @@ import Button from './components/ui/Button.jsx'
 import { gachas, getGachaById } from './data/gachas.js'
 import catImage from './assets/gacha-cat.png'
 import { drawTitle, pickCapsuleColor } from './lib/draw.js'
-import { saveResult, fetchPeople, fetchStyles, generate, fetchPending, publishAll } from './lib/api.js'
+import { saveResult, fetchPeople, fetchStyles, generate, fetchPending, publishAll, fetchAvatars, uploadAvatar, deleteAvatar } from './lib/api.js'
 import { isActive } from '../shared/deadline.js'
 import { galleryUrl } from './lib/galleryUrl.js'
 
@@ -28,6 +28,8 @@ export default function App() {
   const [usedTopics, setUsedTopics] = useState([])
   const [topicsStatus, setTopicsStatus] = useState('idle') // 'idle' | 'loading' | 'ready' | 'error'
   const topicsRequestId = useRef(0)
+  // 生成パネルで自動選択する人物。保存直後にその人を選んだ状態にする。
+  const [lastSavedPersonId, setLastSavedPersonId] = useState(null)
 
   const selectedGachaObj = getGachaById(selectedGacha)
   // 件数の比較ではなく集合で判定する。usedTopics には topic リストに無い値
@@ -82,6 +84,7 @@ export default function App() {
     // 番号が古ければ捨てる（別ガチャの topic が混ざるのを防ぐ）。
     const reqId = ++topicsRequestId.current
     setUsedTopics([])
+    setLastSavedPersonId(null)
     fetchPeople(id)
       .then((people) => {
         if (reqId !== topicsRequestId.current) return
@@ -102,6 +105,7 @@ export default function App() {
       color: color ?? pickCapsuleColor(),
       gachaId: selectedGacha,
     })
+    setLastSavedPersonId(saved.id)
     setUsedTopics((prev) => (prev.includes(topic) ? prev : [...prev, topic]))
     return saved
   }
@@ -142,8 +146,11 @@ export default function App() {
             loadPeople={fetchPeople}
             loadPending={fetchPending}
             loadStyles={fetchStyles}
+            loadAvatars={fetchAvatars}
             onGenerate={generate}
             onPublish={publishAll}
+            onUploadAvatar={uploadAvatar}
+            onDeleteAvatar={deleteAvatar}
           />
         </div>
       )}
@@ -195,6 +202,19 @@ export default function App() {
               <button className="again-btn" onClick={handleReset}>もう一回</button>
             </div>
           )}
+
+          <GeneratePage
+            gachaId={selectedGacha}
+            selectedPersonId={lastSavedPersonId}
+            loadPeople={fetchPeople}
+            loadPending={fetchPending}
+            loadStyles={fetchStyles}
+            loadAvatars={fetchAvatars}
+            onGenerate={generate}
+            onPublish={publishAll}
+            onUploadAvatar={uploadAvatar}
+            onDeleteAvatar={deleteAvatar}
+          />
         </div>
       )}
     </div>
