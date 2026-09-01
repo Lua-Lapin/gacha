@@ -24,6 +24,13 @@ export function createDb(path = 'data/gacha.db') {
       error TEXT,
       created_at TEXT NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS avatars (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      file_path TEXT NOT NULL,
+      mime TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    );
   `)
 
   const genCols = sqlite.prepare(`PRAGMA table_info(generations)`).all()
@@ -110,6 +117,31 @@ export function createDb(path = 'data/gacha.db') {
       if (!ids.length) return
       const placeholders = ids.map(() => '?').join(',')
       sqlite.prepare(`UPDATE generations SET published = 1 WHERE id IN (${placeholders})`).run(...ids)
+    },
+    insertAvatar({ name, filePath, mime }) {
+      const info = sqlite.prepare(
+        `INSERT INTO avatars (name, file_path, mime, created_at) VALUES (?, ?, ?, ?)`
+      ).run(name, filePath, mime, new Date().toISOString())
+      return Number(info.lastInsertRowid)
+    },
+    listAvatars() {
+      return sqlite.prepare(
+        `SELECT id, name, file_path AS filePath, mime, created_at AS createdAt
+         FROM avatars ORDER BY id DESC`
+      ).all()
+    },
+    getAvatar(id) {
+      return sqlite.prepare(
+        `SELECT id, name, file_path AS filePath, mime, created_at AS createdAt
+         FROM avatars WHERE id = ?`
+      ).get(id)
+    },
+    deleteAvatar(id) {
+      return sqlite.prepare(`DELETE FROM avatars WHERE id = ?`).run(id).changes > 0
+    },
+    // API 側はファイル名に採番 id を使うため、insert 後にパスを埋める
+    setAvatarPath(id, filePath) {
+      sqlite.prepare(`UPDATE avatars SET file_path = ? WHERE id = ?`).run(filePath, id)
     },
   }
 }

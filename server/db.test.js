@@ -222,3 +222,23 @@ describe('generations.style_id', () => {
     unlinkSync(tmp)
   })
 })
+
+describe('avatars', () => {
+  it('inserts, lists newest first, gets and deletes', () => {
+    const db = createDb(':memory:')
+    const a = db.insertAvatar({ name: '田中', filePath: '1.png', mime: 'image/png' })
+    const b = db.insertAvatar({ name: '佐藤', filePath: '2.jpg', mime: 'image/jpeg' })
+
+    const list = db.listAvatars()
+    expect(list.map((r) => r.id)).toEqual([b, a])
+    expect(list[0]).toMatchObject({ name: '佐藤', filePath: '2.jpg', mime: 'image/jpeg' })
+    expect(list[0].createdAt).toBeTypeOf('string')
+
+    expect(db.getAvatar(a)).toMatchObject({ name: '田中', filePath: '1.png' })
+    expect(db.getAvatar(9999)).toBeUndefined()
+
+    expect(db.deleteAvatar(a)).toBe(true)
+    expect(db.deleteAvatar(a)).toBe(false)
+    expect(db.listAvatars().map((r) => r.id)).toEqual([b])
+  })
+})
