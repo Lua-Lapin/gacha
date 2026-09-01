@@ -7,14 +7,20 @@ import { buildManifest } from './manifest.js'
 
 const upload = multer({ storage: multer.memoryStorage() })
 
-export function createApp({ db, generateImage, writeGenerationFiles, publishPending, galleryDir }) {
+export function createApp({
+  db, generateImage, writeGenerationFiles, publishPending, galleryDir,
+  uploadsDir, saveAvatarFile, readAvatarFile, deleteAvatarFile,
+}) {
   const app = express()
   app.use(express.json())
+
+  // 保存済みアバター画像の配信。uploadsDir が未指定のテストでは張らない。
+  if (uploadsDir) app.use('/uploads', express.static(uploadsDir))
 
   // 開発時はフロント(vite)とAPIがクロスオリジンになるため最小限のCORSを許可する
   app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*')
-    res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+    res.header('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS')
     res.header('Access-Control-Allow-Headers', 'Content-Type')
     if (req.method === 'OPTIONS') return res.sendStatus(204)
     next()
@@ -31,6 +37,14 @@ export function createApp({ db, generateImage, writeGenerationFiles, publishPend
     writeGenerationFiles({ galleryDir, generationId: genId, imageBuffer, manifest })
     return { generationId: genId, imagePath }
   }
+
+  function toAvatarResponse(row) {
+    return { id: row.id, name: row.name, url: `/uploads/${row.filePath}`, createdAt: row.createdAt }
+  }
+
+  app.get('/api/avatars', (req, res) => {
+    res.json(db.listAvatars().map(toAvatarResponse))
+  })
 
   app.get('/api/people', (req, res) => {
     const gachaId = req.query.gacha

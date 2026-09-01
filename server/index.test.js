@@ -7,6 +7,7 @@ import { createApp } from './index.js'
 import { createDb } from './db.js'
 
 let app, db, generateImage, writeGenerationFiles, publishPending, galleryDir
+let uploadsDir, savedFiles, saveAvatarFile, readAvatarFile, deleteAvatarFile
 beforeEach(() => {
   db = createDb(':memory:')
   generateImage = vi.fn().mockResolvedValue(Buffer.from('png'))
@@ -14,7 +15,18 @@ beforeEach(() => {
   publishPending = vi.fn(async ({ generations }) => ({ committed: generations.map((g) => g.id) }))
   galleryDir = mkdtempSync(join(tmpdir(), 'gacha-test-'))
   mkdirSync(join(galleryDir, 'images'), { recursive: true })
-  app = createApp({ db, generateImage, writeGenerationFiles, publishPending, galleryDir })
+  uploadsDir = mkdtempSync(join(tmpdir(), 'gacha-uploads-'))
+  savedFiles = new Map()
+  saveAvatarFile = vi.fn(({ filePath, buffer }) => { savedFiles.set(filePath, buffer) })
+  readAvatarFile = vi.fn(({ filePath }) => {
+    if (!savedFiles.has(filePath)) throw new Error('ENOENT')
+    return savedFiles.get(filePath)
+  })
+  deleteAvatarFile = vi.fn(({ filePath }) => { savedFiles.delete(filePath) })
+  app = createApp({
+    db, generateImage, writeGenerationFiles, publishPending, galleryDir,
+    uploadsDir, saveAvatarFile, readAvatarFile, deleteAvatarFile,
+  })
 })
 
 describe('POST /api/results', () => {
@@ -296,5 +308,17 @@ describe('GET /api/styles', () => {
   it('returns 400 when the gacha param is missing', async () => {
     const res = await request(app).get('/api/styles')
     expect(res.status).toBe(400)
+  })
+})
+
+describe('GET /api/avatars', () => {
+  it('lists avatars newest first with a url', async () => {
+    db.insertAvatar({ name: '田中', filePath: '1.png', mime: 'image/png' })
+    db.insertAvatar({ name: '佐藤', filePath: '2.png', mime: 'image/png' })
+    const res = await request(app).get('/api/avatars')
+    expect(res.status).toBe(200)
+    expect(res.body.map((a) => a.name)).toEqual(['佐藤', '田中'])
+    expect(res.body[0]).toMatchObject({ url: '/uploads/2.png' })
+    expect(res.body[0].createdAt).toBeTypeOf('string')
   })
 })
