@@ -263,10 +263,14 @@ describe('ガチャ画面の生成パネル', () => {
   })
 
   it('保存した人物が生成パネルで自動選択される', async () => {
-    saveResult.mockResolvedValueOnce({ id: 42 })
-    fetchPeopleMock.mockResolvedValue([
-      { id: 42, name: 'あや', title: '陽気なイルカ', gacha_id: 'sea' },
-    ])
+    // 保存前は人物一覧が空。保存が済んで初めて 42 が返るようにして、
+    // 「保存後に一覧を取り直す」ことを検証する（先に返すとテストが素通りする）。
+    let people = []
+    fetchPeopleMock.mockImplementation(() => Promise.resolve(people))
+    saveResult.mockImplementationOnce(async () => {
+      people = [{ id: 42, name: 'あや', title: '陽気なイルカ', gacha_id: 'sea' }]
+      return { id: 42 }
+    })
     render(<App />)
     fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
     await act(async () => {})
@@ -277,5 +281,31 @@ describe('ガチャ画面の生成パネル', () => {
     await act(async () => {})
     await act(async () => {})
     expect(screen.getByLabelText('人を選択')).toHaveValue('42')
+  })
+
+  it('ガチャを切り替えると選択がリセットされる', async () => {
+    // カクテル・海の両方が公開中の時刻に固定して、ガチャを切り替えられるようにする。
+    vi.setSystemTime(new Date('2026-06-15T12:00:00+09:00'))
+    let people = []
+    fetchPeopleMock.mockImplementation(() => Promise.resolve(people))
+    saveResult.mockImplementationOnce(async () => {
+      people = [{ id: 42, name: 'あや', title: '陽気なマティーニ', gacha_id: 'cocktail' }]
+      return { id: 42 }
+    })
+    render(<App />)
+    fireEvent.click(screen.getByText('カクテル役職ガチャ'))
+    await act(async () => {})
+    fireEvent.click(screen.getByLabelText('ガチャを回す'))
+    act(() => { vi.advanceTimersByTime(REVEAL_MS) })
+    fireEvent.change(screen.getByLabelText('名前'), { target: { value: 'あや' } })
+    fireEvent.click(screen.getByRole('button', { name: '保存' }))
+    await act(async () => {})
+    await act(async () => {})
+    expect(screen.getByLabelText('人を選択')).toHaveValue('42')
+
+    fireEvent.click(screen.getByRole('button', { name: '← 一覧に戻る' }))
+    fireEvent.click(screen.getByText('海の生き物役職ガチャ'))
+    await act(async () => {})
+    expect(screen.getByLabelText('人を選択')).toHaveValue('')
   })
 })

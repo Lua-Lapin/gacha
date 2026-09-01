@@ -83,7 +83,8 @@ export default function AvatarPicker({
               <button
                 type="button"
                 className="avatar-picker__delete"
-                aria-label={`${a.name}の画像を削除`}
+                // 同名の画像が複数あっても読み上げ名が重複しないよう id を添える
+                aria-label={`${a.name}の画像を削除（#${a.id}）`}
                 onClick={() => handleDelete(a)}
               >
                 ×

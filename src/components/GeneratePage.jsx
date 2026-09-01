@@ -33,9 +33,11 @@ export default function GeneratePage({
   // 古いガチャの styleId が残っていても採用しない
   const activeStyleId = styles.some((s) => s.id === styleId) ? styleId : (styles[0]?.id || '')
 
+  // selectedPersonId を依存に入れて、保存直後の新しい人物が一覧に載るよう取り直す。
+  // （追従先の option が無いとセレクトが空のままになる）
   useEffect(() => {
     loadPeople(fixedGachaId).then(setPeople)
-  }, [loadPeople, fixedGachaId])
+  }, [loadPeople, fixedGachaId, selectedPersonId])
 
   useEffect(() => {
     loadAvatars()
