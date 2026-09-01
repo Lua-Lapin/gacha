@@ -322,3 +322,53 @@ describe('GET /api/avatars', () => {
     expect(res.body[0].createdAt).toBeTypeOf('string')
   })
 })
+
+describe('POST /api/avatars', () => {
+  it('saves the file and returns the created row', async () => {
+    const res = await request(app)
+      .post('/api/avatars')
+      .field('name', '田中')
+      .attach('avatar', Buffer.from('img'), { filename: 'a.png', contentType: 'image/png' })
+    expect(res.status).toBe(201)
+    expect(res.body).toMatchObject({ name: '田中', url: `/uploads/${res.body.id}.png` })
+    expect(saveAvatarFile).toHaveBeenCalledWith(
+      expect.objectContaining({ uploadsDir, filePath: `${res.body.id}.png` })
+    )
+    expect(db.listAvatars()).toHaveLength(1)
+  })
+
+  it('maps jpeg and webp to their extensions', async () => {
+    const jpeg = await request(app)
+      .post('/api/avatars').field('name', 'a')
+      .attach('avatar', Buffer.from('i'), { filename: 'a.jpg', contentType: 'image/jpeg' })
+    expect(jpeg.body.url).toBe(`/uploads/${jpeg.body.id}.jpg`)
+    const webp = await request(app)
+      .post('/api/avatars').field('name', 'a')
+      .attach('avatar', Buffer.from('i'), { filename: 'a.webp', contentType: 'image/webp' })
+    expect(webp.body.url).toBe(`/uploads/${webp.body.id}.webp`)
+  })
+
+  it('rejects a missing name with 400 and saves nothing', async () => {
+    const res = await request(app)
+      .post('/api/avatars').field('name', '   ')
+      .attach('avatar', Buffer.from('i'), { filename: 'a.png', contentType: 'image/png' })
+    expect(res.status).toBe(400)
+    expect(db.listAvatars()).toHaveLength(0)
+    expect(saveAvatarFile).not.toHaveBeenCalled()
+  })
+
+  it('rejects a missing file with 400', async () => {
+    const res = await request(app).post('/api/avatars').field('name', '田中')
+    expect(res.status).toBe(400)
+    expect(db.listAvatars()).toHaveLength(0)
+  })
+
+  it('rejects an unsupported mime with 400', async () => {
+    const res = await request(app)
+      .post('/api/avatars').field('name', '田中')
+      .attach('avatar', Buffer.from('i'), { filename: 'a.gif', contentType: 'image/gif' })
+    expect(res.status).toBe(400)
+    expect(res.body.error).toMatch(/unsupported/)
+    expect(db.listAvatars()).toHaveLength(0)
+  })
+})

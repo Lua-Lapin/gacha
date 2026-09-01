@@ -38,12 +38,33 @@ export function createApp({
     return { generationId: genId, imagePath }
   }
 
+  const AVATAR_EXTENSIONS = {
+    'image/png': 'png',
+    'image/jpeg': 'jpg',
+    'image/webp': 'webp',
+  }
+
   function toAvatarResponse(row) {
     return { id: row.id, name: row.name, url: `/uploads/${row.filePath}`, createdAt: row.createdAt }
   }
 
   app.get('/api/avatars', (req, res) => {
     res.json(db.listAvatars().map(toAvatarResponse))
+  })
+
+  app.post('/api/avatars', upload.single('avatar'), (req, res) => {
+    const name = String(req.body.name || '').trim()
+    if (!req.file) return res.status(400).json({ error: 'avatar required' })
+    if (!name) return res.status(400).json({ error: 'name required' })
+    const ext = AVATAR_EXTENSIONS[req.file.mimetype]
+    if (!ext) return res.status(400).json({ error: 'unsupported image type' })
+
+    // ファイル名に採番 id を使うため、先に行を作ってからパスを埋める（recordGeneration と同じ手順）。
+    const id = db.insertAvatar({ name, filePath: '', mime: req.file.mimetype })
+    const filePath = `${id}.${ext}`
+    db.setAvatarPath(id, filePath)
+    saveAvatarFile({ uploadsDir, filePath, buffer: req.file.buffer })
+    res.status(201).json(toAvatarResponse(db.getAvatar(id)))
   })
 
   app.get('/api/people', (req, res) => {
