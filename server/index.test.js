@@ -372,3 +372,30 @@ describe('POST /api/avatars', () => {
     expect(db.listAvatars()).toHaveLength(0)
   })
 })
+
+describe('DELETE /api/avatars/:id', () => {
+  it('removes the row and the file', async () => {
+    const created = await request(app)
+      .post('/api/avatars').field('name', '田中')
+      .attach('avatar', Buffer.from('i'), { filename: 'a.png', contentType: 'image/png' })
+    const res = await request(app).delete(`/api/avatars/${created.body.id}`)
+    expect(res.status).toBe(204)
+    expect(deleteAvatarFile).toHaveBeenCalledWith(
+      expect.objectContaining({ uploadsDir, filePath: `${created.body.id}.png` })
+    )
+    expect(db.listAvatars()).toHaveLength(0)
+  })
+
+  it('returns 404 for an unknown id', async () => {
+    const res = await request(app).delete('/api/avatars/9999')
+    expect(res.status).toBe(404)
+  })
+
+  it('still deletes the row when the file is already gone', async () => {
+    const id = db.insertAvatar({ name: '田中', filePath: '1.png', mime: 'image/png' })
+    deleteAvatarFile.mockImplementation(() => { throw new Error('ENOENT') })
+    const res = await request(app).delete(`/api/avatars/${id}`)
+    expect(res.status).toBe(204)
+    expect(db.listAvatars()).toHaveLength(0)
+  })
+})

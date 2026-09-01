@@ -67,6 +67,19 @@ export function createApp({
     res.status(201).json(toAvatarResponse(db.getAvatar(id)))
   })
 
+  app.delete('/api/avatars/:id', (req, res) => {
+    const row = db.getAvatar(Number(req.params.id))
+    if (!row) return res.status(404).json({ error: 'avatar not found' })
+    // ファイルが既に無くても行は消す。消せない行が残ると一覧に幽霊が残り続けるため。
+    try {
+      deleteAvatarFile({ uploadsDir, filePath: row.filePath })
+    } catch {
+      // ignore
+    }
+    db.deleteAvatar(row.id)
+    res.sendStatus(204)
+  })
+
   app.get('/api/people', (req, res) => {
     const gachaId = req.query.gacha
     res.json(db.listPeople(gachaId ? { gachaId } : undefined))
