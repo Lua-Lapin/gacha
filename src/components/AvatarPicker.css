@@ -12,7 +12,9 @@
   grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
   gap: 12px;
   list-style: none;
-  padding: 0;
+  /* 削除ボタン(top/right: -2px)とフォーカスリング(outline-offset: 2px)は
+     セルの外側に描画されるため、スクロール枠で切られないよう余白を確保する */
+  padding: 6px;
   margin: 0;
   max-height: 420px;
   overflow-y: auto;
