@@ -66,7 +66,14 @@ props の変更:
 - 2カラムの骨組みは `GeneratePage` の JSX を `<div className="generate-page__cols">` と `__col--controls` / `__col--images` で包むだけ。state、effect、ハンドラのロジックは変更しない。
 - CSS は `GeneratePage.css`（カラム定義）と `AvatarPicker.css`（一覧のスクロール枠）に分けて追加する。
 
-### 4. エラー表示の配置
+### 4. サムネイルの上端合わせ
+
+画像は縦長のものが多く、現在の `.avatar-picker__thumb img` は `object-fit: cover` の既定（中央基準）で切り抜かれるため、上下が均等に削られて顔が切れる。
+
+- `.avatar-picker__thumb img` に `object-position: top` を追加し、上端を基準に切り抜く。
+- サムネイルのサイズ（84x84）と `object-fit: cover` は変更しない。
+
+### 5. エラー表示の配置
 
 発生元の近くに置く。
 
