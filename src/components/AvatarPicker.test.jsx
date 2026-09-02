@@ -36,6 +36,14 @@ function renderPicker(overrides = {}) {
 }
 
 describe('AvatarPicker', () => {
+  it('renders the upload form before the avatar grid', () => {
+    renderPicker()
+    const upload = screen.getByLabelText('新しい画像')
+    const firstThumb = screen.getAllByTestId('avatar-option')[0]
+    // compareDocumentPosition: FOLLOWING(4) なら upload が先
+    expect(upload.compareDocumentPosition(firstThumb) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
   it('puts avatars matching the suggested person first, newest first within each group', () => {
     renderPicker({ suggestPersonId: 11 })
     const labels = screen.getAllByTestId('avatar-name').map((el) => el.textContent)

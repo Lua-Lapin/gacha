@@ -75,7 +75,9 @@
   font-size: 0.85rem;
 }
 
+/* アップロード欄が一覧の上に来たので、区切り線は下側に出す */
 .avatar-picker__upload {
-  border-top: 2px solid var(--gacha-panel-border);
-  padding-top: 12px;
+  border-bottom: 2px solid var(--gacha-panel-border);
+  padding-bottom: 12px;
+  margin-bottom: 12px;
 }

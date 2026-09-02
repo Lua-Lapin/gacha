@@ -72,8 +72,37 @@ export default function AvatarPicker({
     <div className="avatar-picker">
       {error && <p className="avatar-picker__error">画像一覧の取得に失敗しました: {error}</p>}
 
+      <div className="avatar-picker__upload">
+        <Field label="新しい画像" htmlFor="avatar-upload-file">
+          <input
+            id="avatar-upload-file"
+            className="gacha-file"
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            onChange={handleFile}
+          />
+        </Field>
+        <Field label="画像の名前" htmlFor="avatar-upload-person">
+          <select
+            id="avatar-upload-person"
+            className="gacha-select"
+            value={personId}
+            onChange={(e) => setPersonId(e.target.value)}
+          >
+            <option value="">選択してください</option>
+            {people.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}（{p.title}）</option>
+            ))}
+          </select>
+        </Field>
+        <Button variant="secondary" onClick={handleUpload} disabled={!canUpload}>
+          {uploading ? 'アップロード中…' : 'アップロード'}
+        </Button>
+        {uploadError && <p className="avatar-picker__error">{uploadError}</p>}
+      </div>
+
       {sorted.length === 0 ? (
-        <p className="avatar-picker__empty">まだ画像がありません。下からアップロードしてください。</p>
+        <p className="avatar-picker__empty">まだ画像がありません。上のフォームからアップロードしてください。</p>
       ) : (
         <ul className="avatar-picker__grid">
           {sorted.map((a) => (
@@ -105,35 +134,6 @@ export default function AvatarPicker({
       )}
 
       {deleteError && <p className="avatar-picker__error">削除に失敗しました: {deleteError}</p>}
-
-      <div className="avatar-picker__upload">
-        <Field label="新しい画像" htmlFor="avatar-upload-file">
-          <input
-            id="avatar-upload-file"
-            className="gacha-file"
-            type="file"
-            accept="image/png,image/jpeg,image/webp"
-            onChange={handleFile}
-          />
-        </Field>
-        <Field label="画像の名前" htmlFor="avatar-upload-person">
-          <select
-            id="avatar-upload-person"
-            className="gacha-select"
-            value={personId}
-            onChange={(e) => setPersonId(e.target.value)}
-          >
-            <option value="">選択してください</option>
-            {people.map((p) => (
-              <option key={p.id} value={p.id}>{p.name}（{p.title}）</option>
-            ))}
-          </select>
-        </Field>
-        <Button variant="secondary" onClick={handleUpload} disabled={!canUpload}>
-          {uploading ? 'アップロード中…' : 'アップロード'}
-        </Button>
-        {uploadError && <p className="avatar-picker__error">{uploadError}</p>}
-      </div>
     </div>
   )
 }
