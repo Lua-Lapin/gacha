@@ -26,10 +26,12 @@ export default function AvatarPicker({
 
   // 外から人物を指定されたら追従する。その後ユーザーがセレクトを操作すれば上書きされる。
   // effect ではなくレンダー中に調整する（GeneratePage と同じ追従パターン）。
+  // 指定が外れた（null になった）ときは空へ戻す。ガチャを切り替えると人物一覧ごと
+  // 入れ替わるので、古い id を残すとセレクトが空白表示のまま固まる。
   const [syncedPersonId, setSyncedPersonId] = useState(null)
-  if (suggestPersonId != null && String(suggestPersonId) !== String(syncedPersonId)) {
+  if (String(suggestPersonId ?? '') !== String(syncedPersonId ?? '')) {
     setSyncedPersonId(suggestPersonId)
-    setPersonId(String(suggestPersonId))
+    setPersonId(suggestPersonId == null ? '' : String(suggestPersonId))
   }
 
   const findPerson = (id) => people.find((p) => String(p.id) === String(id))
