@@ -1,12 +1,21 @@
 @import './ui/theme.css';
 
+.avatar-picker {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* 画像が増えても周囲を押し下げないよう、一覧の中だけをスクロールさせる */
 .avatar-picker__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
   gap: 12px;
   list-style: none;
   padding: 0;
-  margin: 0 0 12px;
+  margin: 0;
+  max-height: 420px;
+  overflow-y: auto;
 }
 
 .avatar-picker__cell {
@@ -41,6 +50,8 @@
   width: 84px;
   height: 84px;
   object-fit: cover;
+  /* 縦長の画像が多く、中央基準だと顔が切れるので上端を基準に切り抜く */
+  object-position: top;
   display: block;
 }
 
