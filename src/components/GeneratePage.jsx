@@ -159,7 +159,8 @@ export default function GeneratePage({
         onChange={setAvatarId}
         onUpload={handleUploadAvatar}
         onDelete={handleDeleteAvatar}
-        suggestName={selectedPerson?.name || ''}
+        people={people}
+        suggestPersonId={selectedPerson?.id ?? null}
         error={avatarsError}
       />
 
