@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { render, screen, cleanup, waitFor } from '@testing-library/react'
+import { render, screen, cleanup, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/vitest'
 import GeneratePage from './GeneratePage.jsx'
@@ -27,7 +27,7 @@ function renderPage(overrides = {}) {
 }
 
 async function selectPersonAndAvatar() {
-  await screen.findByText(/陽気なモヒート/)
+  await screen.findAllByText(/陽気なモヒート/)
   await userEvent.selectOptions(screen.getByLabelText('人を選択'), '1')
   await userEvent.click(await screen.findByRole('button', { name: /あやの画像を選択/ }))
 }
@@ -35,7 +35,9 @@ async function selectPersonAndAvatar() {
 describe('GeneratePage', () => {
   it('lists people fetched via loadPeople', async () => {
     renderPage()
-    expect(await screen.findByText(/陽気なモヒート/)).toBeTruthy()
+    expect(
+      await within(screen.getByLabelText('人を選択')).findByRole('option', { name: 'あや（陽気なモヒート）' }),
+    ).toBeInTheDocument()
   })
 
   it('calls onGenerate with selected personId, avatar source and styleId', async () => {
@@ -84,7 +86,7 @@ const seaStyles = [
 ]
 
 async function selectSeaPersonAndAvatar() {
-  await screen.findByText(/怒りのタツノオトシゴ/)
+  await screen.findAllByText(/怒りのタツノオトシゴ/)
   await userEvent.selectOptions(screen.getByLabelText('人を選択'), '2')
   const select = await screen.findByLabelText('スタイル')
   await userEvent.click(await screen.findByRole('button', { name: /あやの画像を選択/ }))
@@ -94,7 +96,7 @@ async function selectSeaPersonAndAvatar() {
 describe('style selection', () => {
   it('hides the style select when the gacha has only one style', async () => {
     renderPage()
-    await screen.findByText(/陽気なモヒート/)
+    await screen.findAllByText(/陽気なモヒート/)
     await userEvent.selectOptions(screen.getByLabelText('人を選択'), '1')
     await waitFor(() => expect(screen.queryByLabelText('スタイル')).toBeNull())
   })
@@ -176,7 +178,7 @@ describe('style selection', () => {
       loadPeople: vi.fn().mockResolvedValue(seaPeople),
       loadStyles: vi.fn().mockRejectedValue(new Error('failed to fetch')),
     })
-    await screen.findByText(/怒りのタツノオトシゴ/)
+    await screen.findAllByText(/怒りのタツノオトシゴ/)
     await userEvent.selectOptions(screen.getByLabelText('人を選択'), '2')
     expect(await screen.findByText(/failed to fetch/)).toBeTruthy()
     expect(screen.getByRole('button', { name: '生成' })).toBeDisabled()
@@ -188,7 +190,7 @@ describe('style selection', () => {
       loadPeople: vi.fn().mockResolvedValue([...seaPeople, { id: 3, name: 'り', title: '眠そうなクラゲ', gacha_id: 'sea' }]),
       loadStyles,
     })
-    await screen.findByText(/怒りのタツノオトシゴ/)
+    await screen.findAllByText(/怒りのタツノオトシゴ/)
     await userEvent.selectOptions(screen.getByLabelText('人を選択'), '2')
     await screen.findByLabelText('スタイル')
     await userEvent.selectOptions(screen.getByLabelText('人を選択'), '3')
@@ -211,7 +213,7 @@ describe('GeneratePage embedded mode', () => {
 
   it('keeps the generate button disabled until an avatar is chosen', async () => {
     renderPage({ selectedPersonId: 1 })
-    await screen.findByText(/陽気なモヒート/)
+    await screen.findAllByText(/陽気なモヒート/)
     expect(screen.getByRole('button', { name: '生成' })).toBeDisabled()
     await userEvent.click(await screen.findByRole('button', { name: /あやの画像を選択/ }))
     await waitFor(() => expect(screen.getByRole('button', { name: '生成' })).toBeEnabled())

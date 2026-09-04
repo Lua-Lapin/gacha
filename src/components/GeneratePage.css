@@ -1,12 +1,58 @@
 @import './ui/theme.css';
 
+/* 2カラムを収めるため、パネルと親の .sub-view をどちらも 900px まで広げている（#root は 1126px） */
 .generate-page {
-  max-width: 440px;
+  max-width: 900px;
   margin: 24px auto 0;
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
+
+.generate-page__cols {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  text-align: left;
+}
+
+/* 操作カラムは幅を固定する。右の画像が増えても位置が動かないのが狙い。 */
+.generate-page__col--controls {
+  flex: 0 0 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.generate-page__col--images {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* 狭い画面では縦積み。DOM 順のまま操作列が先、重い画像一覧が最後に来る。 */
+@media (max-width: 1024px) {
+  .generate-page {
+    max-width: 440px;
+  }
+  .generate-page__cols {
+    flex-direction: column;
+  }
+  .generate-page__col--controls {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+  /* 縦積みでも align-items: flex-start が効くので、明示的に幅いっぱいへ広げる。 */
+  .generate-page__col--images {
+    width: 100%;
+  }
+}
+
+/* 未公開リストは長い imagePath を含む。380px 固定のカラムから溢れないよう折り返す。 */
+.generate-page__pending li {
+  word-break: break-all;
+}
+
 .generate-page__title {
   margin: 0;
   text-align: center;

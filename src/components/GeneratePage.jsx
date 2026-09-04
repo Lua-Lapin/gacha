@@ -124,73 +124,80 @@ export default function GeneratePage({
     <Card className="generate-page">
       <h2 className="generate-page__title">役職アバター生成 🎨</h2>
 
-      <Field label="人を選択" htmlFor="person-select">
-        <select
-          id="person-select"
-          className="gacha-select"
-          value={personId}
-          onChange={(e) => setPersonId(e.target.value)}
-        >
-          <option value="">選択してください</option>
-          {people.map((p) => (
-            <option key={p.id} value={p.id}>{p.name}（{p.title}）</option>
-          ))}
-        </select>
-      </Field>
+      <div className="generate-page__cols">
+        <div className="generate-page__col generate-page__col--controls">
+          <Field label="人を選択" htmlFor="person-select">
+            <select
+              id="person-select"
+              className="gacha-select"
+              value={personId}
+              onChange={(e) => setPersonId(e.target.value)}
+            >
+              <option value="">選択してください</option>
+              {people.map((p) => (
+                <option key={p.id} value={p.id}>{p.name}（{p.title}）</option>
+              ))}
+            </select>
+          </Field>
 
-      {styles.length > 1 && (
-        <Field label="スタイル" htmlFor="style-select">
-          <select
-            id="style-select"
-            className="gacha-select"
-            value={activeStyleId}
-            onChange={(e) => setStyleId(e.target.value)}
-          >
-            {styles.map((s) => (
-              <option key={s.id} value={s.id}>{s.label}</option>
-            ))}
-          </select>
-        </Field>
-      )}
+          {styles.length > 1 && (
+            <Field label="スタイル" htmlFor="style-select">
+              <select
+                id="style-select"
+                className="gacha-select"
+                value={activeStyleId}
+                onChange={(e) => setStyleId(e.target.value)}
+              >
+                {styles.map((s) => (
+                  <option key={s.id} value={s.id}>{s.label}</option>
+                ))}
+              </select>
+            </Field>
+          )}
 
-      <AvatarPicker
-        avatars={avatars}
-        value={avatarId}
-        onChange={setAvatarId}
-        onUpload={handleUploadAvatar}
-        onDelete={handleDeleteAvatar}
-        suggestName={selectedPerson?.name || ''}
-        error={avatarsError}
-      />
+          <Button onClick={handleGenerate} disabled={!personId || !avatarId || !stylesLoaded}>
+            生成
+          </Button>
 
-      <Button onClick={handleGenerate} disabled={!personId || !avatarId || !stylesLoaded}>
-        生成
-      </Button>
+          {stylesError && <p className="generate-page__error">スタイルの取得に失敗しました: {stylesError}</p>}
 
-      {stylesError && <p className="generate-page__error">スタイルの取得に失敗しました: {stylesError}</p>}
+          {jobs.length > 0 && (
+            <ul className="generate-page__jobs">
+              {jobs.map((j) => (
+                <li key={j.id} className={`generate-page__job generate-page__job--${j.status}`}>
+                  {j.label} — {statusLabel[j.status]}
+                  {j.status === 'error' && `: ${j.error}`}
+                </li>
+              ))}
+            </ul>
+          )}
 
-      {jobs.length > 0 && (
-        <ul className="generate-page__jobs">
-          {jobs.map((j) => (
-            <li key={j.id} className={`generate-page__job generate-page__job--${j.status}`}>
-              {j.label} — {statusLabel[j.status]}
-              {j.status === 'error' && `: ${j.error}`}
-            </li>
-          ))}
-        </ul>
-      )}
+          <div className="generate-page__pending">
+            <h3>未公開（{pending.length}）</h3>
+            <ul>
+              {pending.map((p) => (
+                <li key={p.id}>{p.name}（{p.title}）— {p.imagePath}</li>
+              ))}
+            </ul>
+            <Button onClick={handlePublish} disabled={publishing || pending.length === 0}>
+              {publishing ? '公開中…' : '一括コミット＆プッシュ'}
+            </Button>
+            {publishError && <p className="generate-page__error">エラー: {publishError}</p>}
+          </div>
+        </div>
 
-      <div className="generate-page__pending">
-        <h3>未公開（{pending.length}）</h3>
-        <ul>
-          {pending.map((p) => (
-            <li key={p.id}>{p.name}（{p.title}）— {p.imagePath}</li>
-          ))}
-        </ul>
-        <Button onClick={handlePublish} disabled={publishing || pending.length === 0}>
-          {publishing ? '公開中…' : '一括コミット＆プッシュ'}
-        </Button>
-        {publishError && <p className="generate-page__error">エラー: {publishError}</p>}
+        <div className="generate-page__col generate-page__col--images">
+          <AvatarPicker
+            avatars={avatars}
+            value={avatarId}
+            onChange={setAvatarId}
+            onUpload={handleUploadAvatar}
+            onDelete={handleDeleteAvatar}
+            people={people}
+            suggestPersonId={selectedPerson?.id ?? null}
+            error={avatarsError}
+          />
+        </div>
       </div>
     </Card>
   )

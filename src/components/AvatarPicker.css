@@ -1,12 +1,23 @@
 @import './ui/theme.css';
 
+.avatar-picker {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* 画像が増えても周囲を押し下げないよう、一覧の中だけをスクロールさせる */
 .avatar-picker__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
   gap: 12px;
   list-style: none;
-  padding: 0;
-  margin: 0 0 12px;
+  /* 削除ボタン(top/right: -2px)とフォーカスリング(outline-offset: 2px)は
+     セルの外側に描画されるため、スクロール枠で切られないよう余白を確保する */
+  padding: 6px;
+  margin: 0;
+  max-height: 420px;
+  overflow-y: auto;
 }
 
 .avatar-picker__cell {
@@ -41,6 +52,8 @@
   width: 84px;
   height: 84px;
   object-fit: cover;
+  /* 縦長の画像が多く、中央基準だと顔が切れるので上端を基準に切り抜く */
+  object-position: top;
   display: block;
 }
 
@@ -75,7 +88,9 @@
   font-size: 0.85rem;
 }
 
+/* アップロード欄が一覧の上に来たので、区切り線は下側に出す */
 .avatar-picker__upload {
-  border-top: 2px solid var(--gacha-panel-border);
-  padding-top: 12px;
+  border-bottom: 2px solid var(--gacha-panel-border);
+  padding-bottom: 12px;
+  margin-bottom: 12px;
 }
