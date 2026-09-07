@@ -1,5 +1,41 @@
 [
   {
+    "id": 207,
+    "name": "ぴの３",
+    "title": "遊び疲れたコロナビール",
+    "image": "images/207.png",
+    "createdAt": "2026-09-07T14:36:38.024Z",
+    "gachaId": "sushi",
+    "styleId": "real"
+  },
+  {
+    "id": 206,
+    "name": "ぴの３",
+    "title": "優秀なカツオ",
+    "image": "images/206.png",
+    "createdAt": "2026-09-07T14:26:55.536Z",
+    "gachaId": "sushi",
+    "styleId": "real"
+  },
+  {
+    "id": 205,
+    "name": "さとう",
+    "title": "風呂キャンのキムチ",
+    "image": "images/205.png",
+    "createdAt": "2026-09-07T14:20:30.152Z",
+    "gachaId": "sushi",
+    "styleId": "real"
+  },
+  {
+    "id": 204,
+    "name": "りむ",
+    "title": "動かないイワシ",
+    "image": "images/204.png",
+    "createdAt": "2026-09-07T14:17:46.596Z",
+    "gachaId": "sushi",
+    "styleId": "real"
+  },
+  {
     "id": 203,
     "name": "カンズ",
     "title": "動かないサーモン",
