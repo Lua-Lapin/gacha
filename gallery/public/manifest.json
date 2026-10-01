@@ -1,5 +1,23 @@
 [
   {
+    "id": 214,
+    "name": "きょん",
+    "title": "落ち着きがないアイドル",
+    "image": "images/214.png",
+    "createdAt": "2026-10-01T14:21:56.445Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
+    "id": 213,
+    "name": "めーあ",
+    "title": "やかましいフランケンシュタイン",
+    "image": "images/213.png",
+    "createdAt": "2026-10-01T14:15:18.557Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
     "id": 212,
     "name": "りん",
     "title": "呪いの巫女",
