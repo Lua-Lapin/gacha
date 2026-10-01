@@ -1,5 +1,14 @@
 [
   {
+    "id": 219,
+    "name": "りむ",
+    "title": "やる気のない貧乏神",
+    "image": "images/219.png",
+    "createdAt": "2026-10-01T16:07:39.577Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
     "id": 218,
     "name": "ジュリ",
     "title": "伝説の一寸法師",
