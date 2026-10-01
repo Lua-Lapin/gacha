@@ -1,5 +1,41 @@
 [
   {
+    "id": 225,
+    "name": "ゆん",
+    "title": "お昼過ぎに起きるヴァンパイヤ",
+    "image": "images/225.png",
+    "createdAt": "2026-10-01T16:31:42.654Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
+    "id": 224,
+    "name": "きょん",
+    "title": "墓穴を掘る魔女",
+    "image": "images/224.png",
+    "createdAt": "2026-10-01T16:29:58.748Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
+    "id": 221,
+    "name": "ゆら",
+    "title": "ショートスリーパーのゾンビ",
+    "image": "images/221.png",
+    "createdAt": "2026-10-01T16:24:36.372Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
+    "id": 220,
+    "name": "ジュリ",
+    "title": "地獄のカカシ",
+    "image": "images/220.png",
+    "createdAt": "2026-10-01T16:22:41.534Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
     "id": 219,
     "name": "りむ",
     "title": "やる気のない貧乏神",
