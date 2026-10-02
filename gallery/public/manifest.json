@@ -1,5 +1,14 @@
 [
   {
+    "id": 228,
+    "name": "りす汰",
+    "title": "地獄の売人",
+    "image": "images/228.png",
+    "createdAt": "2026-10-02T13:42:19.343Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
     "id": 225,
     "name": "ゆん",
     "title": "お昼過ぎに起きるヴァンパイヤ",
@@ -14,6 +23,24 @@
     "title": "墓穴を掘る魔女",
     "image": "images/224.png",
     "createdAt": "2026-10-01T16:29:58.748Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
+    "id": 223,
+    "name": "ゆん",
+    "title": "眠そうなろくろ首",
+    "image": "images/223.png",
+    "createdAt": "2026-10-01T16:28:29.220Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
+    "id": 222,
+    "name": "ゆん",
+    "title": "眠そうなろくろ首",
+    "image": "images/222.png",
+    "createdAt": "2026-10-01T16:25:09.223Z",
     "gachaId": "halloween",
     "styleId": "event"
   },
