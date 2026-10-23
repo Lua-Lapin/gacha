@@ -1,5 +1,32 @@
 [
   {
+    "id": 231,
+    "name": "海野つぶ",
+    "title": "大暴れする勇者",
+    "image": "images/231.png",
+    "createdAt": "2026-10-23T14:26:22.603Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
+    "id": 230,
+    "name": "竜胆",
+    "title": "憂鬱なジェイソン",
+    "image": "images/230.png",
+    "createdAt": "2026-10-23T14:25:03.517Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
+    "id": 229,
+    "name": "りん",
+    "title": "お菓子配る天使",
+    "image": "images/229.png",
+    "createdAt": "2026-10-23T14:23:18.956Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
     "id": 228,
     "name": "りす汰",
     "title": "地獄の売人",
