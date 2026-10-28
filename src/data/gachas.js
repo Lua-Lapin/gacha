@@ -1,5 +1,7 @@
 import gemstoneBanner from '../assets/gemstone-tea-party-banner.png'
 import { gemstones, gemstoneMotifs } from '../../shared/gemstones.js'
+import odenBanner from '../assets/oden-banner.png'
+import { odenItemInfo } from './oden.js'
 import cocktailBanner from '../assets/cocktail-banner.png'
 import izakayaBanner from '../assets/izakaya-banner.png'
 import seaBanner from '../assets/sea-banner.png'
@@ -27,6 +29,17 @@ export const gachas = [
     itemEmoji: '💎',
     detailLabel: 'デザイン',
     combinationDraw: true,
+  },
+  {
+    id: 'oden',
+    title: 'おでんガチャ',
+    banner: odenBanner,
+    endsAt: '2026-11-30T23:59:00+09:00',
+    words: { adjectives, topics: Object.keys(odenItemInfo) },
+    itemInfo: odenItemInfo,
+    itemLabel: 'おでん',
+    itemEmoji: '🍢',
+    detailLabel: '材料',
   },
   {
     id: 'cocktail',

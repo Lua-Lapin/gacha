@@ -1,6 +1,7 @@
 import { isActive } from '../shared/deadline.js'
 import { escapeHtml } from '../shared/escapeHtml.js'
 import { GEMSTONE_STYLES } from '../shared/prompts/gemstone.js'
+import { ODEN_STYLES } from '../shared/prompts/oden.js'
 import { COCKTAIL_STYLES } from '../shared/prompts/cocktail.js'
 import { IZAKAYA_STYLES } from '../shared/prompts/izakaya.js'
 import { SEA_STYLES } from '../shared/prompts/sea.js'
@@ -21,6 +22,7 @@ export function endedGachas(gachas, now = new Date()) {
 // アプリ内では引き続き promptsFor を使うこと。
 export const STYLES_BY_GACHA = {
   gemstone: GEMSTONE_STYLES,
+  oden: ODEN_STYLES,
   cocktail: COCKTAIL_STYLES,
   izakaya: IZAKAYA_STYLES,
   sea: SEA_STYLES,

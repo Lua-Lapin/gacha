@@ -23,6 +23,7 @@ export function tweetHref(entry, base = BASE) {
 // キーの順序がタブの表示順になる。新しい（締切が後の）ガチャほど左。
 export const GACHAS = {
   gemstone: { label: '💎 宝石ガチャ', endsAt: '2026-11-30T23:59:00+09:00' },
+  oden: { label: '🍢 おでん', endsAt: '2026-11-30T23:59:00+09:00' },
   sushi: { label: '🍣 寿司', endsAt: '2026-09-30T23:59:00+09:00' },
   sea: { label: '🐙 海の生き物', endsAt: '2026-08-31T23:59:00+09:00' },
   izakaya: { label: '🍶 居酒屋', endsAt: '2026-07-31T23:59:00+09:00' },
@@ -31,6 +32,7 @@ export const GACHAS = {
 
 // スタイルの表示名。GACHAS と同じ理由で、React 側の資産は参照せずここに持つ。
 const STYLE_LABELS = {
+  yuru: 'ゆるいかぶりもの',
   standard: 'スタンダード',
   card: 'かわいいカード風',
   jacket: 'ジャケット風',
