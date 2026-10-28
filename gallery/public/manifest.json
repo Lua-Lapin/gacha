@@ -1,5 +1,77 @@
 [
   {
+    "id": 241,
+    "name": "さとう（竜胆）",
+    "title": "伝説のジャック・オ・ランタン",
+    "image": "images/241.png",
+    "createdAt": "2026-10-28T14:31:08.607Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
+    "id": 240,
+    "name": "めーあ",
+    "title": "驚く側の魔王",
+    "image": "images/240.png",
+    "createdAt": "2026-10-28T14:30:01.878Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
+    "id": 239,
+    "name": "めーあ",
+    "title": "三点倒立する白雪姫",
+    "image": "images/239.png",
+    "createdAt": "2026-10-28T14:27:27.513Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
+    "id": 238,
+    "name": "めーあ",
+    "title": "三点倒立する白雪姫",
+    "image": "images/238.png",
+    "createdAt": "2026-10-28T14:25:53.463Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
+    "id": 237,
+    "name": "ちづ",
+    "title": "酒豪の地縛霊",
+    "image": "images/237.png",
+    "createdAt": "2026-10-28T14:25:20.798Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
+    "id": 236,
+    "name": "めーあ",
+    "title": "闇鍋するうさぎ",
+    "image": "images/236.png",
+    "createdAt": "2026-10-28T14:17:39.032Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
+    "id": 235,
+    "name": "ちづ",
+    "title": "ハロウィンはやっぱり王女様",
+    "image": "images/235.png",
+    "createdAt": "2026-10-28T14:17:06.811Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
+    "id": 234,
+    "name": "るん",
+    "title": "社畜の修道女",
+    "image": "images/234.png",
+    "createdAt": "2026-10-28T13:21:14.822Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
     "id": 233,
     "name": "りり",
     "title": "宙を舞うナース",
