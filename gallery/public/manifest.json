@@ -1,5 +1,23 @@
 [
   {
+    "id": 233,
+    "name": "りり",
+    "title": "宙を舞うナース",
+    "image": "images/233.png",
+    "createdAt": "2026-10-28T13:16:52.604Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
+    "id": 232,
+    "name": "カンズ",
+    "title": "宙を舞うピエロ",
+    "image": "images/232.png",
+    "createdAt": "2026-10-23T14:34:40.768Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
     "id": 231,
     "name": "海野つぶ",
     "title": "大暴れする勇者",
