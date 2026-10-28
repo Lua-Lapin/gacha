@@ -1,5 +1,14 @@
 [
   {
+    "id": 242,
+    "name": "竜胆",
+    "title": "大暴れする石油王",
+    "image": "images/242.png",
+    "createdAt": "2026-10-28T14:38:51.060Z",
+    "gachaId": "halloween",
+    "styleId": "event"
+  },
+  {
     "id": 241,
     "name": "さとう（竜胆）",
     "title": "伝説のジャック・オ・ランタン",
