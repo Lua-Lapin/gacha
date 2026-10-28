@@ -1,3 +1,4 @@
+import { ODEN_STYLES } from '../shared/prompts/oden.js'
 import { COCKTAIL_STYLES } from '../shared/prompts/cocktail.js'
 import { IZAKAYA_STYLES } from '../shared/prompts/izakaya.js'
 import { SEA_STYLES } from '../shared/prompts/sea.js'
@@ -5,6 +6,7 @@ import { SUSHI_STYLES } from '../shared/prompts/sushi.js'
 
 // ガチャID -> スタイル定義の配列。配列の先頭が既定スタイル。
 export const GACHA_STYLES = {
+  oden: ODEN_STYLES,
   cocktail: COCKTAIL_STYLES,
   izakaya: IZAKAYA_STYLES,
   sea: SEA_STYLES,

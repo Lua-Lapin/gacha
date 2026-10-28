@@ -1,3 +1,5 @@
+import odenBanner from '../assets/oden-banner.png'
+import { odenItemInfo } from './oden.js'
 import cocktailBanner from '../assets/cocktail-banner.png'
 import izakayaBanner from '../assets/izakaya-banner.png'
 import seaBanner from '../assets/sea-banner.png'
@@ -14,6 +16,17 @@ import { sushiAdjectives, sushiItemInfo } from './sushi.js'
 // itemLabel: UI で「◯◯言葉」の◯◯部分に使う（例: 'カクテル' / '役職'）
 // detailLabel: UI で details 行の見出しに使う（例: '材料' / '特徴'）
 export const gachas = [
+  {
+    id: 'oden',
+    title: 'おでん役職ガチャ',
+    banner: odenBanner,
+    endsAt: '2026-11-30T23:59:00+09:00',
+    words: { adjectives, topics: Object.keys(odenItemInfo) },
+    itemInfo: odenItemInfo,
+    itemLabel: 'おでん',
+    itemEmoji: '🍢',
+    detailLabel: '材料',
+  },
   {
     id: 'cocktail',
     title: 'カクテル役職ガチャ',

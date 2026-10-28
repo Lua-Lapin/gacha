@@ -159,6 +159,9 @@ export function createApp({
         avatarFilename,
         size: imageSize(person.gacha_id),
         quality: 'medium',
+        ...(person.gacha_id === 'oden' ? {
+          styleReferenceBuffer: readFileSync(new URL('./assets/oden-style-reference.png', import.meta.url)),
+        } : {}),
       })
       res.json(recordGeneration({ personId, imageBuffer, prompt, styleId }))
     } catch (err) {

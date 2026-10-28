@@ -9,13 +9,18 @@ export async function generateImage({
   prompt,
   avatarBuffer,
   avatarFilename,
+  styleReferenceBuffer,
   size,
   quality,
 }) {
   const image = await toFile(avatarBuffer, avatarFilename, { type: 'image/png' })
+  // おでんのみ、人物とは別の画像で承認済みのゆるい画風を渡す。
+  const images = styleReferenceBuffer
+    ? [image, await toFile(styleReferenceBuffer, 'oden-style-reference.png', { type: 'image/png' })]
+    : image
   const res = await client.images.edit({
     model: 'gpt-image-2',
-    image,
+    image: images,
     prompt,
     ...(size ? { size } : {}),
     ...(quality ? { quality } : {}),
