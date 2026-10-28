@@ -1,4 +1,5 @@
 import express from 'express'
+import { parseGemstoneTitle } from '../shared/gemstones.js'
 import multer from 'multer'
 import { existsSync, mkdirSync, readFileSync, writeFileSync, unlinkSync } from 'node:fs'
 import { join } from 'node:path'
@@ -25,6 +26,7 @@ export function createApp({
 
   // 保存済みアバター画像の配信。CORSヘッダーが付くよう上のミドルウェアより後段に置く。
   app.use('/uploads', express.static(uploadsDir))
+  app.use('/generated/images', express.static(join(galleryDir, 'images')))
 
   // 生成物をDBに記録し、ギャラリーへローカル書き出しする（git は publish 時にまとめて実行）。
   function recordGeneration({ personId, imageBuffer, prompt, styleId }) {
@@ -35,7 +37,7 @@ export function createApp({
     db.raw.prepare('UPDATE generations SET image_path = ? WHERE id = ?').run(imagePath, genId)
     const manifest = buildManifest(db.listSuccessfulGenerations())
     writeGenerationFiles({ galleryDir, generationId: genId, imageBuffer, manifest })
-    return { generationId: genId, imagePath }
+    return { generationId: genId, imagePath, previewUrl: `/generated/images/${genId}.png` }
   }
 
   const AVATAR_EXTENSIONS = {
@@ -105,6 +107,14 @@ export function createApp({
     const { name, adjective, topic, title, color, gachaId } = req.body || {}
     if (!name || !adjective || !topic || !title || !color || !gachaId) {
       return res.status(400).json({ error: 'missing required fields' })
+    }
+    if (gachaId === 'gemstone') {
+      try {
+        const { gem, motif } = parseGemstoneTitle(title)
+        if (gem !== adjective || motif !== topic) throw new Error('gemstone fields do not match title')
+      } catch (err) {
+        return res.status(400).json({ error: String(err.message || err) })
+      }
     }
     const id = db.insertPerson({ name, adjective, topic, title, color, gachaId })
     res.status(201).json({ id })

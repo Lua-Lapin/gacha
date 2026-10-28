@@ -236,3 +236,12 @@ describe('GeneratePage embedded mode', () => {
     window.confirm.mockRestore()
   })
 })
+
+it('生成完了時に返された画像をプレビューする', async () => {
+  renderPage({ onGenerate: vi.fn().mockResolvedValue({ previewUrl: '/generated/images/42.png' }) })
+  await selectPersonAndAvatar()
+  await userEvent.click(screen.getByRole('button', { name: '生成' }))
+  const image = await screen.findByRole('img', { name: /生成プレビュー/ })
+  expect(image.getAttribute('src')).toMatch(/\/generated\/images\/42.png$/)
+  expect(image.closest('a')).toHaveAttribute('href', image.getAttribute('src'))
+})

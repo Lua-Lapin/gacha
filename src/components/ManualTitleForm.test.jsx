@@ -103,3 +103,15 @@ describe('ManualTitleForm', () => {
     expect(screen.queryByText('保存に失敗しました')).toBeNull()
   })
 })
+
+it('宝石ガチャの指定作成はリストから宝石とモチーフを選ぶ', async () => {
+  const { getGachaById } = await import('../data/gachas.js')
+  const onCreate = vi.fn().mockResolvedValue(undefined)
+  render(<ManualTitleForm itemLabel="モチーフ" gacha={getGachaById('gemstone')} onCreate={onCreate} />)
+  await userEvent.click(screen.getByRole('button', { name: '宝石とモチーフを指定して作る' }))
+  await userEvent.type(screen.getByLabelText('名前'), 'るあ')
+  await userEvent.selectOptions(screen.getByLabelText('宝石'), 'アメジスト')
+  await userEvent.selectOptions(screen.getByLabelText('モチーフ'), 'お茶会')
+  await userEvent.click(screen.getByRole('button', { name: '作成' }))
+  expect(onCreate).toHaveBeenCalledWith({ name: 'るあ', adjective: 'アメジスト', topic: 'お茶会', title: 'アメジストのお茶会' })
+})

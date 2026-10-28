@@ -309,3 +309,30 @@ describe('ガチャ画面の生成パネル', () => {
     expect(screen.getByLabelText('人を選択')).toHaveValue('')
   })
 })
+
+describe('宝石ガチャの結果表示', () => {
+  it('保存済み組み合わせを除外し、プロンプトは画面に出さず同じ2要素を保存する', async () => {
+    vi.setSystemTime(new Date('2026-11-15T12:00:00+09:00'))
+    fetchPeopleMock.mockResolvedValue([{ id: 99, name: '既存', gacha_id: 'gemstone', topic: 'お茶会', title: 'アメジストのお茶会' }])
+    render(<App />)
+    fireEvent.click(screen.getByText('宝石ガチャ'))
+    await act(async () => {})
+    fireEvent.click(screen.getByLabelText('ガチャを回す'))
+    expect(drawTitle.mock.calls[0][1]).toEqual(['アメジストのお茶会'])
+    act(() => vi.advanceTimersByTime(REVEAL_MS))
+    const result = drawTitle.mock.results[0].value
+    expect(result.prompt).toContain(result.title)
+    expect(screen.queryByLabelText('画像生成用プロンプト')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'プロンプトをコピー' })).toBeNull()
+    expect(screen.queryByText(result.prompt)).toBeNull()
+    fireEvent.change(screen.getByRole('textbox', { name: '名前' }), { target: { value: 'るあ' } })
+    fireEvent.click(screen.getByRole('button', { name: '保存' }))
+    await act(async () => {})
+    expect(saveResult).toHaveBeenCalledWith(expect.objectContaining({
+      gachaId: 'gemstone', adjective: result.adjective, topic: result.topic, title: result.title,
+    }))
+    fireEvent.click(screen.getByRole('button', { name: 'もう一回' }))
+    fireEvent.click(screen.getByLabelText('ガチャを回す'))
+    expect(drawTitle.mock.calls[1][1]).toEqual(expect.arrayContaining(['アメジストのお茶会', result.title]))
+  })
+})

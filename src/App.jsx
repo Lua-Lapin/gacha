@@ -11,7 +11,7 @@ import BackButton from './components/ui/BackButton.jsx'
 import Button from './components/ui/Button.jsx'
 import { gachas, getGachaById } from './data/gachas.js'
 import catImage from './assets/gacha-cat.png'
-import { drawTitle, pickCapsuleColor } from './lib/draw.js'
+import { drawTitle, pickCapsuleColor, remainingDraws, resultKey } from './lib/draw.js'
 import { saveResult, fetchPeople, fetchStyles, generate, fetchPending, publishAll, fetchAvatars, uploadAvatar, deleteAvatar } from './lib/api.js'
 import { isActive } from '../shared/deadline.js'
 import { galleryUrl } from './lib/galleryUrl.js'
@@ -35,10 +35,8 @@ export default function App() {
   // 件数の比較ではなく集合で判定する。usedTopics には topic リストに無い値
   // （取り違えた手入力など）が混ざりうるので、数だけ数えると未割り当ての
   // topic が残っていても打ち止めになる。drawTitle の除外条件と揃える。
-  const usedTopicSet = new Set(usedTopics)
-  const isExhausted =
-    topicsStatus === 'ready' &&
-    (selectedGachaObj?.words.topics ?? []).every((t) => usedTopicSet.has(t))
+  const isExhausted = topicsStatus === 'ready' && selectedGachaObj &&
+    remainingDraws(selectedGachaObj, usedTopics).length === 0
 
   // 演出中（暗転オーバーレイ表示中）は背面ページのスクロールを止める。
   useEffect(() => {
@@ -89,7 +87,7 @@ export default function App() {
       .then((people) => {
         if (reqId !== topicsRequestId.current) return
         // 読み込み中に指定作成された topic を取りこぼさないため、上書きせずマージする。
-        setUsedTopics((prev) => [...new Set([...prev, ...people.map((p) => p.topic)])])
+        setUsedTopics((prev) => [...new Set([...prev, ...people.map((p) => resultKey(getGachaById(id), p))])])
         setTopicsStatus('ready')
       })
       .catch(() => {
@@ -106,7 +104,8 @@ export default function App() {
       gachaId: selectedGacha,
     })
     setLastSavedPersonId(saved.id)
-    setUsedTopics((prev) => (prev.includes(topic) ? prev : [...prev, topic]))
+    const key = resultKey(selectedGachaObj, { topic, title })
+    setUsedTopics((prev) => (prev.includes(key) ? prev : [...prev, key]))
     return saved
   }
 
@@ -163,7 +162,7 @@ export default function App() {
             <p className="gacha-status gacha-status--error">使用済み役職の取得に失敗しました</p>
           )}
           {isExhausted && (
-            <p className="gacha-status gacha-status--error">役職はすべて割り当て済みです</p>
+            <p className="gacha-status gacha-status--error">{selectedGachaObj?.combinationDraw ? '宝石とモチーフの組み合わせはすべて割り当て済みです' : '役職はすべて割り当て済みです'}</p>
           )}
           <GachaMachine
             shaking={phase === 'revealing'}
@@ -173,6 +172,8 @@ export default function App() {
 
           {phase === 'idle' && selectedGachaObj && (
             <ManualTitleForm
+              key={selectedGacha}
+              gacha={selectedGachaObj}
               itemLabel={selectedGachaObj.itemLabel}
               onCreate={persistPerson}
             />
@@ -186,6 +187,8 @@ export default function App() {
             <div className="reveal-stage">
               <ResultDisplay
                 title={result.title}
+                gem={selectedGachaObj.combinationDraw ? result.adjective : undefined}
+                motif={selectedGachaObj.combinationDraw ? result.topic : undefined}
                 info={result.info}
                 itemLabel={selectedGachaObj.itemLabel}
                 itemEmoji={selectedGachaObj.itemEmoji}

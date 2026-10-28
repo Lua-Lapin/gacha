@@ -47,3 +47,8 @@ describe('ResultDisplay', () => {
     expect(screen.getByText('特徴：透明 / 発光')).toBeTruthy()
   })
 })
+
+it('宝石とモチーフを表示する', () => {
+  render(<ResultDisplay title="アメジストのお茶会" gem="アメジスト" motif="お茶会" />)
+  expect(screen.getByText(/宝石：アメジスト ／ モチーフ：お茶会/)).toBeInTheDocument()
+})

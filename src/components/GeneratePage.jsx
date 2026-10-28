@@ -3,6 +3,7 @@ import Button from './ui/Button.jsx'
 import Card from './ui/Card.jsx'
 import Field from './ui/Field.jsx'
 import AvatarPicker from './AvatarPicker.jsx'
+import { assetUrl } from '../lib/api.js'
 import './GeneratePage.css'
 
 export default function GeneratePage({
@@ -96,8 +97,8 @@ export default function GeneratePage({
     const label = styles.length > 1 && style ? `${who} — ${style.label}` : who
     setJobs((prev) => [{ id, label, status: 'running', error: '' }, ...prev])
     onGenerate(Number(personId), { avatarId }, activeStyleId || undefined)
-      .then(() => {
-        setJobs((prev) => prev.map((j) => (j.id === id ? { ...j, status: 'done' } : j)))
+      .then((result) => {
+        setJobs((prev) => prev.map((j) => (j.id === id ? { ...j, status: 'done', previewUrl: result.previewUrl } : j)))
         refreshPending()
       })
       .catch((e) => {
@@ -167,6 +168,11 @@ export default function GeneratePage({
                 <li key={j.id} className={`generate-page__job generate-page__job--${j.status}`}>
                   {j.label} — {statusLabel[j.status]}
                   {j.status === 'error' && `: ${j.error}`}
+                  {j.previewUrl && (
+                    <a href={assetUrl(j.previewUrl)} target="_blank" rel="noopener noreferrer">
+                      <img className="generate-page__preview" src={assetUrl(j.previewUrl)} alt={`${j.label}の生成プレビュー`} />
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>

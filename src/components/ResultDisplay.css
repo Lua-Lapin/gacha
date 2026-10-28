@@ -30,3 +30,5 @@
   .result-title, .cocktail-info { animation: none; }
   .result-title::after { animation: none; opacity: 1; }
 }
+
+.gemstone-combination { color: #684792; line-height: 1.7; }

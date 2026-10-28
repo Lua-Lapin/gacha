@@ -481,3 +481,39 @@ describe('POST /api/generate with avatarId', () => {
     )
   })
 })
+
+describe('宝石ガチャの保存から画像生成', () => {
+  it('結果を保存し、内部で構築したプロンプトを画像生成へ渡す', async () => {
+    const { buildGemstonePrompt } = await import('../shared/prompts/gemstone.js')
+    const result = await request(app).post('/api/results').send({
+      name: 'るあ', adjective: 'アメジスト', topic: 'お茶会', title: 'アメジストのお茶会', color: '#c77dff', gachaId: 'gemstone',
+    })
+    expect(result.status).toBe(201)
+    const response = await request(app).post('/api/generate')
+      .field('personId', String(result.body.id))
+      .attach('avatar', Buffer.from('avatar'), 'avatar.png')
+    expect(response.status).toBe(200)
+    expect(response.body.previewUrl).toBe(`/generated/images/${response.body.generationId}.png`)
+    const prompt = buildGemstonePrompt('アメジスト', 'お茶会')
+    expect(generateImage).toHaveBeenCalledWith(expect.objectContaining({ prompt, size: '1024x1536' }))
+    expect(db.listPeople({ gachaId: 'gemstone' })[0].title).toBe('アメジストのお茶会')
+    expect(db.raw.prepare('SELECT prompt FROM generations').get().prompt).toBe(prompt)
+  })
+
+  it('宝石・モチーフとタイトルが食い違う保存を拒否する', async () => {
+    const response = await request(app).post('/api/results').send({
+      name: 'るあ', adjective: 'ルビー', topic: 'お茶会', title: 'アメジストのお茶会', color: '#c77dff', gachaId: 'gemstone',
+    })
+    expect(response.status).toBe(400)
+    expect(db.listPeople()).toHaveLength(0)
+  })
+})
+
+it('生成画像は公開前にプレビューできる', async () => {
+  const buffer = Buffer.from('preview-png')
+  writeFileSync(join(galleryDir, 'images', '42.png'), buffer)
+  const response = await request(app).get('/generated/images/42.png')
+  expect(response.status).toBe(200)
+  expect(response.headers['content-type']).toContain('image/png')
+  expect(response.body).toEqual(buffer)
+})

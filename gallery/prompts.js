@@ -1,5 +1,6 @@
 import { isActive } from '../shared/deadline.js'
 import { escapeHtml } from '../shared/escapeHtml.js'
+import { GEMSTONE_STYLES } from '../shared/prompts/gemstone.js'
 import { COCKTAIL_STYLES } from '../shared/prompts/cocktail.js'
 import { IZAKAYA_STYLES } from '../shared/prompts/izakaya.js'
 import { SEA_STYLES } from '../shared/prompts/sea.js'
@@ -19,6 +20,7 @@ export function endedGachas(gachas, now = new Date()) {
 // export しているのは gallery/consistency.test.js から突き合わせるため。
 // アプリ内では引き続き promptsFor を使うこと。
 export const STYLES_BY_GACHA = {
+  gemstone: GEMSTONE_STYLES,
   cocktail: COCKTAIL_STYLES,
   izakaya: IZAKAYA_STYLES,
   sea: SEA_STYLES,
@@ -45,7 +47,7 @@ export function formatEndedOn(endsAt) {
 
 const PLACEHOLDER_NOTICE =
   'プロンプト中の <code>{役職名}</code> / <code>{カクテル名}</code> は、'
-  + '自分の役職名に置き換えて使ってください。'
+  + '自分の役職名に置き換えて使ってください。宝石ガチャの {宝石名}・{宝石の質感}・{配色}・{シーン} は、選んだ宝石とモチーフに合わせて置き換えてください。'
 
 // アコーディオン1つ分。open のときだけ本文とスタイルタブを描く。
 function renderSection(gacha, isOpen, styleId, lookup) {

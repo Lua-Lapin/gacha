@@ -27,10 +27,15 @@
 /* ガチャ演出: 結果表示を暗転オーバーレイ上にまとめる固定ステージ */
 .reveal-stage {
   position: fixed; inset: 0; z-index: 60;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
   gap: 4px; padding: 24px;
   overflow-y: auto; /* 小さい画面では内部スクロール（背面ページは動かさない） */
   background: radial-gradient(circle at 50% 38%, #2a2150 0%, #141426 60%, #0c0d17 100%);
 }
 /* ステージ上では名前ラベルを白系にして暗転背景で読めるようにする */
 .reveal-stage .save-result__label { color: #f0eefb; }
+
+.reveal-stage > * { flex-shrink: 0; }
+.reveal-stage > :first-child { margin-top: auto; }
+.reveal-stage > :last-child { margin-bottom: auto; }
+.reveal-stage .gemstone-combination { color: #e6d5ff; }

@@ -1,3 +1,5 @@
+import { GEMSTONE_STYLES, buildGemstonePrompt } from '../shared/prompts/gemstone.js'
+import { parseGemstoneTitle } from '../shared/gemstones.js'
 import { COCKTAIL_STYLES } from '../shared/prompts/cocktail.js'
 import { IZAKAYA_STYLES } from '../shared/prompts/izakaya.js'
 import { SEA_STYLES } from '../shared/prompts/sea.js'
@@ -5,6 +7,7 @@ import { SUSHI_STYLES } from '../shared/prompts/sushi.js'
 
 // ガチャID -> スタイル定義の配列。配列の先頭が既定スタイル。
 export const GACHA_STYLES = {
+  gemstone: GEMSTONE_STYLES,
   cocktail: COCKTAIL_STYLES,
   izakaya: IZAKAYA_STYLES,
   sea: SEA_STYLES,
@@ -14,6 +17,7 @@ export const GACHA_STYLES = {
 // ガチャID -> 画像サイズ。未指定は正方形。
 // sushi は雑誌表紙レイアウトのため縦長で生成する。
 const GACHA_SIZES = {
+  gemstone: '1024x1536',
   sushi: '1024x1536',
 }
 
@@ -45,5 +49,9 @@ export function buildPrompt(gachaId, title, styleId) {
   // 未知IDは既定へフォールバックせずエラーにする。誤ったIDのまま
   // 別スタイルの画像が生成され、DBにも誤った style_id が残るのを防ぐ。
   if (!style) throw new Error(`unknown style: ${id} for gacha ${gachaId}`)
+  if (gachaId === 'gemstone') {
+    const { gem, motif } = parseGemstoneTitle(title)
+    return buildGemstonePrompt(gem, motif)
+  }
   return style.template.replaceAll('{カクテル名}', title).replaceAll('{役職名}', title)
 }

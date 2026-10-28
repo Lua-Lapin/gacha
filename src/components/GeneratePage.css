@@ -67,3 +67,5 @@
   font-weight: 700;
   word-break: break-all;
 }
+
+.generate-page__preview { display: block; width: 100%; max-width: 360px; height: auto; margin-top: 12px; border-radius: 12px; }

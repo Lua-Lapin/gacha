@@ -7,3 +7,7 @@ data/*.db
 data/*.db.backup-*
 *.sqlite
 data/uploads/
+
+/node_modules
+
+/output/gemstone-e2e/uploads/
