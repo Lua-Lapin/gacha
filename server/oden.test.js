@@ -14,7 +14,11 @@ import { GACHAS } from '../gallery/main.js'
 describe('oden gacha integration', () => {
   it('can generate every registered ingredient and keeps prompts private until the deadline', () => {
     const gacha = getGachaById('oden')
-    expect(gacha.words.topics).toEqual(['餅巾着', 'ちくわ', '大根'])
+    expect(gacha.words.topics).toEqual([
+      '牛すじ', 'がんもどき', 'ちくわ', 'ちくわぶ', 'はんぺん', 'たまご',
+      'こんにゃく', '餅巾着', '大根', 'ロールキャベツ', 'ウィンナー',
+      '糸こんにゃく', 'とまと', 'さつまあげ', 'じゃがいも', 'うどん',
+    ])
     for (const topic of gacha.words.topics) {
       const prompt = buildPrompt('oden', `眠そうな${topic}`)
       expect(prompt).toContain(`「眠そうな${topic}」`)
