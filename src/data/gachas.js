@@ -18,7 +18,7 @@ import { sushiAdjectives, sushiItemInfo } from './sushi.js'
 export const gachas = [
   {
     id: 'oden',
-    title: 'おでん役職ガチャ',
+    title: 'おでんガチャ',
     banner: odenBanner,
     endsAt: '2026-11-30T23:59:00+09:00',
     words: { adjectives, topics: Object.keys(odenItemInfo) },
