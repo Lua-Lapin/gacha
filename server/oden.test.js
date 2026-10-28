@@ -19,6 +19,7 @@ describe('oden gacha integration', () => {
       'こんにゃく', '餅巾着', '大根', 'ロールキャベツ', 'ウィンナー',
       '糸こんにゃく', 'とまと', 'さつまあげ', 'じゃがいも', 'うどん',
       'たこ', '厚揚げ', 'ごぼう巻き', '昆布締め',
+      'にんじん', 'とりつくね',
     ])
     for (const topic of gacha.words.topics) {
       const prompt = buildPrompt('oden', `眠そうな${topic}`)
