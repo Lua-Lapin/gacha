@@ -1,0 +1,9 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "lun222-www",
+  "main": "worker.js",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "www.lun222.com", "custom_domain": true }]
+}
