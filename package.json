@@ -10,11 +10,15 @@
     "preview": "vite preview",
     "test": "vitest run",
     "server": "node server/index.js",
-    "gallery:build": "vite build gallery && node scripts/gen-card-pages.js",
+    "gallery:build": "vite build gallery",
+    "gallery:deploy": "npm run gallery:build && wrangler deploy -c gallery/wrangler.jsonc",
+    "site:deploy": "wrangler deploy -c site/wrangler.jsonc",
+    "gallery:migrate": "node scripts/migrate-to-r2.js",
     "gallery:dev": "vite gallery",
     "prepare": "husky"
   },
   "dependencies": {
+    "aws4fetch": "^1.0.20",
     "better-sqlite3": "^12.11.1",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
@@ -39,6 +43,7 @@
     "jsdom": "^29.1.1",
     "supertest": "^7.2.2",
     "vite": "^8.0.12",
-    "vitest": "^4.1.9"
+    "vitest": "^4.1.9",
+    "wrangler": "^4.168.0"
   }
 }

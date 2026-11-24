@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>lun222.com</title>
+    <meta name="description" content="役職ガチャのギャラリーはこちら" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='28' height='28' rx='4' fill='%23ff4d50' stroke='%23111' stroke-width='3'/%3E%3Ctext x='16' y='23' font-size='19' font-weight='900' font-family='sans-serif' text-anchor='middle' fill='%23111'%3EL%3C/text%3E%3C/svg%3E" />
+    <style>
+      :root {
+        --bg: #f5efdd; --ink: #111; --card: #fff;
+        --red: #ff4d50; --blue: #4d63ff; --yellow: #ffd23f;
+        --green: #7be5aa; --purple: #cbb2ff;
+        --line: 2px solid var(--ink);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; min-height: 100svh; padding: 20px;
+        display: grid; grid-template-rows: auto 1fr;
+        background: var(--bg); color: var(--ink);
+        font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic UI', Meiryo, system-ui, sans-serif;
+      }
+      .brand {
+        justify-self: start; display: flex; align-items: center; gap: 12px;
+        margin: 0; font-size: 1.3rem; font-weight: 700;
+      }
+      .brand span {
+        width: 46px; height: 46px; display: grid; place-items: center;
+        background: var(--red); border: var(--line); border-radius: 4px;
+        box-shadow: 4px 4px 0 var(--ink); font-weight: 900;
+      }
+      main { place-self: center; padding: 40px 0; }
+      .gacha {
+        display: grid; justify-items: center; gap: 22px;
+        width: min(380px, calc(100vw - 48px)); padding: 32px 28px 28px;
+        background: var(--card); border: var(--line); border-radius: 6px;
+        box-shadow: 6px 6px 0 var(--ink);
+        color: inherit; text-decoration: none;
+        transition: transform .12s, box-shadow .12s;
+      }
+      .gacha:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--ink); }
+      .gacha:active { transform: translate(6px, 6px); box-shadow: 0 0 0 var(--ink); }
+      .gacha:focus-visible { outline: 4px solid var(--blue); outline-offset: 10px; }
+      .machine { width: 190px; height: auto; overflow: visible; }
+      .machine * { vector-effect: non-scaling-stroke; }
+      .button {
+        display: block; width: 100%; padding: 14px;
+        background: var(--blue); color: #fff; border: var(--line); border-radius: 4px;
+        box-shadow: 4px 4px 0 var(--ink);
+        text-align: center; font-size: 1.1rem; font-weight: 700;
+      }
+      .knob { transform-box: fill-box; transform-origin: center; transition: transform .5s; }
+      .gacha:hover .knob, .gacha:focus-visible .knob { transform: rotate(180deg); }
+      .prize { animation: hop 2.4s ease-in-out infinite; }
+      .eyes { transform-box: fill-box; transform-origin: center; animation: blink 4s infinite; }
+      @keyframes hop { 0%, 70%, 100% { transform: none; } 80% { transform: translateY(-9px); } 90% { transform: translateY(1px); } }
+      @keyframes blink { 0%, 94%, 100% { transform: none; } 97% { transform: scaleY(.1); } }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before { animation: none !important; transition: none !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="brand"><span aria-hidden="true">L</span>lun222.com</h1>
+    <main>
+      <a class="gacha" href="https://gacha.lun222.com/">
+        <svg class="machine" viewBox="0 0 200 270" aria-hidden="true" stroke="#111" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+          <rect x="30" y="12" width="140" height="122" rx="28" fill="#fffdf0" />
+          <g>
+            <circle cx="62" cy="106" r="19" fill="#ff4d50" /><path d="M43 106h38" />
+            <circle cx="102" cy="109" r="19" fill="#ffd23f" /><path d="M83 109h38" />
+            <circle cx="140" cy="105" r="19" fill="#7be5aa" /><path d="M121 105h38" />
+            <circle cx="82" cy="73" r="19" fill="#cbb2ff" /><path d="M63 73h38" />
+            <circle cx="122" cy="72" r="19" fill="#4d63ff" /><path d="M103 72h38" />
+          </g>
+          <rect x="20" y="128" width="160" height="110" rx="6" fill="#ff4d50" />
+          <rect x="34" y="238" width="30" height="16" fill="#111" />
+          <rect x="136" y="238" width="30" height="16" fill="#111" />
+          <g class="eyes" fill="#111"><circle cx="74" cy="154" r="5" /><circle cx="126" cy="154" r="5" /></g>
+          <path d="M92 158q4 7 8 0q4 7 8 0" fill="none" />
+          <ellipse cx="60" cy="165" rx="7" ry="4" fill="#ffd23f" stroke="none" />
+          <ellipse cx="140" cy="165" rx="7" ry="4" fill="#ffd23f" stroke="none" />
+          <circle cx="62" cy="205" r="20" fill="#fff" />
+          <rect class="knob" x="46" y="200" width="32" height="10" rx="3" fill="#ffd23f" />
+          <rect x="100" y="184" width="64" height="44" rx="6" fill="#111" />
+          <g class="prize">
+            <circle cx="132" cy="220" r="23" fill="#fff" />
+            <path d="M109 220a23 23 0 0 1 46 0z" fill="#7be5aa" />
+            <circle cx="124" cy="228" r="2.5" fill="#111" stroke="none" />
+            <circle cx="140" cy="228" r="2.5" fill="#111" stroke="none" />
+            <path d="M129 231q3 4 6 0" fill="none" />
+          </g>
+        </svg>
+        <span class="button">役職ガチャを見る</span>
+      </a>
+    </main>
+  </body>
+</html>

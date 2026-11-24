@@ -28,7 +28,7 @@ export function createApp({
   app.use('/uploads', express.static(uploadsDir))
   app.use('/generated/images', express.static(join(galleryDir, 'images')))
 
-  // 生成物をDBに記録し、ギャラリーへローカル書き出しする（git は publish 時にまとめて実行）。
+  // 生成物をDBに記録し、ギャラリーへローカル書き出しする（R2 への送信は publish 時にまとめて行う）。
   function recordGeneration({ personId, imageBuffer, prompt, styleId }) {
     const genId = db.insertGeneration({
       personId, imagePath: null, prompt, status: 'success', error: null, styleId,
@@ -187,16 +187,19 @@ export function createApp({
     res.json(db.listPendingGenerations())
   })
 
+  let publishing = false
   app.post('/api/publish', async (req, res) => {
+    if (publishing) return res.status(409).json({ error: '公開処理を実行中です' })
     const pending = db.listPendingGenerations()
     if (!pending.length) return res.json({ committed: [] })
+    publishing = true
     try {
       // 公開は生成順（id 昇順）にまとめる。listPendingGenerations は新しい順で返すため並べ替える。
       const generations = pending
         .map((g) => ({ id: g.id, imagePath: g.imagePath }))
         .sort((a, b) => a.id - b.id)
-      // ファイルが既に消えている行は二度と git add できないため、そのままにすると
-      // 以降のすべての publish を永久にブロックしてしまう。git には送らず、
+      // ファイルが既に消えている行は二度と送信できないため、そのままにすると
+      // 以降のすべての publish を永久にブロックしてしまう。R2 には送らず、
       // 存在する分と合わせて published 済みにして詰まりを解消する。
       const existing = []
       const missingIds = []
@@ -210,11 +213,17 @@ export function createApp({
         return res.json({ committed: [] })
       }
 
-      const { committed } = await publishPending({ galleryDir, generations: existing })
+      const { committed } = await publishPending({
+        galleryDir,
+        generations: existing,
+        entries: buildManifest(db.listSuccessfulGenerations()),
+      })
       db.markPublished([...committed, ...missingIds])
-      res.json({ committed, pushed: true })
+      res.json({ committed })
     } catch (err) {
       res.status(500).json({ error: String(err.message || err) })
+    } finally {
+      publishing = false
     }
   })
 
@@ -238,6 +247,7 @@ dotenv.config({ path: fileURLToPath(new URL('.env', import.meta.url)) })
 import { createDb } from './db.js'
 import { createClient, generateImage as realGenerate } from './imagegen.js'
 import { writeGenerationFiles as realWrite, publishPending as realPublish } from './publish.js'
+import { createR2Storage } from './r2.js'
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   mkdirSync('data', { recursive: true })
@@ -246,11 +256,13 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   // OpenAIクライアントは画像生成が呼ばれた時に初めて作る。
   // これにより APIキーが無くても保存/カード登録のエンドポイントは起動できる。
   let client
+  let storage
   const app = createApp({
     db,
     generateImage: (args) => realGenerate({ client: (client ??= createClient()), ...args }),
     writeGenerationFiles: realWrite,
-    publishPending: realPublish,
+    // R2 の設定が無くても起動できるよう、公開時に初めて作る。
+    publishPending: (args) => realPublish({ storage: (storage ??= createR2Storage()), ...args }),
     galleryDir: 'gallery/public',
     uploadsDir: 'data/uploads',
     saveAvatarFile: realSaveAvatarFile,

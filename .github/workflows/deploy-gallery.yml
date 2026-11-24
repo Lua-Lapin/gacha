@@ -1,14 +1,13 @@
-name: Deploy Gallery
+# ギャラリー本体は Cloudflare に移行した。これは旧URL (GitHub Pages) に
+# 転送ページを置くためだけのもので、手動でしか動かない。
+name: Deploy redirect site (old GitHub Pages)
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'gallery/**'
-      - 'shared/**'
-      - 'scripts/gen-card-pages.js'
-      - '.github/workflows/deploy-gallery.yml'
   workflow_dispatch:
+    inputs:
+      base_url:
+        description: 新しいギャラリーのURL（https://.../）
+        required: true
 
 permissions:
   contents: read
@@ -27,20 +26,15 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Guard against committed secrets/db
-        run: bash scripts/check-no-secrets.sh
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm ci
-      - run: npx vite build gallery
-      - run: node scripts/gen-card-pages.js
-
+      - run: node scripts/gen-redirect-site.js "$BASE_URL"
+        env:
+          BASE_URL: ${{ inputs.base_url }}
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: gallery/dist
+          path: dist/redirect
       - id: deploy
         uses: actions/deploy-pages@v4

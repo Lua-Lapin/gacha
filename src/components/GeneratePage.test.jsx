@@ -74,7 +74,7 @@ describe('GeneratePage', () => {
     const loadPending = vi.fn().mockResolvedValue([{ id: 1, imagePath: 'images/1.png', name: 'あや', title: '陽気なモヒート' }])
     const props = renderPage({ loadPending })
     await waitFor(() => expect(screen.getByText(/images\/1\.png/)).toBeTruthy())
-    await userEvent.click(screen.getByRole('button', { name: /一括コミット/ }))
+    await userEvent.click(screen.getByRole('button', { name: /公開する/ }))
     expect(props.onPublish).toHaveBeenCalledOnce()
   })
 })

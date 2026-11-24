@@ -2,13 +2,13 @@
 
 ガチャで「形容詞 + 実在カクテル名」の架空カクテル役職を引き、結果をSQLiteに保存。
 保存した人物とアバター画像から gpt-image-2 でポスター風イラストを生成し、
-GitHub Pages のギャラリーへ自動デプロイする。
+Cloudflare（Worker + R2）のギャラリーに公開する。
 
 ## 構成
 
 - **フロント（ガチャ＋生成画面）**: Vite + React。ローカル運用のみ。
 - **バックエンド** (`server/`): Express + better-sqlite3 + OpenAI。ローカル運用のみ。**APIキーを持つ唯一の場所**。
-- **ギャラリー** (`gallery/`): 軽量Viteの静的ページ。**これだけ GitHub Pages にデプロイされる**。
+- **ギャラリー** (`gallery/`): 軽量Viteの静的ページと Worker。**これだけ Cloudflare にデプロイされる**。画像と `manifest.json` は R2 に置く。
 - **共有** (`shared/`): プロンプト本文・期限判定など、**公開されても安全な**内容だけを置く。
   `server/` と `gallery/` の両方から参照する。APIキーやDBに触れるものは絶対に置かない。
 
@@ -32,9 +32,8 @@ npm run server   # API（http://localhost:3001）
 
 1. ガチャを回す → 結果が出たら「名前」を入力して「保存」（SQLiteの `people` に保存）
 2. 「生成」タブ → 一覧から人を選び、アバター画像を添付して「生成」
-3. gpt-image-2 が画像を生成し、`gallery/public/images/` に保存・`manifest.json` を更新して
-   自動で git commit & push される
-4. `gallery/` への push をトリガーに GitHub Actions がギャラリーをビルドし Pages へデプロイ
+3. gpt-image-2 が画像を生成し、`gallery/public/images/` に保存・手元の `manifest.json` を更新する
+4. 「公開する」を押すと、未公開の画像と manifest を R2 に送る。git push もビルドも不要
 
 ## 終了したガチャのプロンプト公開
 
@@ -68,9 +67,19 @@ npm run server   # API（http://localhost:3001）
 - デプロイ対象は `gallery/` のビルド成果物だけ（`shared/` の内容もバンドルされる）。キーもDBも含まれない。
   そのため `shared/` には**公開されて困るものを置かない**こと。
 
-## GitHub Pages の設定
+## Cloudflare の設定
 
-リポジトリの Settings → Pages → Source を **「GitHub Actions」** に設定すること。
+初回だけ:
+
+1. ドメインを Cloudflare に追加し、R2 を有効化して非公開バケット `gacha-gallery` を作る
+2. バケット限定の読み書きキーを発行し、`server/.env` に `R2_*` を入れる（`.env.example` 参照）
+3. 配信先は `gallery/wrangler.jsonc`（gacha.lun222.com）と `site/wrangler.jsonc`（lun222.com）の `routes` で指定している
+4. `npx wrangler login` → `npm run gallery:migrate` → `npm run gallery:deploy` → `npm run site:deploy`
+
+以後、画像の公開は「公開する」ボタンだけでよい。ギャラリーの見た目やガチャのコードを
+変えたときだけ `npm run gallery:deploy` を実行する（手元の未コミットの変更もそのまま出る）。
+
+旧URL（GitHub Pages）の転送ページは、`deploy-gallery.yml` を手動実行して作る。
 
 ## テスト
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { mkdtempSync, rmSync, existsSync, readFileSync } from 'node:fs'
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { writeGenerationFiles, publishPending } from './publish.js'
@@ -23,31 +23,70 @@ describe('writeGenerationFiles', () => {
 })
 
 describe('publishPending', () => {
-  it('adds every pending image plus manifest in one commit and pushes', async () => {
-    const runGit = vi.fn().mockResolvedValue(undefined)
+  const entry = (id, createdAt) => ({ id, name: 'n', title: 't', image: `images/${id}.png`, createdAt })
+  const fakeStorage = (current = []) => ({
+    put: vi.fn().mockResolvedValue(undefined),
+    getJson: vi.fn().mockResolvedValue(current),
+  })
+  const addImage = (id) => {
+    mkdirSync(join(dir, 'images'), { recursive: true })
+    writeFileSync(join(dir, 'images', `${id}.png`), `png${id}`)
+  }
+  const gen = (id) => ({ id, imagePath: `images/${id}.png` })
+
+  it('uploads images in id order, then the merged manifest last', async () => {
+    addImage(9); addImage(14)
+    const storage = fakeStorage([entry(1, '2026-01-01')])
     const result = await publishPending({
-      galleryDir: dir,
-      generations: [{ id: 9, imagePath: 'images/9.png' }, { id: 14, imagePath: 'images/14.png' }],
-      runGit,
+      galleryDir: dir, storage,
+      generations: [gen(14), gen(9)],
+      entries: [entry(14, '2026-01-03'), entry(9, '2026-01-02')],
     })
-    expect(runGit).toHaveBeenCalledTimes(3)
-    const addArgs = runGit.mock.calls[0][0]
-    expect(addArgs[0]).toBe('add')
-    expect(addArgs).toContain(join(dir, 'images', '9.png'))
-    expect(addArgs).toContain(join(dir, 'images', '14.png'))
-    expect(addArgs).toContain(join(dir, 'manifest.json'))
-    expect(runGit.mock.calls[1][0]).toEqual(['commit', '-m', 'feat: add generations 9-14'])
-    expect(runGit.mock.calls[2][0]).toEqual(['push'])
+    expect(storage.put.mock.calls.map((c) => c[0])).toEqual(['images/9.png', 'images/14.png', 'manifest.json'])
+    expect(storage.put.mock.calls[0][2]).toBe('image/png')
+    expect(JSON.parse(storage.put.mock.calls[2][1]).map((e) => e.id)).toEqual([14, 9, 1])
     expect(result.committed).toEqual([9, 14])
   })
 
-  it('uses singular message for a single generation', async () => {
-    const runGit = vi.fn().mockResolvedValue(undefined)
+  it('does not write the manifest when an image upload fails', async () => {
+    addImage(9)
+    const storage = fakeStorage()
+    storage.put.mockRejectedValueOnce(new Error('network'))
+    await expect(publishPending({
+      galleryDir: dir, storage, generations: [gen(9)], entries: [entry(9, 'x')],
+    })).rejects.toThrow('network')
+    expect(storage.put).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not include entries outside this batch', async () => {
+    addImage(9)
+    const storage = fakeStorage()
     await publishPending({
-      galleryDir: dir,
-      generations: [{ id: 7, imagePath: 'images/7.png' }],
-      runGit,
+      galleryDir: dir, storage, generations: [gen(9)], entries: [entry(9, 'x'), entry(10, 'y')],
     })
-    expect(runGit.mock.calls[1][0]).toEqual(['commit', '-m', 'feat: add generation 7'])
+    expect(JSON.parse(storage.put.mock.calls[1][1]).map((e) => e.id)).toEqual([9])
+  })
+
+  it('does not duplicate an entry when publishing is retried', async () => {
+    addImage(9)
+    const storage = fakeStorage([entry(9, 'x')])
+    await publishPending({ galleryDir: dir, storage, generations: [gen(9)], entries: [entry(9, 'x')] })
+    expect(JSON.parse(storage.put.mock.calls[1][1])).toHaveLength(1)
+  })
+
+  it('refuses to publish before the initial migration', async () => {
+    addImage(9)
+    const storage = fakeStorage(null)
+    await expect(publishPending({
+      galleryDir: dir, storage, generations: [gen(9)], entries: [entry(9, 'x')],
+    })).rejects.toThrow('gallery:migrate')
+    expect(storage.put).not.toHaveBeenCalled()
+  })
+
+  it('does not upload card images that are not listed in the gallery', async () => {
+    const storage = fakeStorage()
+    const result = await publishPending({ galleryDir: dir, storage, generations: [gen(3)], entries: [] })
+    expect(storage.put).not.toHaveBeenCalled()
+    expect(result.committed).toEqual([3])
   })
 })

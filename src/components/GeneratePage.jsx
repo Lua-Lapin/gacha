@@ -186,7 +186,7 @@ export default function GeneratePage({
               ))}
             </ul>
             <Button onClick={handlePublish} disabled={publishing || pending.length === 0}>
-              {publishing ? '公開中…' : '一括コミット＆プッシュ'}
+              {publishing ? '公開中…' : '公開する'}
             </Button>
             {publishError && <p className="generate-page__error">エラー: {publishError}</p>}
           </div>

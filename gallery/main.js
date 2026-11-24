@@ -2,13 +2,10 @@ import { cardPagePath } from './cardPage.js'
 import { shareOrDownload } from './share.js'
 import { endedGachas, promptsFor, renderPrompts } from './prompts.js'
 
-// 本番（GitHub Pages）の絶対URL。ツイートのカードページURLとメタタグの解決に使う。
-export const BASE = 'https://lua-lapin.github.io/gacha/'
-
 // カードをX(Twitter)へ投稿するためのintent URLを組み立てる。
 // X は画像直リンクではプレビューを出さないため、url にはメタタグ入りの
 // カードページ（card/{id}.html）の絶対URLを載せる。これにより画像カードが展開される。
-export function tweetHref(entry, base = BASE) {
+export function tweetHref(entry, base = '') {
   const text = `私の役職は「${entry.title}」でした🍸 #役職ガチャ`
   const params = new URLSearchParams({ text })
   if (base) {
@@ -177,8 +174,6 @@ export function upgradeDownloadLinks(root) {
 // ブラウザ実行時のみ動作（テスト環境では document が無い）
 if (typeof document !== 'undefined') {
   // 生成直後でも最新を出すため、キャッシュを避けて取得する。
-  // GitHub Pages の manifest.json は max-age=600 なので、これが無いと
-  // 古い(空の)manifestが最大10分残り「ギャラリーに出ない」状態になる。
   fetch(`manifest.json?ts=${Date.now()}`, { cache: 'no-store' })
     .then((r) => r.json())
     .then((entries) => {

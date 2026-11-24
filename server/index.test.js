@@ -233,17 +233,33 @@ describe('POST /api/publish', () => {
     expect(publishPending).not.toHaveBeenCalled()
   })
 
-  it('returns 500 and leaves rows pending when push fails', async () => {
+  it('returns 500 and leaves rows pending when publishing fails', async () => {
     const id = db.insertPerson({ name: 'b', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
     await request(app).post('/api/generate').field('personId', String(id)).attach('avatar', Buffer.from('a'), 'a.png')
     writeFileSync(join(galleryDir, 'images/1.png'), Buffer.from('a'))
-    publishPending.mockRejectedValueOnce(new Error('push failed'))
+    publishPending.mockRejectedValueOnce(new Error('upload failed'))
     const res = await request(app).post('/api/publish')
     expect(res.status).toBe(500)
     expect(db.listPendingGenerations()).toHaveLength(1)
   })
 
-  it('excludes a pending row whose image file is missing from git, but still marks it published', async () => {
+  it('rejects a second publish while one is running, then accepts again', async () => {
+    const id = db.insertPerson({ name: 'b', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
+    await request(app).post('/api/generate').field('personId', String(id)).attach('avatar', Buffer.from('a'), 'a.png')
+    writeFileSync(join(galleryDir, 'images/1.png'), Buffer.from('a'))
+    let finish
+    let started
+    const running = new Promise((r) => { started = r })
+    publishPending.mockImplementationOnce(() => { started(); return new Promise((r) => { finish = r }) })
+    const first = request(app).post('/api/publish').then((r) => r)
+    await running
+    expect((await request(app).post('/api/publish')).status).toBe(409)
+    finish({ committed: [1] })
+    expect((await first).status).toBe(200)
+    expect((await request(app).post('/api/publish')).status).toBe(200)
+  })
+
+  it('excludes a pending row whose image file is missing, but still marks it published', async () => {
     const id = db.insertPerson({ name: 'b', adjective: 'a', topic: 'c', title: 'ac', color: '#000', gachaId: 'cocktail' })
     // generation 1: file present on disk
     await request(app).post('/api/generate').field('personId', String(id)).attach('avatar', Buffer.from('a'), 'a.png')
