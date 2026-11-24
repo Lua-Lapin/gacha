@@ -1,5 +1,23 @@
 [
   {
+    "id": 246,
+    "name": "ジュリ",
+    "title": "愛されるロールキャベツ",
+    "image": "images/246.png",
+    "createdAt": "2026-11-24T12:48:18.940Z",
+    "gachaId": "oden",
+    "styleId": "yuru"
+  },
+  {
+    "id": 245,
+    "name": "じゅり",
+    "title": "ラリマーの天使",
+    "image": "images/245.png",
+    "createdAt": "2026-11-24T12:47:18.056Z",
+    "gachaId": "gemstone",
+    "styleId": "standard"
+  },
+  {
     "id": 244,
     "name": "さとう",
     "title": "墓穴を掘るポリス",
