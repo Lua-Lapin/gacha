@@ -19,7 +19,7 @@ export async function generateImage({
     ? [image, await toFile(styleReferenceBuffer, 'oden-style-reference.png', { type: 'image/png' })]
     : image
   const res = await client.images.edit({
-    model: 'gpt-image-2',
+    model: 'gpt-image-2.5-flare',
     image: images,
     prompt,
     ...(size ? { size } : {}),
@@ -27,7 +27,7 @@ export async function generateImage({
   })
   const b64 = res?.data?.[0]?.b64_json
   if (!b64) {
-    throw new Error('gpt-image-2 returned no image data')
+    throw new Error('gpt-image-2.5-flare returned no image data')
   }
   return Buffer.from(b64, 'base64')
 }

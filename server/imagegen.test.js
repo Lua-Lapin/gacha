@@ -18,7 +18,7 @@ describe('generateImage', () => {
     })
     expect(fakeClient.images.edit).toHaveBeenCalledOnce()
     const arg = fakeClient.images.edit.mock.calls[0][0]
-    expect(arg.model).toBe('gpt-image-2')
+    expect(arg.model).toBe('gpt-image-2.5-flare')
     expect(arg.prompt).toBe('a prompt')
     expect(Buffer.isBuffer(buf)).toBe(true)
     expect(buf.toString()).toBe('fakepng')
