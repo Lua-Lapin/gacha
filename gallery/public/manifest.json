@@ -1,5 +1,41 @@
 [
   {
+    "id": 250,
+    "name": "わにこ",
+    "title": "現場主義の餅巾着",
+    "image": "images/250.png",
+    "createdAt": "2026-11-24T12:59:58.317Z",
+    "gachaId": "oden",
+    "styleId": "yuru"
+  },
+  {
+    "id": 249,
+    "name": "わにこ",
+    "title": "ルビーの香水工房",
+    "image": "images/249.png",
+    "createdAt": "2026-11-24T12:59:18.688Z",
+    "gachaId": "gemstone",
+    "styleId": "standard"
+  },
+  {
+    "id": 248,
+    "name": "るん",
+    "title": "渋いがんもどき",
+    "image": "images/248.png",
+    "createdAt": "2026-11-24T12:54:14.860Z",
+    "gachaId": "oden",
+    "styleId": "yuru"
+  },
+  {
+    "id": 247,
+    "name": "るん",
+    "title": "ラブラドライトの雨の日のお出かけ",
+    "image": "images/247.png",
+    "createdAt": "2026-11-24T12:51:27.983Z",
+    "gachaId": "gemstone",
+    "styleId": "standard"
+  },
+  {
     "id": 246,
     "name": "ジュリ",
     "title": "愛されるロールキャベツ",
