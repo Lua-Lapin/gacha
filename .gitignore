@@ -13,3 +13,7 @@ data/uploads/
 /output/gemstone-e2e/uploads/
 
 .wrangler/
+
+# 画像と manifest は R2 に置く（手元には残す）
+gallery/public/images/
+gallery/public/manifest.json

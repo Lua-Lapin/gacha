@@ -79,7 +79,8 @@ npm run server   # API（http://localhost:3001）
 以後、画像の公開は「公開する」ボタンだけでよい。ギャラリーの見た目やガチャのコードを
 変えたときだけ `npm run gallery:deploy` を実行する（手元の未コミットの変更もそのまま出る）。
 
-旧URL（GitHub Pages）の転送ページは、`deploy-gallery.yml` を手動実行して作る。
+旧URL（GitHub Pages）には転送ページを配信済み（`scripts/gen-redirect-site.js` で生成。ワークフローは削除済みで、Pages の設定は残しておくこと）。
+画像と manifest は git 管理外で、R2 と手元の `gallery/public/` にある。
 
 ## テスト
 
