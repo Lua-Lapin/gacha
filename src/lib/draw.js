@@ -1,4 +1,4 @@
-import { gemstoneTitle } from '../../shared/gemstones.js'
+import { gemstoneTitle, usedGemstoneParts } from '../../shared/gemstones.js'
 import { buildGemstonePrompt } from '../../shared/prompts/gemstone.js'
 
 export const CAPSULE_COLORS = ['#ff6b6b', '#ffd93d', '#6bcB77', '#4d96ff', '#c77dff', '#ff9f45']
@@ -7,7 +7,7 @@ function pick(arr) {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
-// 既存ガチャはtopic単位、宝石ガチャは宝石とモチーフの組み合わせ単位で除外。
+// 既存ガチャはtopic単位。宝石ガチャは保存済みタイトルから両要素を独立して除外する。
 export function resultKey(gacha, result) {
   return gacha.combinationDraw ? result.title : result.topic
 }
@@ -15,9 +15,11 @@ export function resultKey(gacha, result) {
 export function remainingDraws(gacha, excluded = []) {
   const used = new Set(excluded)
   if (!gacha.combinationDraw) return gacha.words.topics.filter((topic) => !used.has(topic))
-  return gacha.words.adjectives.flatMap((adjective) =>
-    gacha.words.topics.map((topic) => ({ adjective, topic, title: gemstoneTitle(adjective, topic) })),
-  ).filter((result) => !used.has(result.title))
+  const { gems, motifs } = usedGemstoneParts(excluded)
+  return gacha.words.adjectives.filter((gem) => !gems.has(gem)).flatMap((adjective) =>
+    gacha.words.topics.filter((motif) => !motifs.has(motif))
+      .map((topic) => ({ adjective, topic, title: gemstoneTitle(adjective, topic) })),
+  )
 }
 
 // gacha: { id, words: { adjectives, topics }, itemInfo }

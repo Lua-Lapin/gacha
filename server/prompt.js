@@ -2,6 +2,7 @@ import { GEMSTONE_STYLES, buildGemstonePrompt } from '../shared/prompts/gemstone
 import { parseGemstoneTitle } from '../shared/gemstones.js'
 import { ODEN_STYLES } from '../shared/prompts/oden.js'
 import { COCKTAIL_STYLES } from '../shared/prompts/cocktail.js'
+import { HALLOWEEN_STYLES } from '../shared/prompts/halloween.js'
 import { IZAKAYA_STYLES } from '../shared/prompts/izakaya.js'
 import { SEA_STYLES } from '../shared/prompts/sea.js'
 import { SUSHI_STYLES } from '../shared/prompts/sushi.js'
@@ -14,13 +15,15 @@ export const GACHA_STYLES = {
   izakaya: IZAKAYA_STYLES,
   sea: SEA_STYLES,
   sushi: SUSHI_STYLES,
+  halloween: HALLOWEEN_STYLES,
 }
 
 // ガチャID -> 画像サイズ。未指定は正方形。
-// sushi は雑誌表紙レイアウトのため縦長で生成する。
+// sushi は雑誌表紙レイアウトのため縦長、halloween はタイトルロゴを載せる横長で生成する。
 const GACHA_SIZES = {
   gemstone: '1024x1536',
   sushi: '1024x1536',
+  halloween: '1536x1024',
 }
 
 export function imageSize(gachaId) {

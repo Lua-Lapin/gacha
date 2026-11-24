@@ -116,6 +116,12 @@ export function createApp({
         return res.status(400).json({ error: String(err.message || err) })
       }
     }
+    if (gachaId === 'gemstone') {
+      const used = db.listPeople({ gachaId })
+      if (used.some((person) => person.adjective === adjective || person.topic === topic)) {
+        return res.status(409).json({ error: 'この宝石またはモチーフは使用済みです。「もう一回」で引き直すか、別の候補を選んでください。' })
+      }
+    }
     const id = db.insertPerson({ name, adjective, topic, title, color, gachaId })
     res.status(201).json({ id })
   })

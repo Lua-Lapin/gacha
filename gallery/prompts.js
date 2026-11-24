@@ -3,6 +3,7 @@ import { escapeHtml } from '../shared/escapeHtml.js'
 import { GEMSTONE_STYLES } from '../shared/prompts/gemstone.js'
 import { ODEN_STYLES } from '../shared/prompts/oden.js'
 import { COCKTAIL_STYLES } from '../shared/prompts/cocktail.js'
+import { HALLOWEEN_STYLES } from '../shared/prompts/halloween.js'
 import { IZAKAYA_STYLES } from '../shared/prompts/izakaya.js'
 import { SEA_STYLES } from '../shared/prompts/sea.js'
 import { SUSHI_STYLES } from '../shared/prompts/sushi.js'
@@ -27,6 +28,7 @@ export const STYLES_BY_GACHA = {
   izakaya: IZAKAYA_STYLES,
   sea: SEA_STYLES,
   sushi: SUSHI_STYLES,
+  halloween: HALLOWEEN_STYLES,
 }
 
 // 表示用に { id, label, template } を { styleId, label, template } へ付け替える。

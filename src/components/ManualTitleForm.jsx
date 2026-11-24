@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import { gemstoneTitle } from '../../shared/gemstones.js'
+import { gemstoneTitle, usedGemstoneParts } from '../../shared/gemstones.js'
 import Button from './ui/Button.jsx'
 import Field from './ui/Field.jsx'
 import './ManualTitleForm.css'
 
 // ガチャを回さずに役職を作るフォーム。入力と title の組み立てまでを担当し、
 // 保存は onCreate({ name, adjective, topic, title }) に委ねる（Promise を返すこと）。
-// お題はガチャのリスト外でもよく、重複チェックは意図的に行わない。
-export default function ManualTitleForm({ itemLabel, onCreate, gacha }) {
+// 旧ガチャは手入力可。宝石ガチャは宝石とモチーフの双方を使用済みから除外する。
+export default function ManualTitleForm({ itemLabel, onCreate, gacha, usedTopics = [], disabled = false }) {
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
   const [adjective, setAdjective] = useState('')
@@ -16,7 +16,9 @@ export default function ManualTitleForm({ itemLabel, onCreate, gacha }) {
   const [error, setError] = useState('')
 
   const values = { name: name.trim(), adjective: adjective.trim(), topic: topic.trim() }
-  const canSubmit = Boolean(values.name && values.adjective && values.topic)
+  const used = usedGemstoneParts(gacha?.combinationDraw ? usedTopics : [])
+  const selectionUsed = gacha?.combinationDraw && (used.gems.has(adjective) || used.motifs.has(topic))
+  const canSubmit = Boolean(values.name && values.adjective && values.topic) && !selectionUsed && !disabled
 
   function handleChange(setter) {
     return (e) => {
@@ -64,7 +66,7 @@ export default function ManualTitleForm({ itemLabel, onCreate, gacha }) {
           {gacha?.combinationDraw ? (
             <select id="manual-adjective" className="gacha-input" value={adjective} onChange={handleChange(setAdjective)}>
               <option value="">選択してください</option>
-              {gacha.words.adjectives.map((value) => <option key={value} value={value}>{value}</option>)}
+              {gacha.words.adjectives.map((value) => <option key={value} value={value} disabled={used.gems.has(value)}>{value}{used.gems.has(value) ? '（使用済み）' : ''}</option>)}
             </select>
           ) : (
           <input
@@ -79,7 +81,7 @@ export default function ManualTitleForm({ itemLabel, onCreate, gacha }) {
           {gacha?.combinationDraw ? (
             <select id="manual-topic" className="gacha-input" value={topic} onChange={handleChange(setTopic)}>
               <option value="">選択してください</option>
-              {gacha.words.topics.map((value) => <option key={value} value={value}>{value}</option>)}
+              {gacha.words.topics.map((value) => <option key={value} value={value} disabled={used.motifs.has(value)}>{value}{used.motifs.has(value) ? '（使用済み）' : ''}</option>)}
             </select>
           ) : (
           <input
@@ -92,6 +94,7 @@ export default function ManualTitleForm({ itemLabel, onCreate, gacha }) {
         </Field>
         <Button onClick={handleCreate} disabled={!canSubmit}>作成</Button>
       </div>
+      {selectionUsed && <p className="manual-title-form__error">選択した宝石またはモチーフは使用済みです。別の候補を選んでください。</p>}
       {created && <p className="manual-title-form__msg">作成しました ✓</p>}
       {error && <p className="manual-title-form__error">{error}</p>}
     </div>

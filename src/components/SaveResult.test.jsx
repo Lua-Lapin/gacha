@@ -30,3 +30,12 @@ describe('SaveResult', () => {
     expect(await screen.findByText(/保存しました/)).toBeTruthy()
   })
 })
+
+it('保存エラーを表示し、成功扱いにしない', async () => {
+  const onSave = vi.fn().mockRejectedValue(new Error('この宝石は使用済みです。引き直してください。'))
+  render(<SaveResult onSave={onSave} />)
+  await userEvent.type(screen.getByLabelText('名前'), 'あや')
+  await userEvent.click(screen.getByRole('button', { name: '保存' }))
+  expect((await screen.findByRole('alert')).textContent).toContain('引き直してください')
+  expect(screen.queryByText(/保存しました/)).toBeNull()
+})

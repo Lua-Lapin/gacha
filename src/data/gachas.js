@@ -3,11 +3,13 @@ import { gemstones, gemstoneMotifs } from '../../shared/gemstones.js'
 import odenBanner from '../assets/oden-banner.png'
 import { odenItemInfo } from './oden.js'
 import cocktailBanner from '../assets/cocktail-banner.png'
+import halloweenBanner from '../assets/halloween-banner.png'
 import izakayaBanner from '../assets/izakaya-banner.png'
 import seaBanner from '../assets/sea-banner.png'
 import sushiBanner from '../assets/sushi-banner.png'
 import { adjectives } from './words.js'
 import { cocktailInfo } from './cocktails.js'
+import { halloweenAdjectives, halloweenCostumeInfo } from './halloween.js'
 import { izakayaMenuInfo } from './izakaya.js'
 import { seaAdjectives, seaCreatureInfo } from './sea.js'
 import { sushiAdjectives, sushiItemInfo } from './sushi.js'
@@ -84,6 +86,17 @@ export const gachas = [
     itemLabel: '寿司',
     itemEmoji: '🍣',
     detailLabel: '材料',
+  },
+  {
+    id: 'halloween',
+    title: 'ハロウィン仮装ガチャ',
+    banner: halloweenBanner,
+    endsAt: '2026-10-31T23:59:00+09:00',
+    words: { adjectives: halloweenAdjectives, topics: Object.keys(halloweenCostumeInfo) },
+    itemInfo: halloweenCostumeInfo,
+    itemLabel: '仮装',
+    itemEmoji: '🎃',
+    detailLabel: '特徴',
   },
 ]
 

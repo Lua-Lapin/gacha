@@ -533,3 +533,30 @@ it('生成画像は公開前にプレビューできる', async () => {
   expect(response.headers['content-type']).toContain('image/png')
   expect(response.body).toEqual(buffer)
 })
+
+describe('宝石とモチーフを個別に重複禁止', () => {
+  const result = (adjective, topic) => ({
+    name: 'テスト', adjective, topic, title: `${adjective}の${topic}`, color: '#c77dff', gachaId: 'gemstone',
+  })
+
+  it('同じ宝石または同じモチーフを別タイトルで保存しても409になる', async () => {
+    expect((await request(app).post('/api/results').send(result('アメジスト', '魔法使い'))).status).toBe(201)
+    expect((await request(app).post('/api/results').send(result('アメジスト', 'お茶会'))).status).toBe(409)
+    expect((await request(app).post('/api/results').send(result('ルビー', '魔法使い'))).status).toBe(409)
+    expect((await request(app).post('/api/results').send(result('ルビー', 'お茶会'))).status).toBe(201)
+    expect(db.listPeople({ gachaId: 'gemstone' })).toHaveLength(2)
+  })
+
+  it('旧仕様の重複データを残し、双方の使用済みを新しい保存で尊重する', async () => {
+    db.insertPerson(result('アメジスト', '魔法使い'))
+    db.insertPerson(result('アメジスト', 'お茶会'))
+    const response = await request(app).post('/api/results').send(result('ルビー', 'お茶会'))
+    expect(response.status).toBe(409)
+    expect(db.listPeople({ gachaId: 'gemstone' })).toHaveLength(2)
+  })
+
+  it('他のガチャに同名の要素があっても宝石ガチャを消費しない', async () => {
+    db.insertPerson({ ...result('アメジスト', '魔法使い'), gachaId: 'cocktail' })
+    expect((await request(app).post('/api/results').send(result('アメジスト', '魔法使い'))).status).toBe(201)
+  })
+})

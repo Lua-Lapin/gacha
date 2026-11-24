@@ -98,11 +98,28 @@ export default function App() {
 
   // ガチャ結果の保存と指定作成で共通の保存処理。色は毎回ランダムに割り当てる。
   async function persistPerson({ name, adjective, topic, title, color }) {
-    const saved = await saveResult({
-      name, adjective, topic, title,
-      color: color ?? pickCapsuleColor(),
-      gachaId: selectedGacha,
-    })
+    let saved
+    try {
+      saved = await saveResult({
+        name, adjective, topic, title,
+        color: color ?? pickCapsuleColor(),
+        gachaId: selectedGacha,
+      })
+    } catch (error) {
+      if (selectedGachaObj.combinationDraw) {
+        const gacha = selectedGachaObj
+        const requestId = topicsRequestId.current
+        try {
+          const people = await fetchPeople(gacha.id)
+          if (requestId === topicsRequestId.current) {
+            setUsedTopics((prev) => [...new Set([...prev, ...people.map((p) => resultKey(gacha, p))])])
+          }
+        } catch {
+          // 元の保存エラーを優先して表示する。
+        }
+      }
+      throw error
+    }
     setLastSavedPersonId(saved.id)
     const key = resultKey(selectedGachaObj, { topic, title })
     setUsedTopics((prev) => (prev.includes(key) ? prev : [...prev, key]))
@@ -162,7 +179,7 @@ export default function App() {
             <p className="gacha-status gacha-status--error">使用済み役職の取得に失敗しました</p>
           )}
           {isExhausted && (
-            <p className="gacha-status gacha-status--error">{selectedGachaObj?.combinationDraw ? '宝石とモチーフの組み合わせはすべて割り当て済みです' : '役職はすべて割り当て済みです'}</p>
+            <p className="gacha-status gacha-status--error">{selectedGachaObj?.combinationDraw ? '未使用の宝石またはモチーフがないため、抽選を終了しました' : '役職はすべて割り当て済みです'}</p>
           )}
           <GachaMachine
             shaking={phase === 'revealing'}
@@ -174,6 +191,8 @@ export default function App() {
             <ManualTitleForm
               key={selectedGacha}
               gacha={selectedGachaObj}
+              usedTopics={usedTopics}
+              disabled={selectedGachaObj.combinationDraw && topicsStatus !== 'ready'}
               itemLabel={selectedGachaObj.itemLabel}
               onCreate={persistPerson}
             />

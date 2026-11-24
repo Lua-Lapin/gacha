@@ -115,3 +115,14 @@ it('宝石ガチャの指定作成はリストから宝石とモチーフを選�
   await userEvent.click(screen.getByRole('button', { name: '作成' }))
   expect(onCreate).toHaveBeenCalledWith({ name: 'るあ', adjective: 'アメジスト', topic: 'お茶会', title: 'アメジストのお茶会' })
 })
+
+it('宝石とモチーフの使用済み候補をそれぞれ選択不可にする', async () => {
+  const { getGachaById } = await import('../data/gachas.js')
+  const onCreate = vi.fn()
+  render(<ManualTitleForm itemLabel="モチーフ" gacha={getGachaById('gemstone')} usedTopics={['アメジストの魔法使い']} onCreate={onCreate} />)
+  await userEvent.click(screen.getByRole('button', { name: '宝石とモチーフを指定して作る' }))
+  expect(screen.getByRole('option', { name: 'アメジスト（使用済み）' })).toBeDisabled()
+  expect(screen.getByRole('option', { name: '魔法使い（使用済み）' })).toBeDisabled()
+  expect(screen.getByRole('option', { name: 'ルビー' })).not.toBeDisabled()
+  expect(screen.getByRole('option', { name: 'お茶会' })).not.toBeDisabled()
+})

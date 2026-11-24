@@ -21,6 +21,7 @@ export function tweetHref(entry, base = '') {
 export const GACHAS = {
   gemstone: { label: '💎 宝石ガチャ', endsAt: '2026-11-30T23:59:00+09:00' },
   oden: { label: '🍢 おでん', endsAt: '2026-11-30T23:59:00+09:00' },
+  halloween: { label: '🎃 ハロウィン仮装', endsAt: '2026-10-31T23:59:00+09:00' },
   sushi: { label: '🍣 寿司', endsAt: '2026-09-30T23:59:00+09:00' },
   sea: { label: '🐙 海の生き物', endsAt: '2026-08-31T23:59:00+09:00' },
   izakaya: { label: '🍶 居酒屋', endsAt: '2026-07-31T23:59:00+09:00' },
@@ -33,6 +34,7 @@ const STYLE_LABELS = {
   standard: 'スタンダード',
   card: 'かわいいカード風',
   jacket: 'ジャケット風',
+  event: 'イベントカード風',
 }
 
 // now はテストから差し替えられるようにする。終了ガチャが1件も無ければ
